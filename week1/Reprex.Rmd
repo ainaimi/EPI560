@@ -1,0 +1,9 @@
+---
+title: 
+author: 
+date: '`r Sys.Date()`'
+output: bookdown::tufte_book2
+bibliography: refs.bib
+---
+
+Hello @Cole2015.
