@@ -8,7 +8,7 @@ header-includes:
    - \usepackage{setspace}
    - \usepackage{booktabs}
    - \usepackage{multirow}
-   - \usepackage{eqnarray,amsmath,amssymb}
+   - \usepackage{eqnarray,amsmath,amssymb,xfrac}
 output: 
   bookdown::tufte_book2
 bibliography: ../ref_main_v4.bib
@@ -50,12 +50,13 @@ theme_set(thm)
 \begin{itemize}
   \item Cohort and Timescale
   \item Risk (Functions)
-  \item Risk with Treatment (Counterfactuals)
-  \item
-  \item Risk with Competing Events
   \item Risk with Censoring
+  \item Risk with Competing Events
   \item Risk with Truncation
   \item
+  \item (save for week 2)
+  \item Risk with Treatment (Counterfactuals)
+  \item Causal Inference
   \item Target Trials
 \end{itemize}
 
@@ -118,6 +119,8 @@ knitr::include_graphics("../figures/2021_08_19-figure_cens_trunc.png")
 
 5) ^!^Sabia2019 looked at the association between cardiovascular health at age 50 and the risk of subsequent dementia in ~8,000 individuals enrolled in the Whitehall II study. In this analysis, the timescale was **calendar date**, with the starting date being the date of clinical examination at age 50.
 
+# Censoring and Truncation
+
 Figure \@ref(fig:tenobs) is an important tool, and we will make much use of it. However, for now, we will generalize this figure to depict two key concepts: **censoring** and **truncation**. These concepts are illustrated in Figure \@ref(fig:censtrunc), showing a line diagram corresponding to Figure \@ref(fig:tenobs), but with six distinct scenarios.
 
 The first three observations in Figure \@ref(fig:censtrunc) depict right, left, and interval censoring, respectively. The last three observations depict right, left, and interval truncation.^[Note that interval censoring and interval truncation are often referred to as double censoring and double truncation.]
@@ -162,7 +165,7 @@ Let's say we did a study of the effect of some exposure on an outcome of interes
 
 \
 
-```{r, echo=F}
+```{r synthdat, echo=F, results="asis"}
 
 cohort %>% 
   filter(ID<=10) %>%
@@ -179,14 +182,14 @@ cohort %>%
 
 \
 
-These are the same data displayed in Figure \@ref(fig:tenobs). 
+These are the same data displayed in Figure \@ref(fig:tenobs).
 
-We are going to focus here on risk. Risk is a central parameter in cohort studies [^!^Cole2015], and is often specified as the "probability of an event during a specified period of time." [^!^Rothman2008]^[It's useful to separate the linguistic connotations of the word "risk" from its mathematical definition, which can sometimes lead to confusion. For example, one might define the "risk of live birth". Linguistically, "risk" connotes something bad, whereas in many cases successful live birth is a good thing. Here, we will be using the word "risk" in its strictly mathematical sense. In practice, I will often use "probability" instead of risk to avoid this potential dissonance.] For now, let's evaluate the risk without looking at the role that the exposure plays in influencing the outcome. This is akin to a "no intervention" or "no treatment" scenario,^[This is not the risk if everyone's exposure were set to zero. It's the risk that would be observed if we did nothing.] by which we mean that we want to compute the risk of the outcome that we actually observed--i.e., the risk under the natural settings in the study. This is sometimes referred to as the **natural course** risk [^!^Rudolph2021].
+We are going to focus here on risk. Risk is a central parameter in cohort studies [^!^Cole2015], and is often specified as the "probability of an event during a specified period of time." [^!^Rothman2008]^[It's useful to separate the linguistic connotations of the word "risk" from its mathematical definition, which can sometimes lead to confusion. For example, one might define the "risk of live birth". Linguistically, "risk" connotes something bad, whereas in many cases successful live birth is a good thing. Here, we will be using the word "risk" in its strictly mathematical sense. In practice, I will often use "probability" instead of risk to avoid this potential dissonance.] For now, let's evaluate the risk without looking at the role that the exposure plays in influencing the outcome. This is akin to a "no intervention" or "no treatment" scenario, by which we mean that we want to compute the risk of the outcome that we actually observed--i.e., the risk under the natural settings in the study. Importantly, this is **not** the risk if everyone's exposure were set to zero. It's the risk that would be observed if we did nothing. This is sometimes referred to as the **natural course** risk [^!^Rudolph2021].
 
 \begin{fullwidth}
 \hrulefill
 
-\noindent \textsc{Context Note:} Often when we use the word "bias" in epidemiology, we actually mean "inconsistent" in the statistical sense. Technically, an estimator $\hat{\theta}$ is consistent if, for some arbitrarily small $\epsilon > 0$: $$\lim_{n \rightarrow \infty} P( | \hat{\theta} - \theta | > \epsilon ) = 0.$$ When epidemiologic bias is present (confounding, selection, information), the estimator will not converge to the truth no matter how large a sample we have. In contrast, we say that an estimator is biased (in finite samples) if: $$E(\hat{\theta} - \theta) \neq 0.$$ That is, we can have zero confounding (i.e., a consistent estimator), but still have a biased estimator because of how poorly it performs at using the data to estimate the effect at a given sample size. One example of this is the partial likelihood estimator used to quantify parameters of a Cox regression model @Johnson1982. Usually, this statistical bias will disappear as the sample size increases.
+\noindent \textsc{Context Note:} Often when we use the word "bias" in epidemiology, we actually mean "inconsistent" in the statistical sense. Technically, an estimator $\hat{\theta}$ is consistent if, for some arbitrarily small $\epsilon > 0$: $$\lim_{n \rightarrow \infty} P( | \hat{\theta} - \theta | > \epsilon ) = 0.$$ When epidemiologic bias is present (confounding, selection, information), the estimator will not converge to the truth no matter how large a sample we have. In contrast, we say that an estimator is biased (in finite samples) if: $$E(\hat{\theta} - \theta) \neq 0.$$ That is, we can have zero confounding (i.e., a consistent estimator), but still have a biased estimator because of how poorly it performs at using the data to estimate the effect at a given sample size. One example of this is the partial likelihood estimator used to quantify parameters of a Cox regression model (see Johnson1982). Usually, this statistical bias will disappear as the sample size increases.
 
 \noindent \hrulefill
 \end{fullwidth}
@@ -195,9 +198,25 @@ Mathematically, we define the risk of an outcome as
 
 $$ F(t) = P(T \leq t) $$
 
-This equation quantifies the probability (or risk) that the observed failure time $T$ is less than or equal to some arbitrary threshold $t$. In less technical terms, this equation is a compact way of asking a set of similar questions. For example, if we have a study with 5 years of follow-up, with years as the time-scale,^[NB: In order for this equation to make sense, we need a follow-up time and a time-scale.] the equation can be framed as the probability that event happens before or at: $t \leq$ 1 year, or $t \leq$ 2 years, or $t \leq$ 3 years, or $t \leq$ 4 years, or $t \leq$ 5 years
+This equation quantifies the probability (or risk) that the observed failure time $T$ is less than or equal to some arbitrary threshold $t$. 
 
-To compute this, we can simply calculate the average number of events in the first, second, third, fourth, and fifth years on study.^[**NB:** This only works if there is only a single event type and no censoring.]
+Relatedly, we could define survival as:
+
+$$S(t) = 1 - F(t) = P(T>t)$$
+
+The risk and survival functions are complements to one another. Both equations are a compact way of asking how the risk cumulates over time: For example, if we have a study with 5 years of follow-up, with years as the time-scale,^[In order for this equation to make sense, we need a follow-up time and a time-scale.] the risk equation can be framed as: the probability that event happens before or at: $t \leq$ 1 year, or $t \leq$ 2 years, or $t \leq$ 3 years, or $t \leq$ 4 years, or $t \leq$ 5 years.
+
+To compute this, we can simply calculate the average number of events in the first, second, third, fourth, and fifth years on study.^[This only works if there is only a single event type and no censoring.] The denominator for this risk is everyone in the sample. For example, using the ten observations from the synthetic data in Table \@ref(tab:synthdat), we have:^[Make sure you understand how these risks are calculated from the Table.]
+
+\begin{align*}
+\text{Year 1: } & \sfrac{4}{10} = .4 \\
+\text{Year 2: } & \sfrac{4}{10} + \sfrac{0}{10} = .4 \\
+\text{Year 3: } & \sfrac{4}{10} + \sfrac{0}{10} + \sfrac{2}{10} = .6 \\
+\text{Year 4: } & \sfrac{4}{10} + \sfrac{0}{10} + \sfrac{2}{10} + \sfrac{1}{10} = .7 \\
+\text{Year 5: } & \sfrac{4}{10} + \sfrac{0}{10} + \sfrac{2}{10} + \sfrac{1}{10} + \sfrac{0}{10} = .7 \\
+\end{align*}
+
+
 
 \newpage
 

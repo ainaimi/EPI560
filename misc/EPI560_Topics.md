@@ -22,7 +22,6 @@ Week 2)
 a.	Survival
 b.	Hazard
 c.	Cumulative Hazard
-d.	Risk
 e.	Rate
 f.	Odds
 
