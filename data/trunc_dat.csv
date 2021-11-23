@@ -1,0 +1,10 @@
+﻿ID,start,time,outcome,type
+4,-1.2323,-1.2323,Event,Unseen
+4,-1.2323,0,Left Truncation,Unseen
+4,0,5,End,Seen
+5,0,5,Right Truncation,Seen
+5,5,7.36436,Event,Unseen
+6,0,2,Left Truncation,Seen
+6,2,2.334,Event,Unseen
+6,2.334,3,Right Truncation,Unseen
+6,3,5,End,Seen

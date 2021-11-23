@@ -1,0 +1,120 @@
+\usepackage{color}
+\usepackage{framed}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{float}
+\DeclareMathOperator{\logit}{logit}
+\DeclareMathOperator{\expit}{expit}
+\usepackage{setspace}
+\usepackage{multirow}
+\usepackage{tcolorbox}
+\tcbuselibrary{skins}
+\usepackage{eqnarray,amsmath,amssymb,xfrac}
+
+\setlength{\fboxsep}{.8em}
+
+\makeatletter
+\def\thm@space@setup{%
+  \thm@preskip=8pt plus 2pt minus 4pt
+  \thm@postskip=\thm@preskip
+}
+\makeatother
+
+
+% Create blackbox 
+% \newenvironment{blackbox}{
+%   \definecolor{shadecolor}{rgb}{255, 228, 228}  % 255	228	228
+%   \color{white}
+%   \begin{shaded}}
+%  {\end{shaded}}
+
+\usepackage{tcolorbox}
+% create rmdcaution based on blackbox
+\newtcolorbox{caution}{
+  colback=red!50!white,
+  colframe=black,
+  coltext=black,
+  boxsep=5pt,
+  arc=4pt}
+
+\newenvironment{rmdcaution}[1]
+  {
+  \begin{itemize}
+  \renewcommand{\labelitemi}{
+    \raisebox{-.7\height}[0pt][0pt]{
+      {\setkeys{Gin}{width=3em,keepaspectratio}\includegraphics{../figures/#1}}
+    }
+  }
+  \setlength{\fboxsep}{1em}
+  \begin{caution}
+  \item
+  }
+  {
+  \end{caution}
+  \end{itemize}
+  }
+  
+  
+  % create rmdnote based on blackbox
+\newtcolorbox{note}{
+  colback=white,
+  colframe=black,
+  coltext=black,
+  boxsep=5pt,
+  arc=0pt,
+  leftrule=1pt,
+  toprule=0pt,
+  bottomrule=0pt,
+  rightrule=0pt
+  }
+
+\newenvironment{rmdnote}[1]
+  {
+  \begin{fullwidth}
+  \begin{itemize}
+  \renewcommand{\labelitemi}{
+    \raisebox{-.7\height}[0pt][0pt]{
+      {\setkeys{Gin}{width=3em,keepaspectratio}\includegraphics{../figures/#1}}
+    }
+  }
+  \setlength{\fboxsep}{1em}
+  \begin{note}
+  \item
+  }
+  {
+  \end{note}
+  \end{itemize}
+  \end{fullwidth}
+  }
+  
+  
+  
+    % create rmdtip based on blackbox
+\newtcolorbox{tip}{
+  colback=green!15!white,
+  colframe=black,
+  coltext=black,
+  boxsep=5pt,
+  arc=4pt}
+
+\newenvironment{rmdtip}[1]
+  {
+  \begin{itemize}
+  \renewcommand{\labelitemi}{
+    \raisebox{-.7\height}[0pt][0pt]{
+      {\setkeys{Gin}{width=3em,keepaspectratio}\includegraphics{../figures/#1}}
+    }
+  }
+  \setlength{\fboxsep}{1em}
+  \begin{tip}
+  \item
+  }
+  {
+  \end{tip}
+  \end{itemize}
+  }
+
+
+
+
+
