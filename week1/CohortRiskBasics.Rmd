@@ -157,7 +157,12 @@ p2 <- trunc_dat %>%
   ggtitle("Truncation Types")
 
 g <- arrangeGrob(p2,p1,nrow=2)
-ggsave(file="../figures/2021_11_23-figure2_cens_trunc.png",g)
+ggsave(file="../figures/2021_11_23-figure2_cens_trunc.png",
+       plot=g,
+       width = 12,
+       height = 20,
+       units = c("cm"),
+       dpi = 300)
 
 ```
 
@@ -167,7 +172,7 @@ ggsave(file="../figures/2021_11_23-figure2_cens_trunc.png",g)
 
 Figure \@ref(fig:tenobs) is an important tool, and we will make much use of it. However, for now, we will generalize this figure to depict two key concepts: **censoring** and **truncation**. These concepts are illustrated in Figure \@ref(fig:censtrunc), showing a line diagram corresponding to Figure \@ref(fig:tenobs), but with six distinct scenarios.
 
-```{r censtrunc, out.width="10cm", fig.fullwidth = TRUE, fig.cap="Six observations in a hypothetical study depicting censoring and truncation (left, right, and interval for both).",echo=F}
+```{r censtrunc, out.width="12cm", out.height="20cm", fig.fullwidth = TRUE, fig.align = "center", fig.cap="Six observations in a hypothetical study depicting censoring and truncation (left, right, and interval for both).",echo=F}
 knitr::include_graphics("../figures/2021_11_23-figure2_cens_trunc.png")
 ```
 
@@ -179,7 +184,7 @@ The first three observations in Figure \@ref(fig:censtrunc) depict right, left, 
 
 **Interval Censoring** (ID = 3 in Figure \@ref(fig:censtrunc)): occurs when an individual is enrolled in the study, and we know has experienced an event of interest (and we know which event it is), but we only know that the event occurred in a bounded *interval*, with the bounds occurring after the study start date and before the study end date.
 
-:::{.rmdnote data-latex="{note}"}
+:::{.rmdnote data-latex="{tip}"}
 
 __Technical Note__:
 
@@ -189,7 +194,7 @@ __Technical Note__:
 
 **Right Truncation** (ID = 4 in Figure \@ref(fig:censtrunc)): occurs when an individual is NOT enrolled in the study because the event happened after a particular date. One example is in ^!^Medley1987, who studied time from exposure to HIV contaminated blood or blood products and the development of AIDS. Data were collected retrospectively from individuals with confirmed AIDS diagnosis. The number of individuals who were exposed to HIV contaminated blood or blood products that had not yet developed AIDS was not known. In this study, only those individuals who developed AIDS by the time the study was enrolling could be identified for inclusion, which resulted in right truncated data.
 
-:::{.rmdnote data-latex="{caution}"}
+:::{.rmdnote data-latex="{note}"}
 
 __Study Note__:
 
@@ -235,7 +240,7 @@ These are the same data displayed in Figure \@ref(fig:tenobs).
 
 We are going to focus here on risk. Risk is a central parameter in cohort studies [^!^Cole2015], and is often specified as the "probability of an event during a specified period of time." [^!^Rothman2008]^[It's useful to separate the linguistic connotations of the word "risk" from its mathematical definition, which can sometimes lead to confusion. For example, one might define the "risk of live birth". Linguistically, "risk" connotes something bad, whereas in many cases successful live birth is a good thing. Here, we will be using the word "risk" in its strictly mathematical sense. In practice, I will often use "probability" instead of risk to avoid this potential dissonance.] For now, let's evaluate the risk without looking at the role that the exposure plays in influencing the outcome. This is akin to a "no intervention" or "no treatment" scenario, by which we mean that we want to compute the risk of the outcome that we actually observed--i.e., the risk under the natural settings in the study. Importantly, this is **not** the risk if everyone's exposure were set to zero. It's the risk that would be observed if we did nothing. This is sometimes referred to as the **natural course** risk [^!^Rudolph2021].
 
-:::{.rmdnote data-latex="{note}"}
+:::{.rmdnote data-latex="{tip}"}
 
 __Technical Note__:
 
