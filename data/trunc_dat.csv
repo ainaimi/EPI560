@@ -4,7 +4,7 @@
 4,0,5,End,Seen
 5,0,5,Right Truncation,Seen
 5,5,7.36436,Event,Unseen
-6,0,2,Left Truncation,Seen
-6,2,2.334,Event,Unseen
-6,2.334,3,Right Truncation,Unseen
-6,3,5,End,Seen
+6,-2.334,-1.343,Event,Unseen
+6,-1.343,0,Left Truncation,Unseen
+6,0,5,End,Seen
+6,5,6.3431,Right Truncation,Unseen

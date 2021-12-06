@@ -22,9 +22,10 @@ bibliography: "../misc/ref_main_v4.bib"
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+library(knitr)
+opts_chunk$set(tidy.opts=list(width.cutoff=60),tidy=TRUE)
 
-packages <- c( "data.table","tidyverse","ggplot2","ggExtra",
+packages <- c( "data.table","tidyverse","ggplot2","ggExtra","formatR",
                "gridExtra","skimr","here","Hmisc","RColorBrewer")
 
 for (package in packages) {
@@ -58,8 +59,8 @@ theme_set(thm)
   \item Cohort and Timescale
   \item Risk (Functions)
   \item Risk with Censoring
-  \item Risk with Competing Events
   \item Risk with Truncation
+  \item Risk with Competing Events
   \item
   \item (save for week 2)
   \item Risk with Treatment (Counterfactuals)
@@ -90,7 +91,8 @@ cohort <- read_csv("../data/example_dat1.csv")
 cohort %>% 
   filter(ID<=10) %>%
   mutate(ID=rank(time,ties="random"),
-         outcome=if_else(time<5,1,0)) %>% 
+         outcome=if_else(time<5,1,0),
+         outcome=if_else(ID==4,2,outcome)) %>% 
   ggplot(.) + 
   geom_linerange(aes(y=ID,xmin=start,xmax=time)) +
   geom_point(aes(y=ID,x=time,shape=factor(outcome))) +
@@ -137,7 +139,7 @@ p1 <- cens_dat %>%
   scale_y_continuous(expand=c(0.05,0.05), 
                      breaks=seq(1,3,1),
                      limits=c(1,3)) +
-  scale_x_continuous(expand=c(0,0.05),limits=c(-3,7)) +
+  scale_x_continuous(expand=c(0,0.05),limits=c(0,5)) +
   theme(axis.title.y = element_text(angle=0,vjust=.5)) +
   ggtitle("Censoring Types")
 
@@ -152,7 +154,7 @@ p2 <- trunc_dat %>%
   scale_y_continuous(expand=c(0.05,0.05), 
                      breaks=seq(4,6,1),
                      limits=c(4,6)) +
-  scale_x_continuous(expand=c(0,0.05),limits=c(-3,7)) +
+  scale_x_continuous(expand=c(0,0.05),limits=c(-3,8)) +
   theme(axis.title.y = element_text(angle=0,vjust=.5)) +
   ggtitle("Truncation Types")
 
@@ -178,7 +180,7 @@ knitr::include_graphics("../figures/2021_11_23-figure2_cens_trunc.png")
 
 The first three observations in Figure \@ref(fig:censtrunc) depict right, left, and interval censoring, respectively. The last three observations depict right, left, and interval truncation.^[Note that interval censoring and interval truncation are often referred to as double censoring and double truncation.]
 
-**Right Censoring** (ID = 1 in Figure \@ref(fig:censtrunc)): occurs when an individual is enrolled in the study, but we don't know whether the individual has had an event of interest or not. This type of censoring often occurs because either an enrolled individual leaves the study (withdrawal), or the study ends (administrative censoring). This is often said to be the most common type of censoring. Generally, when we use the word "censoring" in this class, we are referring to right censoring.
+**Right Censoring** (ID = 1 in Figure \@ref(fig:censtrunc)): occurs when an individual is enrolled in the study, but we don't know whether the individual has had an event of interest or not. This type of censoring often occurs because either an enrolled individual leaves the study (withdrawal), or the study ends (administrative censoring). This distinction is sometimes referred to as "Type I" versus "Type II" censoring. It is an important one, which will come up several times in the class. Right censoring is often said to be the most common type of censoring. Generally, when we use the word "censoring" in this class, we are referring to right censoring.
 
 **Left Censoring** (ID = 2 in Figure \@ref(fig:censtrunc)): occurs when an individual is enrolled in the study, and we know has experienced an event of interest (and we know which event it is), but we have no information on *when* the event occurred. I believe this to be the most common type of censoring, due to the fact that most often, we collect data on whether an event occurred or not during the course of our study, and not on the exact timing of events. Thus, outcomes in a typical cohort study that do not have information on the timing of events are left censored.
 
@@ -228,7 +230,8 @@ cohort %>%
          confounder=L,
          start_time=start,
          stop_time=time,
-         outcome=if_else(time<5,1,0)) %>% 
+         outcome=if_else(time<5,1,0),
+         outcome=if_else(ID==4,2,outcome)) %>% 
   arrange(ID) %>% 
   select(ID, exposure, confounder, start_time, stop_time, outcome) %>% 
   knitr::kable(., caption="Synthetic Data", digits = 2)
@@ -238,7 +241,7 @@ cohort %>%
 
 These are the same data displayed in Figure \@ref(fig:tenobs).
 
-We are going to focus here on risk. Risk is a central parameter in cohort studies [^!^Cole2015], and is often specified as the "probability of an event during a specified period of time." [^!^Rothman2008]^[It's useful to separate the linguistic connotations of the word "risk" from its mathematical definition, which can sometimes lead to confusion. For example, one might define the "risk of live birth". Linguistically, "risk" connotes something bad, whereas in many cases successful live birth is a good thing. Here, we will be using the word "risk" in its strictly mathematical sense. In practice, I will often use "probability" instead of risk to avoid this potential dissonance.] For now, let's evaluate the risk without looking at the role that the exposure plays in influencing the outcome. This is akin to a "no intervention" or "no treatment" scenario, by which we mean that we want to compute the risk of the outcome that we actually observed--i.e., the risk under the natural settings in the study. Importantly, this is **not** the risk if everyone's exposure were set to zero. It's the risk that would be observed if we did nothing. This is sometimes referred to as the **natural course** risk [^!^Rudolph2021].
+We are going to focus here on risk. Risk is a central parameter in cohort studies [^!^Cole2015], and is often specified as the "probability of an event during a specified period of time." [^!^Rothman2008]^[It's useful to separate the linguistic connotations of the word "risk" from its mathematical definition, which can sometimes lead to confusion. For example, one might define the "risk of live birth". Linguistically, "risk" connotes something bad, whereas in scenarios in reproductive epidemiology successful live birth is good. Here, we will be using the word "risk" in its strictly mathematical sense. In practice, I will often use "probability" instead of risk to avoid this potential dissonance.] For now, let's evaluate the risk without looking at the role that the exposure plays in influencing the outcome. This is akin to a "no intervention" or "no treatment" scenario, by which we mean that we want to compute the risk of the outcome that we actually observed--i.e., the risk under the natural settings in the study. Importantly, this is **not** the risk if everyone's exposure were set to zero. It's the risk that would be observed if we did nothing. This is sometimes referred to as the **natural course** risk [^!^Rudolph2021].
 
 :::{.rmdnote data-latex="{tip}"}
 
@@ -258,9 +261,19 @@ Relatedly, we could define survival as:
 
 $$S(t) = 1 - F(t) = P(T>t)$$
 
-The risk and survival functions are complements to one another. Both equations are a compact way of asking how the risk cumulates over time: For example, if we have a study with 5 years of follow-up, with years as the time-scale,^[In order for this equation to make sense, we need a follow-up time and a time-scale.] the risk equation can be framed as: the probability that event happens before or at: $t \leq$ 1 year, or $t \leq$ 2 years, or $t \leq$ 3 years, or $t \leq$ 4 years, or $t \leq$ 5 years.
+The risk and survival functions are complements to one another. Both equations are a compact way of asking how the risk cumulates over time.
 
-To compute this, we can simply calculate the average number of events in the first, second, third, fourth, and fifth years on study.^[This only works if there is only a single event type and no censoring.] The denominator for this risk is everyone in the sample. For example, using the ten observations from the synthetic data in Table \@ref(tab:synthdat), we have:^[Make sure you understand how these risks are calculated from the Table.]
+The risk function^[ The cumulative risk function, or cumulative distribution function, i.e., CDF] is a fundamental function in epidemiologic analyses specificaly, and data science more generally, for several reasons:
+
+1) It is the most complete summary available of a random variable of interest ^!^Wasserman2004 (p21). Statistically speaking, there is no other function that provides more information about a random variable of interest.^[ In the context of this class, and most epidemiologic analyses, the random variable of interest will be a time-to-event outcome, but this need not be the case. One can define a CDF for any continuous random variable of interest.]
+
+2) All other measures of effect or occurrence can be defined as a function of the CDF. The risk, rate, odds, and hazards, which are commonly used to analyse epidemiologic data, can all be derived from the CDF ^!^Klein2003.
+
+3) It is among the most intuitive measures of occurrence available. There is a lot of literature now on how poorly humans reason with quantitive or probabalistic summaries ^!^Kahneman2011 (thinking fast and slow), ^!^Gilovich2002 (heuristics and biases), ^!^Taleb2001 (fooled by randomness). Measures such as the odds ratio or hazard ratio add an additional layer of complexity when reasoning with quantitative summaries ^!^Hernan2010 (hazards of hazard ratios) ^!^Greenland1987 (interpretation and choice) ^!^Kaufman2010 (marginalia) ^!^Kaufman2010 (decomposing with alot of supposing). Thus, focusing on risk has benefits in terms of keeping things simple.
+
+For these reasons, we focus on risk extensively in this course.
+
+We can compute the cumulative risk function $F(t)$ in several ways. Consider the synthetic data in Table 1, but imagine that instead of "outcome = 2" for ID 4, they had "outcome = 1". If this were the case, one could simply compute the risk function by calculating the average number of events in the first, second, third, fourth, and fifth years on study.^[This **only** works in a simple setting where there is only a single event type, no censoring, and no left truncation. Because this is very unlikely the approach we are using here is only for demonstration.] The denominator for this risk is everyone in the sample. For example, using the ten observations from the synthetic data in Table \@ref(tab:synthdat), we have:
 
 \begin{align*}
 \text{Year 1: } & \sfrac{4}{10} = .4 \\
@@ -269,6 +282,90 @@ To compute this, we can simply calculate the average number of events in the fir
 \text{Year 4: } & \sfrac{4}{10} + \sfrac{0}{10} + \sfrac{2}{10} + \sfrac{1}{10} = .7 \\
 \text{Year 5: } & \sfrac{4}{10} + \sfrac{0}{10} + \sfrac{2}{10} + \sfrac{1}{10} + \sfrac{0}{10} = .7 \\
 \end{align*}
+
+If we plot these risks using a step-function with Year as the $x$-axis and risk as the $y$-axis, we might get the following:
+
+```{r, warning=F, message=F, echo=F, include=F}
+
+d1 <- tibble(Year=c(0,1,2,3,4,5), Risk=c(0,.4,.4,.6,.7,.7))
+
+surv_dat <- cohort %>% 
+  filter(ID<=10) %>%
+  mutate(ID=rank(time,ties="random"),
+         exposure=X,
+         confounder=L,
+         start_time=start,
+         stop_time=time,
+         outcome=if_else(time<5,1,0))
+example_surv <- survival::survfit(Surv(time=start_time,time2=stop_time,event=outcome)~1,data=surv_dat)
+d2 <- tibble(Year=c(0,example_surv$time),Risk=c(0,1-example_surv$surv))
+
+ggplot() + 
+  geom_step(data=d1,aes(x=Year,y=Risk),
+            direction="hv") +
+  geom_step(data=d2,aes(x=Year,y=Risk),
+            direction="hv",color="blue",linetype=2) +
+  scale_x_continuous(expand=c(0,0)) +
+  scale_y_continuous(expand=c(0,0), limits=c(0,1))
+
+ggsave("../figures/2021_11_24-CumincExample.png")
+
+surv_dat <- surv_dat %>% mutate(outcome=if_else(ID==4,2,outcome))
+
+```
+
+```{r basiccuminc, out.width="6cm", fig.align="center", fig.cap="Basic cumulative distribution function (cumulative risk) for the synthetic data presented in Table 1. The risks in this Figure were obtained by computing basic risk quantities in each year as 'Number Events / Number At Risk', and is used only for illustrative purposes. In more realistic settings, alternative approches (which will be presented later) should be used. Blue dashed line is CDF estimated via Kaplan-Meier, discussed next.",echo=F}
+knitr::include_graphics("../figures/2021_11_24-CumincExample.png")
+```
+
+The approach we just used to compute the cumulative distribution function above was used to simply illustrate the core idea behind the risk function $F(t)$. This is not the approach one would use in typical settings, because we often have to deal with issues such as right censoring and left truncation.
+
+The next sections will be about **how** to estimate the cumulative distribution function for a time-to-event outcome. We will be introduced to two different approaches, the Kaplan-Meier estimators, the cumulative incidence function estimator (from !^!Gray1988), and the Aalen-Johansen estimator [^!^Putter2007]. We'll also discuss the factors that should lead you to decide choosing one or the other, and go over how to use them in the R programming language. 
+
+It's important to note here that the KM, CIF, and AJ estimators will estimate the same thing and yield the same results when there are no competing risks present. We will cover what competing risks are, and what happens to these estimators when competing risks are present in the next section.  
+
+# Kaplan-Meier Estimator
+
+The first estimator is the Kaplan-Meier (KM) approach. This approach should be used in a setting where you have a single time-to-event outcome of interest (e.g., all cause mortality). It can also handle right censoring, and with a slight modification is able to handle left-truncation. 
+
+The KM estimator for the survival curve is the product, taken over the ordered set of distinct event times, of the complement of the number of events divided by the number at risk:
+
+$$ \hat{S}(t) = \prod_{k \in t_k \leq t} (1 - d_k/n_k) $$
+where $d_k$ is the number of events, and $n_k$ is the number at risk, both at time $k = t_k$ [^!^Cole2020]. Here, $n_k = \sum_{i = 1}^n I(t_k \leq T_i)$, which is the number of individuals in the risk-set at time $t_k$. Taking the complement of this estimator gives us a KM estimator for the cumulative distribution function.
+
+To implement the KM estimator in R, we need to use the `survival` package, which includes the `Surv()` and the `survfit()` functions. We will use the data in Table \@ref(tab:synthdat), and we have to set up the data in so the `Surv()` and `survfit()` functions work as we want them to.
+
+The key issue we need to address is the following: in Table \@ref(tab:synthdat), we use the number "2" to denote Type I right censoring, and the number "0" to denote Type II right censoring. However, the functions in `R` do not distinguish between Type I and Type II censoring. We need set all these observation's (ID = 4, 8, 9, 10) outcome to the same value. We'll pick the number "0":
+
+```{r}
+
+# modify the data: "surv_dat" was used to create table 1
+surv_dat <- surv_dat %>% 
+  mutate(outcome=if_else(outcome %in% c(0,2),0,outcome))
+
+# examine
+surv_dat %>% 
+  select(ID,start_time,stop_time,outcome) %>% arrange(ID)
+
+# fit KM curve
+example_surv <- survfit(Surv(time=start_time,time2=stop_time,event=outcome)~1,data=surv_dat)
+
+# create dataset for plotting
+plot_dat <- tibble(Year=c(0,example_surv$time),Risk=c(0,1-example_surv$surv))
+
+# examine dataset
+plot_dat
+
+# plot KM curve
+km_plot <- ggplot() + 
+  geom_step(data=plot_dat,aes(x=Year,y=Risk),
+            direction="hv") +
+  scale_x_continuous(expand=c(0,0)) +
+  scale_y_continuous(expand=c(0,0), limits=c(0,1))
+
+ggsave("../figures/2021_12_06-KM_Example.png",
+       plot=km_plot)
+```
 
 
 

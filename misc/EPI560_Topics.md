@@ -1,5 +1,15 @@
 EPI 560 Topics
 
+Important Spring Dates:  
+1/4                   TA start date 
+1/10                 Classes begin 
+1/17                 Registration closes 
+1/1                   Martin Luther King Day, no classes 
+3/7-3/11           Spring Break 
+4/25                 Last Day of Class 
+4/26-5/2           Final Exam Period 
+5/9                   TA end date
+
 Material: 
 
 Random Thoughts / Notes:
