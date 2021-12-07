@@ -1,6 +1,6 @@
 EPI 560 Lab Topics
 
-Weeks 1 and 2:
+Week 1:
 
 - Using the language of "censoring" and/or "truncation" (left, right, and/or interval), explain why a prospective cohort study is often seen as higher quality than a retrospective cohort study.
 

@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999993 (TeX Live 2021) (preloaded format=xelatex 2021.11.23)  6 DEC 2021 10:12
+This is XeTeX, Version 3.141592653-2.6-0.999993 (TeX Live 2021) (preloaded format=xelatex 2021.12.6)  6 DEC 2021 21:58
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -532,7 +532,7 @@ Package: nicefrac 1998/08/04 v0.9b Nice fractions
 \L@UnitsRaiseTextstyle=\skip97
 \L@UnitsRaiseScriptstyle=\skip98
 )) (/Users/AIN8/Library/TinyTeX/texmf-dist/tex/latex/fancyvrb/fancyvrb.sty
-Package: fancyvrb 2021/11/18 v4.0 verbatim text (tvz,hv)
+Package: fancyvrb 2021/11/24\nobreakspace {} 4.1a\nobreakspace {}verbatim text (tvz,hv)
 \FV@CodeLineNo=\count322
 \FV@InFile=\read2
 \FV@TabBox=\box107
@@ -1345,7 +1345,7 @@ Requested font "cmex7" at 7.0pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm
 Requested font "cmex7" at 5.0pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm
-LaTeX Font Info:    Trying to load font information for U+msa on input line 381.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 383.
 (/Users/AIN8/Library/TinyTeX/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
@@ -1355,7 +1355,7 @@ Requested font "msam7" at 7.0pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam7.tfm
 Requested font "msam5" at 5.0pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam5.tfm
-LaTeX Font Info:    Trying to load font information for U+msb on input line 381.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 383.
 (/Users/AIN8/Library/TinyTeX/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
@@ -1365,21 +1365,12 @@ Requested font "msbm7" at 7.0pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm7.tfm
 Requested font "msbm5" at 5.0pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm5.tfm
-
-Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 396.
-
-[2]
-LaTeX Font Info:    Font shape `TU/RobotoCondensed(0)/m/it' will be
-(Font)              scaled to size 10.0pt on input line 404.
-Requested font "[RobotoCondensed-Italic.otf]/OT:script=latn;language=dflt;+pnum;+lnum;mapping=tex-text;" at 10.0pt
- -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/google/roboto/RobotoCondensed-Italic.otf
 LaTeX Font Info:    Font shape `TU/RobotoCondensed(0)/m/n' will be
-(Font)              scaled to size 7.0pt on input line 404.
+(Font)              scaled to size 7.0pt on input line 383.
 Requested font "[RobotoCondensed-Regular.otf]/OT:script=latn;language=dflt;+pnum;+lnum;mapping=tex-text;" at 7.0pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/google/roboto/RobotoCondensed-Regular.otf
 LaTeX Font Info:    Font shape `TU/RobotoCondensed(0)/m/n' will be
-(Font)              scaled to size 8.0pt on input line 404.
+(Font)              scaled to size 8.0pt on input line 383.
 Requested font "[RobotoCondensed-Regular.otf]/OT:script=latn;language=dflt;+pnum;+lnum;mapping=tex-text;" at 8.0pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/google/roboto/RobotoCondensed-Regular.otf
 Requested font "[lmroman8-regular]:mapping=tex-text;" at 8.0pt
@@ -1411,216 +1402,208 @@ Requested font "cmr8" at 8.0pt
 Requested font "cmr6" at 6.0pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/tfm/public/cm/cmr6.tfm
 LaTeX Font Info:    Font shape `TU/RobotoCondensed(0)/m/n' will be
-(Font)              scaled to size 6.0pt on input line 404.
+(Font)              scaled to size 6.0pt on input line 383.
 Requested font "[RobotoCondensed-Regular.otf]/OT:script=latn;language=dflt;+pnum;+lnum;mapping=tex-text;" at 6.0pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/google/roboto/RobotoCondensed-Regular.otf
 LaTeX Font Info:    Font shape `TU/RobotoCondensed(0)/m/n' will be
-(Font)              scaled to size 5.0pt on input line 404.
+(Font)              scaled to size 5.0pt on input line 383.
 Requested font "[RobotoCondensed-Regular.otf]/OT:script=latn;language=dflt;+pnum;+lnum;mapping=tex-text;" at 5.0pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/google/roboto/RobotoCondensed-Regular.otf
+LaTeX Font Info:    Font shape `TU/RobotoCondensed(0)/m/it' will be
+(Font)              scaled to size 8.0pt on input line 383.
+Requested font "[RobotoCondensed-Italic.otf]/OT:script=latn;language=dflt;+pnum;+lnum;mapping=tex-text;" at 8.0pt
+ -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/google/roboto/RobotoCondensed-Italic.otf
 
-LaTeX Warning: Marginpar on page 3 moved.
+LaTeX Warning: Marginpar on page 2 moved.
 
-LaTeX Font Info:    Font shape `TU/RobotoCondensed(0)/b/n' will be
-(Font)              scaled to size 8.0pt on input line 406.
-Requested font "[RobotoCondensed-Bold.otf]/OT:script=latn;language=dflt;+pnum;+lnum;mapping=tex-text;" at 8.0pt
- -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/google/roboto/RobotoCondensed-Bold.otf
-
-LaTeX Warning: Marginpar on page 3 moved.
-
-
-LaTeX Warning: Marginpar on page 3 moved.
-
-
-LaTeX Warning: Marginpar on page 3 moved.
-
+LaTeX Font Info:    Font shape `TU/RobotoCondensed(0)/m/it' will be
+(Font)              scaled to size 10.0pt on input line 387.
+Requested font "[RobotoCondensed-Italic.otf]/OT:script=latn;language=dflt;+pnum;+lnum;mapping=tex-text;" at 10.0pt
+ -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/google/roboto/RobotoCondensed-Italic.otf
 File: ../figures/2021_08_19-figure1.png Graphic file (type bmp)
 <../figures/2021_08_19-figure1.png>
 
-LaTeX Warning: Marginpar on page 3 moved.
+Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
+This message occurred on input line 401.
 
+[2]
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 424.
+This message occurred on input line 422.
 
 [3]
-
-Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 437.
-
-[4]
 File: ../figures/2021_11_23-figure2_cens_trunc.png Graphic file (type bmp)
 <../figures/2021_11_23-figure2_cens_trunc.png>
 
-LaTeX Warning: Marginpar on page 5 moved.
+LaTeX Warning: Marginpar on page 4 moved.
 
-
-Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 461.
-
-[5]
-
-Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 461.
-
-[6]
 File: ../figures/tip.png Graphic file (type bmp)
 <../figures/tip.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 465--466
+Underfull \hbox (badness 10000) in paragraph at lines 444--445
 []              \TU/RobotoCondensed(0)/m/n/10 In survival (a.k.a. time-to-event) analysis, survival time is typically classified as either continuous
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 465--466
+Underfull \hbox (badness 10000) in paragraph at lines 444--445
 \TU/RobotoCondensed(0)/m/n/10 or discrete time. Simply put, in a continuous time setting, the time to the events of interest are positive real
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 465--466
+Underfull \hbox (badness 10000) in paragraph at lines 444--445
 \TU/RobotoCondensed(0)/m/n/10 numbers ($\U/msb/m/n/10 R[]$\TU/RobotoCondensed(0)/m/n/10 ), or a quantity that can be represented as an infinite decimal expansion. In contrast, in a dis-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 465--466
+Underfull \hbox (badness 10000) in paragraph at lines 444--445
 \TU/RobotoCondensed(0)/m/n/10 crete time setting, the time to the events of interest are typically positive integer values ($\U/msb/m/n/10 Z[]$\TU/RobotoCondensed(0)/m/n/10 ), or a whole
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 465--466
+Underfull \hbox (badness 10000) in paragraph at lines 444--445
 \TU/RobotoCondensed(0)/m/n/10 non-decimal number. In survival analysis \TU/RobotoCondensed(0)/m/it/10 theory\TU/RobotoCondensed(0)/m/n/10 , there are important distinctions between continuous and dis-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 465--466
+Underfull \hbox (badness 10000) in paragraph at lines 444--445
 \TU/RobotoCondensed(0)/m/n/10 crete time analyses. These distinctions are much less important for practical analyses of time-to-event data.
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 465--466
+Underfull \hbox (badness 10000) in paragraph at lines 444--445
 \TU/RobotoCondensed(0)/m/n/10 For example, in a continuous time setting, one might have interval-censored data, since the exact timing of the
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 465--466
+Underfull \hbox (badness 10000) in paragraph at lines 444--445
 \TU/RobotoCondensed(0)/m/n/10 event of interest might not be known. However, if the timescale of an analysis is (e.g.) week on study, and we
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 465--466
+Underfull \hbox (badness 10000) in paragraph at lines 444--445
 \TU/RobotoCondensed(0)/m/n/10 know that the event happened in week $\OML/cmm/m/it/10 J$\TU/RobotoCondensed(0)/m/n/10 , this is typically enough for a discrete time analysis, and we would
  []
 
+
+Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
+This message occurred on input line 446.
+
+[4]
+
+Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
+This message occurred on input line 446.
+
+[5]
 File: ../figures/note.png Graphic file (type bmp)
 <../figures/note.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 475--476
+Underfull \hbox (badness 10000) in paragraph at lines 454--455
 []              \TU/RobotoCondensed(0)/m/n/10 You may have encountered various definitions of “retrospective” and “prospective” cohorts: retrospec-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 475--476
+Underfull \hbox (badness 10000) in paragraph at lines 454--455
 \TU/RobotoCondensed(0)/m/n/10 tive = case-control, prospective = cohort; the investigator’s perspective; and the exposure record in relation to
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 475--476
+Underfull \hbox (badness 10000) in paragraph at lines 454--455
 \TU/RobotoCondensed(0)/m/n/10 the outcome. You may have also heard that retrospective studies are generally lower quality than prospective
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 475--476
+Underfull \hbox (badness 10000) in paragraph at lines 454--455
 \TU/RobotoCondensed(0)/m/n/10 studies, with a range of reasons as to why. Two fundamental questions are: which of these study designs is
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 475--476
+Underfull \hbox (badness 10000) in paragraph at lines 454--455
 \TU/RobotoCondensed(0)/m/n/10 more prone to left, right, and interval truncation?; How do the ideas of truncation and censoring relate to the
  []
 
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 480.
+This message occurred on input line 459.
 
-[7]
-LaTeX Font Info:    Font shape `TU/RobotoCondensed(0)/m/it' will be
-(Font)              scaled to size 8.0pt on input line 485.
-Requested font "[RobotoCondensed-Italic.otf]/OT:script=latn;language=dflt;+pnum;+lnum;mapping=tex-text;" at 8.0pt
- -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/google/roboto/RobotoCondensed-Italic.otf
+[6]
 
-LaTeX Warning: Marginpar on page 8 moved.
+LaTeX Warning: Marginpar on page 7 moved.
 
 
-LaTeX Warning: Marginpar on page 8 moved.
+LaTeX Warning: Marginpar on page 7 moved.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 494--495
+Underfull \hbox (badness 10000) in paragraph at lines 473--474
  
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 527--528
+Underfull \hbox (badness 10000) in paragraph at lines 506--507
  
  []
 
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 531.
+This message occurred on input line 511.
 
-[8]
+[7]
 
-LaTeX Warning: Marginpar on page 9 moved.
+LaTeX Warning: Marginpar on page 8 moved.
 
 File: ../figures/tip.png Graphic file (type bmp)
 <../figures/tip.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 537--537
+Underfull \hbox (badness 10000) in paragraph at lines 516--516
 []              \TU/RobotoCondensed(0)/m/n/10 Often when we use the word “bias” in epidemiology, we actually mean “inconsistent” in the statistical
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 537--537
+Underfull \hbox (badness 10000) in paragraph at lines 516--516
 \TU/RobotoCondensed(0)/m/n/10 When epidemiologic bias is present (confounding, selection, information), the estimator will not converge
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 537--537
+Underfull \hbox (badness 10000) in paragraph at lines 516--516
 \TU/RobotoCondensed(0)/m/n/10 to the truth no matter how large a sample we have. In contrast, we say that an estimator is biased (in finite
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 537--538
+Underfull \hbox (badness 10000) in paragraph at lines 516--517
 \TU/RobotoCondensed(0)/m/n/10 That is, we can have zero confounding (i.e., a consistent estimator), but still have a biased estimator because
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 537--538
+Underfull \hbox (badness 10000) in paragraph at lines 516--517
 \TU/RobotoCondensed(0)/m/n/10 of how poorly it performs at using the data to estimate the effect at a given sample size. One example of this
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 537--538
+Underfull \hbox (badness 10000) in paragraph at lines 516--517
 \TU/RobotoCondensed(0)/m/n/10 is the partial likelihood estimator used to quantify parameters of a Cox regression model (see Johnson1982).
  []
 
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 539.
+This message occurred on input line 518.
 
-[9]
+[8]
 
-LaTeX Warning: Marginpar on page 10 moved.
+LaTeX Warning: Marginpar on page 9 moved.
 
 
-LaTeX Warning: Marginpar on page 10 moved.
+LaTeX Warning: Marginpar on page 9 moved.
 
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 563.
+This message occurred on input line 542.
 
-[10]
+[9]
+LaTeX Font Info:    Font shape `TU/RobotoCondensed(0)/b/n' will be
+(Font)              scaled to size 8.0pt on input line 546.
+Requested font "[RobotoCondensed-Bold.otf]/OT:script=latn;language=dflt;+pnum;+lnum;mapping=tex-text;" at 8.0pt
+ -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/google/roboto/RobotoCondensed-Bold.otf
 
-LaTeX Warning: Marginpar on page 11 moved.
+LaTeX Warning: Marginpar on page 10 moved.
 
 Requested font "[RobotoCondensed-Regular.otf]/OT:script=latn;language=dflt;+pnum;+lnum;mapping=tex-text;" at 4.9pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/google/roboto/RobotoCondensed-Regular.otf
@@ -1674,30 +1657,89 @@ Requested font "msbm5" at 2.44998pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm5.tfm
 Requested font "msbm5" at 1.75pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm5.tfm
+
+Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
+This message occurred on input line 558.
+
+[10]
 File: ../figures/2021_11_24-CumincExample.png Graphic file (type bmp)
 <../figures/2021_11_24-CumincExample.png>
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 591.
+This message occurred on input line 584.
 
 [11]
 Requested font "[lmmono10-regular]:" at 10.0pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/public/lm/lmmono10-regular.otf
 
-Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 607.
+Overfull \hbox (13.5pt too wide) in paragraph at lines 598--598
+[]\TU/lmtt/m/n/10 ## Installing package into '/usr/local/lib/R/4.1/site-library' 
+ []
 
-[12]
 Requested font "[lmmono10-italic]:" at 10.0pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/public/lm/lmmono10-italic.otf
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 650.
+This message occurred on input line 621.
 
-[13]
+[12]
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 683.
+This message occurred on input line 663.
+
+[13]
+File: ../figures/2021_12_06-KM_Example.png Graphic file (type bmp)
+<../figures/2021_12_06-KM_Example.png>
+
+Overfull \hbox (26.71034pt too wide) in paragraph at lines 675--676
+ [][] 
+ []
+
+File: ../figures/tip.png Graphic file (type bmp)
+<../figures/tip.png>
+
+Underfull \hbox (badness 10000) in paragraph at lines 687--688
+[]              \TU/RobotoCondensed(0)/m/n/10 Consider the Table (the \TU/lmtt/m/n/10 tibble\TU/RobotoCondensed(0)/m/n/10 ) in the R output above that includes the Year and the Risk plotted in
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 687--688
+\TU/RobotoCondensed(0)/m/n/10 the margin figure. Notice that the last number is 0.65, effectively stating that the overall risk in the sample of
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 687--688
+\TU/RobotoCondensed(0)/m/n/10 10 observations is 0.65. But, out of the 10 individuals, only six of them had the event. This suggests that the
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 689--690
+[]\TU/RobotoCondensed(0)/m/n/10 The explanation for this higher than expected risk is the censored observation (ID=4), and the fact that, built
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 689--690
+\TU/RobotoCondensed(0)/m/n/10 into the KM estimator is the “redistribution to the right” algorithm. This algorithm spreads the risk that would
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 689--690
+\TU/RobotoCondensed(0)/m/n/10 have resulted from any censored observations had they not been censored, and redistributes it proportionally
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 689--690
+\TU/RobotoCondensed(0)/m/n/10 to the events that occur after the censoring for this observation takes place. In effect, this algorithm redis-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 689--690
+\TU/RobotoCondensed(0)/m/n/10 tributes the risk from censored observations to remaining ovservations. As a result, the end of study risk
+ []
+
+
+Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
+This message occurred on input line 698.
 
 [14]
 No file CohortRiskBasics.bbl.
@@ -1707,15 +1749,15 @@ LaTeX Font Warning: Size substitutions with differences
 (Font)              up to 3.25pt have occurred.
 
 Package rerunfilecheck Info: File `CohortRiskBasics.out' has not changed.
-(rerunfilecheck)             Checksum: 88E6F83E423F050CEA8468E594AF3211;606.
+(rerunfilecheck)             Checksum: 1BDE89A3060FB4E7C9A96CC018E91BF2;694.
  ) 
 Here is how much of TeX's memory you used:
- 30637 strings out of 478256
- 649573 string characters out of 5855372
- 1023354 words of memory out of 5000000
- 50546 multiletter control sequences out of 15000+600000
+ 30658 strings out of 478256
+ 650333 string characters out of 5855373
+ 1018542 words of memory out of 5000000
+ 50566 multiletter control sequences out of 15000+600000
  412965 words of font info for 117 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 108i,18n,112p,1368b,587s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 108i,18n,112p,1360b,587s stack positions out of 5000i,500n,10000p,200000b,80000s
 
 Output written on CohortRiskBasics.pdf (14 pages).

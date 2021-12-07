@@ -52,35 +52,15 @@ theme_set(thm)
 ```
 
 \newpage
-\noindent {\Large \bf Outline}
-\vskip .25cm
-\noindent \underline{Survival Analysis Basics}
-\begin{itemize}
-  \item Cohort and Timescale
-  \item Risk (Functions)
-  \item Risk with Censoring
-  \item Risk with Truncation
-  \item Risk with Competing Events
-  \item
-  \item (save for week 2)
-  \item Risk with Treatment (Counterfactuals)
-  \item Causal Inference
-  \item Target Trials
-\end{itemize}
-
-\newpage
 \onehalfspacing
-
 
 # Cohort and Timescale
 
-Most of the tools we use in epidemiology are either defined, or are demonstrably valid, only based upon the presence or absence of certain fundamentals or some foundation. The idea of a cohort, and a well defined timescale are two pillars of this foundation.
+Most of the tools we use in epidemiology are either defined, or are demonstrably valid, only based upon the presence or absence of certain fundamentals or some foundation. The idea of a cohort, and a well defined timescale are two pillars of this foundation.^[For example, you should already know about how a case-control odds ratio can be used to estimate a *cohort* risk ratio, rate ratio, or odds ratio, depending on how the controls are sampled from the original cohort. That is, the interpretation of a case-control odds ratio depends on details emanating from the cohort we have. Specifically, a case-control odds ratio quantifies a cohort risk ratio, rate ratio, and odds ratio when we use base-case sampling, incidence density sampling, and cumulative sampling, respectively.]
 
-For example, you should already know about how a case-control odds ratio can be used to estimate a *cohort* risk ratio, rate ratio, or odds ratio, depending on how the controls are sampled from the original cohort. That is, the interpretation of a case-control odds ratio depends on details emanating from the cohort we have.^[Specifically, a case-control odds ratio quantifies a cohort risk ratio, rate ratio, and odds ratio when we use base-case sampling, incidence density sampling, and cumulative sampling, respectively.]
+In epidemiologic settings, a cohort is simply a group of people. Ideally, we would like to use a particular cohort to better understand features of the population from which this cohort was sampled. Cohorts can be either closed (people do not enter or leave the cohort during the study), or open (people are free to enter or leave the study at any time). In epidemiology (and particularly in this course) we deal mostly (exclusively) with closed cohorts. 
 
-Alternatively, the fact that we can interpret a parameter estimate for an exposure of interest from, say, a logistic regression model as a ratio of two odds also depends on the fact that we've collected data on a *cohort* with a well-defined start and stop time. Without this underlying concept of a cohort with well-defined start and stop times, all we get from logistic models are values of a parameter which maximize the likelihood function, which is not the same as an odds or risk ratio.^[Consider a fictional "Frankenstein" cohort of 600 men and 400 women, with 250 women aged 15-25, and the rest between 55-64 years. A subset of the cohort is recruited between 1910-1955, with the rest recruited between 2000-2010. We define an outcome indicator to be 1 if the individual experienced ovarian cancer, 0 otherwise. If we fit a logistic model regressing this outcome against, say, race and BMI, can we say that we are modeling the **risk** of ovarian cancer? No.]
-
-In epidemiologic settings, a cohort is simply a group of people. Ideally, we would like to use a particular cohort to better understand features of the population from which this cohort was sampled.^[**generalizability** \\ **selection bias**] Cohorts can be either closed (people do not enter or leave the cohort during the study), or open (people are free to enter or leave the study at any time). In epidemiology (and particularly in this course) we deal mostly (exclusively) with closed cohorts. 
+That we can interpret a parameter estimate for an exposure of interest from, say, a logistic regression model as a ratio of two odds depends on the fact that we've collected data on a *cohort* with a well-defined start and stop time. Without this underlying concept of a cohort with well-defined start and stop times, all we get from logistic models are values of a parameter which maximize the likelihood function, which is not the same as an odds or risk ratio.<!-- ^[Consider a fictional "Frankenstein" cohort of 600 men and 400 women, with 250 women aged 15-25, and the rest between 55-64 years. A subset of the cohort is recruited between 1910-1955, with the rest recruited between 2000-2010. We define an outcome indicator to be 1 if the individual experienced ovarian cancer, 0 otherwise. If we fit a logistic model regressing this outcome against, say, race and BMI, can we say that we are modeling the **risk** of ovarian cancer? No.] -->
 
 To completely define a cohort, we need to clearly define a start or origin time, and a stop time. In the case of a closed cohort, without a well defined start and stop time, we would not be able to decisively state whether a given person should be in or has left the cohort. Consider the following diagram:
 
@@ -91,15 +71,15 @@ cohort <- read_csv("../data/example_dat1.csv")
 cohort %>% 
   filter(ID<=10) %>%
   mutate(ID=rank(time,ties="random"),
-         outcome=if_else(time<5,1,0),
-         outcome=if_else(ID==4,2,outcome)) %>% 
+         outcome=if_else(time<5,"Event","No Event"),
+         outcome=if_else(ID==4,"Withdraw",outcome)) %>% 
   ggplot(.) + 
   geom_linerange(aes(y=ID,xmin=start,xmax=time)) +
   geom_point(aes(y=ID,x=time,shape=factor(outcome))) +
   scale_y_continuous(expand=c(0.05,0.05), 
                      breaks=seq(1,10,1)) +
   scale_x_continuous(expand=c(0,0.05)) +
-  scale_shape_discrete(name = "Outcome") +
+  scale_shape_manual(name = "Outcome",values = c(1, 17, 4)) +
   theme(axis.title.y = element_text(angle=0,vjust=.5))
 
 
@@ -111,7 +91,7 @@ ggsave("../figures/2021_08_19-figure1.png")
 knitr::include_graphics("../figures/2021_08_19-figure1.png")
 ```
 
-Figure \@ref(fig:tenobs) shows ten simulated observations. Assume for the moment that the outcomes for these observations are as follows: 0 = no outcome; 1 = event of interest. In this setting, time zero is our start time. The start time usually corresponds to some well-defined event such as an age of interest (age as time-scale), a date of interest (calendar date as time-scale), or the timing of some important study marker (e.g., date of randomization to treatment versus placebo).^[**incident** versus **prevalent** cohort]
+Figure \@ref(fig:tenobs) shows ten simulated observations. In this setting, time zero is our start time. The start time should correspond to some well-defined event such as an age of interest (age as time-scale), a date of interest (calendar date as time-scale), or the timing of some important study marker (e.g., date of randomization to treatment versus placebo).
 
 Consider the following examples from the literature with different study time-scales:
 
@@ -172,13 +152,13 @@ ggsave(file="../figures/2021_11_23-figure2_cens_trunc.png",
 
 # Censoring and Truncation
 
-Figure \@ref(fig:tenobs) is an important tool, and we will make much use of it. However, for now, we will generalize this figure to depict two key concepts: **censoring** and **truncation**. These concepts are illustrated in Figure \@ref(fig:censtrunc), showing a line diagram corresponding to Figure \@ref(fig:tenobs), but with six distinct scenarios.
+Figure \@ref(fig:tenobs) is an important tool, particularly for exploratory data analysis. However, for now, we will generalize this figure to depict two key concepts: **censoring** and **truncation**. These concepts are illustrated in Figure \@ref(fig:censtrunc), showing a line diagram corresponding to Figure \@ref(fig:tenobs), but with six distinct scenarios.
 
 ```{r censtrunc, out.width="12cm", out.height="20cm", fig.fullwidth = TRUE, fig.align = "center", fig.cap="Six observations in a hypothetical study depicting censoring and truncation (left, right, and interval for both).",echo=F}
 knitr::include_graphics("../figures/2021_11_23-figure2_cens_trunc.png")
 ```
 
-The first three observations in Figure \@ref(fig:censtrunc) depict right, left, and interval censoring, respectively. The last three observations depict right, left, and interval truncation.^[Note that interval censoring and interval truncation are often referred to as double censoring and double truncation.]
+The first three observations in Figure \@ref(fig:censtrunc) depict right, left, and interval censoring, respectively. The last three observations depict right, left, and interval truncation.^[Interval censoring and interval truncation are often referred to as double censoring and double truncation.]
 
 **Right Censoring** (ID = 1 in Figure \@ref(fig:censtrunc)): occurs when an individual is enrolled in the study, but we don't know whether the individual has had an event of interest or not. This type of censoring often occurs because either an enrolled individual leaves the study (withdrawal), or the study ends (administrative censoring). This distinction is sometimes referred to as "Type I" versus "Type II" censoring. It is an important one, which will come up several times in the class. Right censoring is often said to be the most common type of censoring. Generally, when we use the word "censoring" in this class, we are referring to right censoring.
 
@@ -213,7 +193,7 @@ There are some important takeaways from these definitions and examples:
 
 First, with censoring, the individuals are included in our study but we do not see when their events occur. With truncation, we do not see the individuals, and thus cannot include them in our study.^[Linguistically, we say that *individuals* are censored, but *data* are truncated.]
 
-Second, it's important to connect the idea of censoring and truncation back to the idea of cohort and timescale, and our ability to validly interpret regression model parameters as risk differences, risk ratios, or odds ratios.^[Note that validity here depends on more than just the presence or absence of censoring and truncation. But appropriate handling of censoring and truncation are essential (i.e., necessary, but not sufficient).] Clearly, censoring and truncation matter because they determine whose outcome is observed or who is in cohort. Without carefully considering how to handle censored or truncated data, we can obtain biased (i.e., inconsistent) results.
+Second, it's important to connect the idea of censoring and truncation back to the idea of cohort and timescale, and our ability to validly interpret regression model parameters as risk differences, risk ratios, or odds ratios.^[Validity here depends on more than just the presence or absence of censoring and truncation. But appropriate handling of censoring and truncation are essential (i.e., necessary, but not sufficient).] Clearly, censoring and truncation matter because they determine whose outcome is observed or who is in cohort. Without carefully considering how to handle censored or truncated data, we can obtain biased (i.e., inconsistent) results.
 
 # Risk (Functions)
 
@@ -230,8 +210,8 @@ cohort %>%
          confounder=L,
          start_time=start,
          stop_time=time,
-         outcome=if_else(time<5,1,0),
-         outcome=if_else(ID==4,2,outcome)) %>% 
+         outcome=if_else(time<5,"Event","No Event"),
+         outcome=if_else(ID==4,"Withdrawal",outcome)) %>% 
   arrange(ID) %>% 
   select(ID, exposure, confounder, start_time, stop_time, outcome) %>% 
   knitr::kable(., caption="Synthetic Data", digits = 2)
@@ -273,7 +253,7 @@ The risk function^[ The cumulative risk function, or cumulative distribution fun
 
 For these reasons, we focus on risk extensively in this course.
 
-We can compute the cumulative risk function $F(t)$ in several ways. Consider the synthetic data in Table 1, but imagine that instead of "outcome = 2" for ID 4, they had "outcome = 1". If this were the case, one could simply compute the risk function by calculating the average number of events in the first, second, third, fourth, and fifth years on study.^[This **only** works in a simple setting where there is only a single event type, no censoring, and no left truncation. Because this is very unlikely the approach we are using here is only for demonstration.] The denominator for this risk is everyone in the sample. For example, using the ten observations from the synthetic data in Table \@ref(tab:synthdat), we have:
+We can compute the cumulative risk function $F(t)$ in several ways. Consider the synthetic data in Table 1, but imagine that instead of "outcome = Withdrawal" for ID 4, they had "outcome = Event". If this were the case, one could simply compute the risk function by calculating the average number of events in the first, second, third, fourth, and fifth years on study.^[This **only** works in a simple setting where there is only a single event type, no censoring, and no left truncation. Because this is very unlikely the approach we are using here is only for demonstration.] The denominator for this risk is everyone in the sample. For example, using the ten observations from the synthetic data in Table \@ref(tab:synthdat), we have:
 
 \begin{align*}
 \text{Year 1: } & \sfrac{4}{10} = .4 \\
@@ -282,6 +262,10 @@ We can compute the cumulative risk function $F(t)$ in several ways. Consider the
 \text{Year 4: } & \sfrac{4}{10} + \sfrac{0}{10} + \sfrac{2}{10} + \sfrac{1}{10} = .7 \\
 \text{Year 5: } & \sfrac{4}{10} + \sfrac{0}{10} + \sfrac{2}{10} + \sfrac{1}{10} + \sfrac{0}{10} = .7 \\
 \end{align*}
+
+This simple approach is sometimes referred to as the empirical distribution function (ECDF) estimator, but (again) doesn't usually work in survival data (becuase of censoring and truncation).
+
+\newpage
 
 If we plot these risks using a step-function with Year as the $x$-axis and risk as the $y$-axis, we might get the following:
 
@@ -297,6 +281,7 @@ surv_dat <- cohort %>%
          start_time=start,
          stop_time=time,
          outcome=if_else(time<5,1,0))
+
 example_surv <- survival::survfit(Surv(time=start_time,time2=stop_time,event=outcome)~1,data=surv_dat)
 d2 <- tibble(Year=c(0,example_surv$time),Risk=c(0,1-example_surv$surv))
 
@@ -320,13 +305,13 @@ knitr::include_graphics("../figures/2021_11_24-CumincExample.png")
 
 The approach we just used to compute the cumulative distribution function above was used to simply illustrate the core idea behind the risk function $F(t)$. This is not the approach one would use in typical settings, because we often have to deal with issues such as right censoring and left truncation.
 
-The next sections will be about **how** to estimate the cumulative distribution function for a time-to-event outcome. We will be introduced to two different approaches, the Kaplan-Meier estimators, the cumulative incidence function estimator (from !^!Gray1988), and the Aalen-Johansen estimator [^!^Putter2007]. We'll also discuss the factors that should lead you to decide choosing one or the other, and go over how to use them in the R programming language. 
+The next section will be about **how** to estimate the cumulative distribution function for a time-to-event outcome. We will be introduced to two different approaches, first the Kaplan-Meier estimator, and then later (when we cover competing risks) the cumulative incidence function estimator (from !^!Gray1988). We'll also discuss the factors that should lead you to decide choosing one or the other, and go over how to use them in the R programming language. 
 
-It's important to note here that the KM, CIF, and AJ estimators will estimate the same thing and yield the same results when there are no competing risks present. We will cover what competing risks are, and what happens to these estimators when competing risks are present in the next section.  
+It's important to note here that the KM and CIF estimators will estimate the same thing and yield the same results when there are no competing risks present. We will cover what competing risks are, and what happens to these estimators when competing risks are present in later sections.  
 
 # Kaplan-Meier Estimator
 
-The first estimator is the Kaplan-Meier (KM) approach. This approach should be used in a setting where you have a single time-to-event outcome of interest (e.g., all cause mortality). It can also handle right censoring, and with a slight modification is able to handle left-truncation. 
+The first estimator is the Kaplan-Meier (KM) approach. This approach should be used in a setting where you have a single time-to-event outcome of interest (e.g., all cause mortality).^[Some might dispute this. We'll find out why when we cover cause-specific and sub-distribution risks.] It can also handle right censoring, and with a slight modification is able to handle left-truncation. 
 
 The KM estimator for the survival curve is the product, taken over the ordered set of distinct event times, of the complement of the number of events divided by the number at risk:
 
@@ -338,6 +323,9 @@ To implement the KM estimator in R, we need to use the `survival` package, which
 The key issue we need to address is the following: in Table \@ref(tab:synthdat), we use the number "2" to denote Type I right censoring, and the number "0" to denote Type II right censoring. However, the functions in `R` do not distinguish between Type I and Type II censoring. We need set all these observation's (ID = 4, 8, 9, 10) outcome to the same value. We'll pick the number "0":
 
 ```{r}
+
+install.packages("survival",repos='http://cran.us.r-project.org')
+library(survival)
 
 # modify the data: "surv_dat" was used to create table 1
 surv_dat <- surv_dat %>% 
@@ -363,11 +351,31 @@ km_plot <- ggplot() +
   scale_x_continuous(expand=c(0,0)) +
   scale_y_continuous(expand=c(0,0), limits=c(0,1))
 
+```
+
+```{r, warning=F, message=F, echo=F, include=F}
 ggsave("../figures/2021_12_06-KM_Example.png",
        plot=km_plot)
 ```
+```{r KMcuminc, out.width="6cm", fig.align="center", fig.margin=TRUE, fig.cap="Cumulative distribution function obtained from the Kaplan-Meier estimator from the example data in Table 1.",echo=F}
+knitr::include_graphics("../figures/2021_12_06-KM_Example.png")
+```
 
+The CDF curve generated by the above code is presented in Figure \@ref(fig:KMcuminc) in the margin.
 
+:::{.rmdnote data-latex="{tip}"}
+
+__Technical Note__:
+
+|               Consider the Table (the `tibble`) in the R output above that includes the Year and the Risk plotted in the margin figure. Notice that the last number is 0.65, effectively stating that the overall risk in the sample of 10 observations is 0.65. But, out of the 10 individuals, only six of them had the event. This suggests that the overall risk should be 0.60, and not 0.65. Why the discrepancy? Is the KM estimator wrong?
+
+The explanation for this higher than expected risk is the censored observation (ID=4), and the fact that, built into the KM estimator is the "redistribution to the right" algorithm. This algorithm spreads the risk that would have resulted from any censored observations had they not been censored, and redistributes it proportionally to the events that occur after the censoring for this observation takes place. In effect, this algorithm redistributes the risk from censored observations to remaining ovservations. As a result, the end of study risk estimated with a KM estimator is usually higher in the presence of censoring than the empirical risk function.
+
+This re-distribution is a "hidden imputation" that is not often recognized with the KM estimator ^!^Cole2020.
+
+:::
+
+# Takeaways
 
 \newpage
 

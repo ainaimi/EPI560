@@ -89,11 +89,11 @@ Repeated exposure, covariate, and/or outcome measurement is what leads to "longi
 
 Repeated measurement over time opens up the possibility of complex causal relations between past and future covariates. Suppose we measure an expsoure twice over follow-up, a covariate once, and the outcome at the end of follow-up (Figure 1). If we can assume that past exposure/covariate values do not affect future exposure/covariate values (usually a very risky assumption), we might not consider these data "complex," because we can use many standard methods we already know to analyze these data.
 ```{r, out.width = "200px",fig.cap="Longitudinal data that might not be considered `complex' because there is no feedback between exposure and covariates.",echo=F}
-knitr::include_graphics("F1.pdf")
+knitr::include_graphics("../figures/F1.pdf")
 ```
 On the other hand, if past exposure/covariates affect future exposure/covariates in such a way that prior exposures or covariates confound future exposures (Figure 2), more advanced analytic techniques are needed. 
 ```{r, out.width = "200px",fig.cap="The simplest kind of complex longitudinal data. Note that the exposure at time zero affects the covariate at time 1 which affects the exposure at time 1. This feedback leads to confounding of the time 1 expsoure by a covariate that is affected by the prior exposure. Analysis of these data require more general methods to  account for this complex form of confounding.",echo=F}
-knitr::include_graphics("F2.pdf")
+knitr::include_graphics("../figures/F2.pdf")
 ```
 Later, we will learn how to use methods to account for this type of complex time-varying confounding.
 
