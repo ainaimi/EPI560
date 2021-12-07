@@ -101,7 +101,7 @@ Consider the following examples from the literature with different study time-sc
 
 3) ^!^Huang2018 looked at the relation between different post-operative management strategies, including the use of dexamethasone versus flurbiprofen axetil on survival in 588 patients undergoing surgical lung resection for non-small-cell lung cancer. In this study, the timescale was **time since surgical resection**.
 
-4) ^!^Schwarzinger2018 looked at the relation between alcohol use and dementia risk in nearly 31 million individuals in France between 2008 and 2013. In this analysis, the timescale was age, meaning that "time 0" was the age at which the individual entered into the study, corresponding to the age at the calendar date during which the study started.
+4) ^!^Schwarzinger2018 looked at the relation between alcohol use and dementia risk in nearly 31 million individuals in France between 2008 and 2013. In this analysis, the timescale was age, meaning that "time 0" was the age at which the individual entered into the study, corresponding to the **age at the calendar date during which the study started**.
 
 ```{r, warning=F, message=F, echo=F, include=F}
 
@@ -374,8 +374,6 @@ The explanation for this higher than expected risk is the censored observation (
 This re-distribution is a "hidden imputation" that is not often recognized with the KM estimator ^!^Cole2020.
 
 :::
-
-# Takeaways
 
 \newpage
 
