@@ -27,13 +27,14 @@ Week 1)
 Week 2)
 1)	Causal Inference
 
-Week 2)
+Week 3)
 6)	Functions of CDF (see chpt 2 of Dirk Moore):
 a.	Survival
 b.	Hazard
 c.	Cumulative Hazard
-e.	Rate
+e.	Rate (incidence and prevalence)
 f.	Odds
+g.  Risk
 
 Week 3)
 7)	Counterfactuals and Models(?)
