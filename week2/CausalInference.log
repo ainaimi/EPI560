@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999993 (TeX Live 2021) (preloaded format=xelatex 2021.12.7)  7 DEC 2021 09:11
+This is XeTeX, Version 3.141592653-2.6-0.999993 (TeX Live 2021) (preloaded format=xelatex 2021.12.7)  9 DEC 2021 14:22
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1444,6 +1444,9 @@ LaTeX Warning: Marginpar on page 5 moved.
 LaTeX Warning: Marginpar on page 5 moved.
 
 
+LaTeX Warning: Marginpar on page 5 moved.
+
+
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
 This message occurred on input line 445.
 
@@ -1456,36 +1459,26 @@ Class tufte-handout Warning: Proper spacing of small-caps letters has not been s
 This message occurred on input line 475.
 
 [6]
-File: ../figures/F1.pdf Graphic file (type pdf)
-<use ../figures/F1.pdf>
+File: ../figures/tip.png Graphic file (type bmp)
+<../figures/tip.png>
 
-Overfull \hbox (16.14993pt too wide) in paragraph at lines 493--494
-[]\TU/RobotoCondensed(0)/m/n/10 On the other hand, if past exposure/covariates affect future exposure/covariates 
+Underfull \hbox (badness 10000) in paragraph at lines 479--480
+[]              \TU/RobotoCondensed(0)/m/n/10 Suppose you collect data from a single person and find that they are exposed. Can you interpret the
  []
 
-File: ../figures/F2.pdf Graphic file (type pdf)
-<use ../figures/F2.pdf>
 
-Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 505.
-
-[7]
-
-LaTeX Warning: Marginpar on page 8 moved.
+Underfull \hbox (badness 10000) in paragraph at lines 479--480
+\TU/RobotoCondensed(0)/m/n/10 outcome you observe to be the potential outcome that would have been observed had they been exposed?
+ []
 
 LaTeX Font Info:    Font shape `TU/RobotoCondensed(0)/m/n' will be
-(Font)              scaled to size 9.0pt on input line 516.
+(Font)              scaled to size 9.0pt on input line 491.
 Requested font "[RobotoCondensed-Regular.otf]/OT:script=latn;language=dflt;+pnum;+lnum;mapping=tex-text;" at 9.0pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/google/roboto/RobotoCondensed-Regular.otf
 LaTeX Font Info:    Font shape `TU/RobotoCondensed(0)/m/sc' will be
-(Font)              scaled to size 9.0pt on input line 517.
+(Font)              scaled to size 9.0pt on input line 492.
 Requested font "[RobotoCondensed-Regular.otf]/OT:script=latn;language=dflt;+pnum;+lnum;+smcp;mapping=tex-text;" at 9.0pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/google/roboto/RobotoCondensed-Regular.otf
-
-Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 528.
-
-[8]
 Requested font "[lmroman9-regular]:mapping=tex-text;" at 9.0pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/public/lm/lmroman9-regular.otf
 Requested font "cmmi9" at 9.0pt
@@ -1501,65 +1494,78 @@ Requested font "msbm10" at 9.0pt
 Requested font "cmr9" at 9.0pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/tfm/public/cm/cmr9.tfm
 
-LaTeX Warning: Marginpar on page 9 moved.
-
-
-LaTeX Warning: Marginpar on page 9 moved.
+LaTeX Warning: Marginpar on page 7 moved.
 
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 549.
+This message occurred on input line 502.
+
+[7]
+
+LaTeX Warning: Marginpar on page 8 moved.
+
+
+Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
+This message occurred on input line 512.
+
+[8]
+
+Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
+This message occurred on input line 530.
 
 [9]
-
-Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 557.
-
-[10]
 Requested font "[lmmono10-regular]:" at 10.0pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/public/lm/lmmono10-regular.otf
 Requested font "[lmmono10-italic]:" at 10.0pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/public/lm/lmmono10-italic.otf
 LaTeX Font Info:    Font shape `TU/lmtt/bx/n' in size <10> not available
-(Font)              Font shape `TU/lmtt/b/n' tried instead on input line 575.
+(Font)              Font shape `TU/lmtt/b/n' tried instead on input line 536.
 Requested font "[lmmonolt10-bold]:" at 10.0pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/public/lm/lmmonolt10-bold.otf
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 592.
+This message occurred on input line 578.
+
+[10]
+
+Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
+This message occurred on input line 643.
 
 [11]
 
+LaTeX Warning: Marginpar on page 12 moved.
+
+
+LaTeX Warning: Marginpar on page 12 moved.
+
+
+LaTeX Warning: Marginpar on page 12 moved.
+
+
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 668.
+This message occurred on input line 663.
 
 [12]
-
-LaTeX Warning: Marginpar on page 13 moved.
-
-
-LaTeX Warning: Marginpar on page 13 moved.
-
-
-Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 688.
-
-[13]
-
-LaTeX Warning: Marginpar on page 14 moved.
-
 LaTeX Font Info:    Font shape `TU/RobotoCondensed(0)/b/n' will be
-(Font)              scaled to size 8.0pt on input line 703.
+(Font)              scaled to size 8.0pt on input line 664.
 Requested font "[RobotoCondensed-Bold.otf]/OT:script=latn;language=dflt;+pnum;+lnum;mapping=tex-text;" at 8.0pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/google/roboto/RobotoCondensed-Bold.otf
 
-Overfull \hbox (71.33995pt too wide) in paragraph at lines 703--704
+Overfull \hbox (71.33995pt too wide) in paragraph at lines 664--665
 \TU/RobotoCondensed(0)/m/n/10 the observed outcome [^!^Hernan2005b,^!^Hernan2008a,^!^Hernan2011a,^!^VanderWeele2013b].[] 
  []
 
 
-LaTeX Warning: Marginpar on page 14 moved.
+LaTeX Warning: Marginpar on page 13 moved.
 
+
+LaTeX Warning: Marginpar on page 13 moved.
+
+
+Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
+This message occurred on input line 678.
+
+[13]
 
 LaTeX Warning: Marginpar on page 14 moved.
 
@@ -1569,120 +1575,103 @@ This message occurred on input line 708.
 
 [14]
 
-LaTeX Warning: Marginpar on page 15 moved.
-
-
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 730.
+This message occurred on input line 723.
 
 [15]
 
-Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 751.
-
-[16]
-
-Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 774.
-
-[17]
-
-LaTeX Warning: Marginpar on page 18 moved.
+LaTeX Warning: Marginpar on page 16 moved.
 
 
 Package amsmath Warning: Foreign command \atopwithdelims;
 (amsmath)                \frac or \genfrac should be used instead
-(amsmath)                 on input line 781.
+(amsmath)                 on input line 742.
 
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 795.
+This message occurred on input line 745.
 
-[18]
-Overfull \hbox (57.32996pt too wide) in paragraph at lines 797--798
+[16]
+Overfull \hbox (57.32996pt too wide) in paragraph at lines 758--759
 \TU/RobotoCondensed(0)/m/n/10 and unexposed individuals within all confounding levels [^!^Mortimer2005,^!^Westreich2010a]. 
  []
 
 
-LaTeX Warning: Marginpar on page 19 moved.
+LaTeX Warning: Marginpar on page 17 moved.
 
 
-LaTeX Warning: Marginpar on page 19 moved.
+LaTeX Warning: Marginpar on page 17 moved.
 
 
-Overfull \hbox (11.87964pt too wide) detected at line 803
+Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
+This message occurred on input line 764.
+
+[17]
+Overfull \hbox (11.87964pt too wide) detected at line 764
 \OML/cmm/m/it/10 E\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 Y[]\OT1/cmr/m/n/10 ) = \OML/cmm/m/it/10 E\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 Y \OMS/cmsy/m/n/10 j \OML/cmm/m/it/10 X \OT1/cmr/m/n/10 = 1\OML/cmm/m/it/10 ; C \OT1/cmr/m/n/10 = 1)\OML/cmm/m/it/10 P\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 C \OT1/cmr/m/n/10 = 1) + \OML/cmm/m/it/10 E\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 Y \OMS/cmsy/m/n/10 j \OML/cmm/m/it/10 X \OT1/cmr/m/n/10 = 1\OML/cmm/m/it/10 ; C \OT1/cmr/m/n/10 = 0)\OML/cmm/m/it/10 P\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 C \OT1/cmr/m/n/10 = 0)
  []
 
 
+LaTeX Warning: Marginpar on page 18 moved.
+
+
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 811.
+This message occurred on input line 774.
+
+[18]
+
+LaTeX Warning: Marginpar on page 19 moved.
+
+
+LaTeX Font Warning: Font shape `TU/lmtt/bx/it' in size <10> not available
+(Font)              Font shape `TU/lmtt/b/sl' tried instead on input line 794.
+
+Requested font "[lmmonolt10-boldoblique]:" at 10.0pt
+ -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/public/lm/lmmonolt10-boldoblique.otf
+File: CausalInference_files/figure-latex/unnamed-chunk-5-1.pdf Graphic file (type pdf)
+<use CausalInference_files/figure-latex/unnamed-chunk-5-1.pdf>
+
+Overfull \hbox (12.01027pt too wide) in paragraph at lines 812--813
+[][]  
+ []
+
+
+Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
+This message occurred on input line 814.
 
 [19]
 
 LaTeX Warning: Marginpar on page 20 moved.
 
 
-LaTeX Warning: Marginpar on page 20 moved.
-
-
-LaTeX Warning: Marginpar on page 20 moved.
-
-
-LaTeX Font Warning: Font shape `TU/lmtt/bx/it' in size <10> not available
-(Font)              Font shape `TU/lmtt/b/sl' tried instead on input line 833.
-
-Requested font "[lmmonolt10-boldoblique]:" at 10.0pt
- -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/public/lm/lmmonolt10-boldoblique.otf
-
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 838.
+This message occurred on input line 837.
 
 [20]
-File: CausalInference_files/figure-latex/unnamed-chunk-7-1.pdf Graphic file (type pdf)
-<use CausalInference_files/figure-latex/unnamed-chunk-7-1.pdf>
-
-Overfull \hbox (12.01027pt too wide) in paragraph at lines 851--852
-[][]  
- []
-
-
-LaTeX Warning: Marginpar on page 21 moved.
-
-
-Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 873.
-
-[21]
 File: ../figures/bounds.png Graphic file (type bmp)
 <../figures/bounds.png>
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 891.
+This message occurred on input line 853.
+
+[21]
+
+Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
+This message occurred on input line 853.
 
 [22]
-
-Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 891.
-
-[23]
-
-Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 892.
-
-[24]
 No file CausalInference.bbl.
 (./CausalInference.aux)
 Package rerunfilecheck Info: File `CausalInference.out' has not changed.
-(rerunfilecheck)             Checksum: 7B9152AEFC5F6EC30A660EBC53344452;628.
+(rerunfilecheck)             Checksum: DEE34728D82E2BBA4F259685E1F24B3A;638.
  ) 
 Here is how much of TeX's memory you used:
- 30534 strings out of 478256
- 646551 string characters out of 5855373
- 1020202 words of memory out of 5000000
- 50437 multiletter control sequences out of 15000+600000
+ 30556 strings out of 478256
+ 647163 string characters out of 5855373
+ 1020116 words of memory out of 5000000
+ 50461 multiletter control sequences out of 15000+600000
  410608 words of font info for 101 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 108i,14n,112p,1520b,479s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 108i,14n,112p,1520b,587s stack positions out of 5000i,500n,10000p,200000b,80000s
 
-Output written on CausalInference.pdf (24 pages).
+Output written on CausalInference.pdf (22 pages).

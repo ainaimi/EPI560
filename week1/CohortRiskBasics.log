@@ -1,10 +1,10 @@
-This is XeTeX, Version 3.141592653-2.6-0.999993 (TeX Live 2021) (preloaded format=xelatex 2021.12.6)  6 DEC 2021 21:58
+This is XeTeX, Version 3.141592653-2.6-0.999993 (TeX Live 2021) (preloaded format=xelatex 2021.12.7)  9 DEC 2021 14:12
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
 **CohortRiskBasics.tex
 (./CohortRiskBasics.tex
-LaTeX2e <2021-11-15>
+LaTeX2e <2021-11-15> patch level 1
 L3 programming layer <2021-11-22> (/Users/AIN8/Library/TinyTeX/texmf-dist/tex/latex/tufte-latex/tufte-handout.cls
 Document Class: tufte-handout 2015/06/21 v3.5.2 Tufte-handout class
 (/Users/AIN8/Library/TinyTeX/texmf-dist/tex/latex/tufte-latex/tufte-common.def
@@ -1533,18 +1533,8 @@ LaTeX Warning: Marginpar on page 7 moved.
 LaTeX Warning: Marginpar on page 7 moved.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 473--474
- 
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 506--507
- 
- []
-
-
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 511.
+This message occurred on input line 473.
 
 [7]
 
@@ -1553,38 +1543,38 @@ LaTeX Warning: Marginpar on page 8 moved.
 File: ../figures/tip.png Graphic file (type bmp)
 <../figures/tip.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 516--516
+Underfull \hbox (badness 10000) in paragraph at lines 514--514
 []              \TU/RobotoCondensed(0)/m/n/10 Often when we use the word “bias” in epidemiology, we actually mean “inconsistent” in the statistical
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 516--516
+Underfull \hbox (badness 10000) in paragraph at lines 514--514
 \TU/RobotoCondensed(0)/m/n/10 When epidemiologic bias is present (confounding, selection, information), the estimator will not converge
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 516--516
+Underfull \hbox (badness 10000) in paragraph at lines 514--514
 \TU/RobotoCondensed(0)/m/n/10 to the truth no matter how large a sample we have. In contrast, we say that an estimator is biased (in finite
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 516--517
+Underfull \hbox (badness 10000) in paragraph at lines 514--515
 \TU/RobotoCondensed(0)/m/n/10 That is, we can have zero confounding (i.e., a consistent estimator), but still have a biased estimator because
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 516--517
+Underfull \hbox (badness 10000) in paragraph at lines 514--515
 \TU/RobotoCondensed(0)/m/n/10 of how poorly it performs at using the data to estimate the effect at a given sample size. One example of this
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 516--517
+Underfull \hbox (badness 10000) in paragraph at lines 514--515
 \TU/RobotoCondensed(0)/m/n/10 is the partial likelihood estimator used to quantify parameters of a Cox regression model (see Johnson1982).
  []
 
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 518.
+This message occurred on input line 516.
 
 [8]
 
@@ -1595,11 +1585,11 @@ LaTeX Warning: Marginpar on page 9 moved.
 
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 542.
+This message occurred on input line 539.
 
 [9]
 LaTeX Font Info:    Font shape `TU/RobotoCondensed(0)/b/n' will be
-(Font)              scaled to size 8.0pt on input line 546.
+(Font)              scaled to size 8.0pt on input line 544.
 Requested font "[RobotoCondensed-Bold.otf]/OT:script=latn;language=dflt;+pnum;+lnum;mapping=tex-text;" at 8.0pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/google/roboto/RobotoCondensed-Bold.otf
 
@@ -1659,20 +1649,23 @@ Requested font "msbm5" at 1.75pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm5.tfm
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 558.
+This message occurred on input line 556.
 
 [10]
 File: ../figures/2021_11_24-CumincExample.png Graphic file (type bmp)
 <../figures/2021_11_24-CumincExample.png>
 
+LaTeX Warning: Marginpar on page 11 moved.
+
+
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 584.
+This message occurred on input line 582.
 
 [11]
 Requested font "[lmmono10-regular]:" at 10.0pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/public/lm/lmmono10-regular.otf
 
-Overfull \hbox (13.5pt too wide) in paragraph at lines 598--598
+Overfull \hbox (13.5pt too wide) in paragraph at lines 596--596
 []\TU/lmtt/m/n/10 ## Installing package into '/usr/local/lib/R/4.1/site-library' 
  []
 
@@ -1680,68 +1673,88 @@ Requested font "[lmmono10-italic]:" at 10.0pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/public/lm/lmmono10-italic.otf
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 621.
+This message occurred on input line 619.
 
 [12]
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 663.
+This message occurred on input line 661.
 
 [13]
 File: ../figures/2021_12_06-KM_Example.png Graphic file (type bmp)
 <../figures/2021_12_06-KM_Example.png>
 
-Overfull \hbox (26.71034pt too wide) in paragraph at lines 675--676
+Overfull \hbox (26.71034pt too wide) in paragraph at lines 673--674
  [][] 
  []
 
 File: ../figures/tip.png Graphic file (type bmp)
 <../figures/tip.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 687--688
+Underfull \hbox (badness 10000) in paragraph at lines 698--699
 []              \TU/RobotoCondensed(0)/m/n/10 Consider the Table (the \TU/lmtt/m/n/10 tibble\TU/RobotoCondensed(0)/m/n/10 ) in the R output above that includes the Year and the Risk plotted in
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 687--688
+Underfull \hbox (badness 10000) in paragraph at lines 698--699
 \TU/RobotoCondensed(0)/m/n/10 the margin figure. Notice that the last number is 0.65, effectively stating that the overall risk in the sample of
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 687--688
+Underfull \hbox (badness 10000) in paragraph at lines 698--699
 \TU/RobotoCondensed(0)/m/n/10 10 observations is 0.65. But, out of the 10 individuals, only six of them had the event. This suggests that the
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 689--690
+Underfull \hbox (badness 10000) in paragraph at lines 700--701
 []\TU/RobotoCondensed(0)/m/n/10 The explanation for this higher than expected risk is the censored observation (ID=4), and the fact that, built
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 689--690
+Underfull \hbox (badness 10000) in paragraph at lines 700--701
 \TU/RobotoCondensed(0)/m/n/10 into the KM estimator is the “redistribution to the right” algorithm. This algorithm spreads the risk that would
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 689--690
+Underfull \hbox (badness 10000) in paragraph at lines 700--701
 \TU/RobotoCondensed(0)/m/n/10 have resulted from any censored observations had they not been censored, and redistributes it proportionally
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 689--690
+Underfull \hbox (badness 10000) in paragraph at lines 700--701
 \TU/RobotoCondensed(0)/m/n/10 to the events that occur after the censoring for this observation takes place. In effect, this algorithm redis-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 689--690
-\TU/RobotoCondensed(0)/m/n/10 tributes the risk from censored observations to remaining ovservations. As a result, the end of study risk
+Underfull \hbox (badness 10000) in paragraph at lines 700--701
+\TU/RobotoCondensed(0)/m/n/10 tributes the risk from censored observations to remaining observations. As a result, the end of study risk
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 702--703
+[]\TU/RobotoCondensed(0)/m/n/10 A similar phenomenon occurs for left truncation. In effect, the “extended” KM estimator imputes the risks for
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 704--705
+[]\TU/RobotoCondensed(0)/m/n/10 Both the re-distribution of censored risks and imputing of ghost risks is a “hidden imputation” that is not often
  []
 
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 698.
+This message occurred on input line 706.
 
 [14]
+
+Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
+This message occurred on input line 723.
+
+[15]
+
+Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
+This message occurred on input line 732.
+
+[16]
 No file CohortRiskBasics.bbl.
 (./CohortRiskBasics.aux)
 
@@ -1754,10 +1767,10 @@ Package rerunfilecheck Info: File `CohortRiskBasics.out' has not changed.
 Here is how much of TeX's memory you used:
  30658 strings out of 478256
  650333 string characters out of 5855373
- 1018542 words of memory out of 5000000
+ 1019535 words of memory out of 5000000
  50566 multiletter control sequences out of 15000+600000
  412965 words of font info for 117 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  108i,18n,112p,1360b,587s stack positions out of 5000i,500n,10000p,200000b,80000s
 
-Output written on CohortRiskBasics.pdf (14 pages).
+Output written on CohortRiskBasics.pdf (16 pages).
