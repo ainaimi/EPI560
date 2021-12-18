@@ -233,13 +233,13 @@ Mathematically, we define the risk of an outcome over follow-up as
 
 $$ F(t) = P(T \leq t) $$
 
-This equation quantifies the probability (or risk) that the observed failure time $T$ is less than or equal to some arbitrary threshold $t$, where the threshold $t$ is defined over the domain of follow-up.
+This equation quantifies the probability (or risk) that the observed failure time $T$ is less than or equal to some arbitrary threshold $t$, where the threshold $t$ is defined over the domain of follow-up. $F(t)$ quantifies the probability of the event occurring at or before time $t$.
 
 Relatedly, we could define survival as:
 
 $$S(t) = 1 - F(t) = P(T>t)$$
 
-The risk and survival functions are complements to one another. Both equations are a compact way of asking how risk (or survival) cumulates over time.
+The risk and survival functions are complements to one another. Both equations are a compact way of asking how risk (or survival) cumulates over time. $S(t)$ quantifies the probability of no events occurring until after time $t$.
 
 The risk function^[ The cumulative risk function, or cumulative distribution function, i.e., CDF] is a fundamental function in epidemiologic analyses specificaly, and data science more generally, for several reasons:
 
