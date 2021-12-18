@@ -257,4 +257,131 @@ C) If everyone were exposed at both time points versus if no one were exposed at
 \noindent{ \bf Question 7}: For the example of the relation between quitting smoking and high blood pressure, do you think the average treatment effect or the effect of treatment on the treated is more relevant? Explain why or why not.
 
 
+\noindent{ \bf Question 1}: Please provide {\bf the complete} definition of a p-value.
+
+{\color{red} The p-value is defined as the probability of observing a result as extreme or more extreme if the null hypotheses were true  and there were {\bf no selection, confounding, and information bias}. Note this latter condition (no bias) is what \emph{completes} the definition, and is not typically included in statistical treatments.}
+
+\vskip .5cm 
+
+\noindent { \bf Question 2}: In a recent article, a group of prominent scientists/statisticians argued for redefining ``statistical significance,'' from 0.05 to 0.005. In no more than 1/2 a page, please provide your views on whether this change is a useful suggestion or not. Be sure to provide insights on the potential benefits and drawbacks to making such a change.
+
+{\color{red} Changing the value at which researchers deem results to be ``statistically significant'' from 0.05 to 0.005 will do little to nothing to improve the quality or calibre of scientific research. This is because random error represents only a minor portion of the challenges that a researcher faces in seeking to quantify effect estimates. More threatening are the challenges imposed by confounding, selection, or information bias. 
+
+In fact, it is likely that such a proposal will do more harm than good. The magnitude of the p-value is affected by two phenomena: 1) bias; and 2) sample size. By lowering the significance threshold to a smaller value, there is an increased likelihood that ``significant'' results are those that are subject to more extreme bias. On the other hand, it is also possible that clinically insignificant results are deemed significant by virtue of the fact that ``big data'' were used to quantify the effect, thus rendering a low p-value.
+
+All told, rather than focus on some arbitrary threshold of a single (and easily misunderstood) measure, scientists would be better off thinking critically about all of the potential threats to their inferences.}
+
+\vskip .5cm 
+
+\noindent{ \bf Question 3}: With the NHEFS data, please re-do the analysis using IPW to estimate the average treatment effect and the effect of treatment on the treated for the relation between quitting smoking (\texttt{qsmk}) and weight gain (\texttt{wt82\_71}). Present estimates for these effects on the mean difference scale. Adjust for the following variables: \texttt{smkintensity82\_71, exercise, sbp, dbp, sex, age, race, income, marital, school, asthma}. Use the same strategy to obtain complete cases that was illustrated in Application 1.
+
+This time, please provide the point estimates for the ATE and ETT, as well as p-values based on the $Z$-test using the robust variance estimator, and $p$-values based on a permutation test. Please interpret the ATE and ETT as {\bf causal effects} assuming all relevant identifiability assumptions hold (no need to discuss these assumptions here). Additionally, please provide a complete interpretation of the estimated p-values.
+
+The following code can be used to obtain estimates representing the distribution of the null for the ATE and ETT, provided the dataset is named ``\texttt{nhefs\_data}'':
+
+\begin{verbatim}
+  set.seed(123) 
+  res <- NULL 
+  permutations <- 2000 
+  permuted <- nhefs_data
+  for(i in 1:permutations){
+    permuted$qsmk <- permuted$qsmk[sample(length(permuted$qsmk))]
+    
+    propensity <- glm(qsmk ~ smkintensity82_71 + exercise + sbp + dbp + sex + 
+                      age + race + income + marital + school + asthma,
+                    data=permuted,family=binomial("logit"))$fitted.values
+                    
+        sw <- (mean(permuted$qsmk)/propensity)*permuted$qsmk + 
+          (mean(1-permuted$qsmk)/(1-propensity))*(1-permuted$qsmk)
+  
+    sw_ett <- mean(permuted$qsmk)*permuted$qsmk + 
+          (mean(1-permuted$qsmk)*(propensity/(1-propensity)))*(1-permuted$qsmk)
+    
+      ATE_mod <- glm(wt82_71 ~ qsmk, data=permuted,
+            weights=sw,family=gaussian("identity"))
+      ATE_permuted <- coef(ATE_mod)[2]
+  
+      ETT_mod <- glm(wt82_71 ~ qsmk, data=permuted,
+            weights=sw_ett,family=gaussian("identity"))
+      ETT_permuted <- coef(ETT_mod)[2]
+  
+      res <- rbind(res,cbind(ATE_permuted,ETT_permuted))
+}
+
+res <- data.frame(res) 
+names(res) <- c("ATE","ETT")
+\end{verbatim}
+
+To obtain the robust standard error, fit the IP-weighted model and use the \texttt{vcovHC} function from the \texttt{sandwich} package. For example, for the ATE:
+
+\begin{verbatim}
+ATE_model <- glm(wt82_71 ~ qsmk,data=nhefs_data,
+        weights=sw,family=gaussian(link = "identity"))
+ATE <- round(coef(ATE_model),2)[2]
+z = (ATE - 0)/vcovHC(ATE_model, type = "HC1")[2,2]
+p.value_ATE <- round(2*pnorm(-abs(z)),4)
+\end{verbatim}
+
+{\color{red} 
+
+After implementing IP-weighting for estimating the ATE and the ETT, as well as robust and permutation based p-values for these associations, we obtain the following results.
+% latex table generated in R 3.5.1 by xtable 1.8-3 package
+% Thu Nov  1 21:24:32 2018
+\begin{table}[ht]
+\centering
+\begin{tabular}{rrrrrr}
+  \hline
+&  & \multicolumn{2}{2}{Confidence Limits} & \multicolumn{2}{2}{P-Values} \\
+& Estimate & Lower & Upper & Z-score & Permutation \\ 
+  \hline
+ATE & 2.00 & 0.44 & 3.57 & 0.00 & 0.00 \\ 
+ETT & 3.77 & 1.32 & 6.22 & 0.02 & 0.00 \\ 
+   \hline
+\end{tabular}
+\end{table}
+
+These effects can be interpreted as follows: If all individuals in the population were to quit smoking, the mean weight loss in the population would be 2 kg higher than if no individuals were to quit smoking (ATE). On the other hand, among those who actually quit smoking, the effect of quitting led to a 3.8 kg increase in weight between 1972 and 1981.
+
+The z-score based p-values suggest that the probability of observing an ATE and ETT as extreme or more than what was observed is less than 0.001 and equal to 0.02, respectively.
+
+For the permutation p-values, the interpretation is identical, except the probabilities are less than 0.001 for both the ATE and the ETT.
+
+}
+
+\noindent{ \bf Question 4}: In a 2016 study of the relation between statins and the risk of glioma, Seliger et al. reported that ``this matched case-control study revealed a null association between statin use and risk of glioma.'' Furthermore, they stated that their findings ``do not support previous sparse evidence of a possible inverse association between statin use and glioma risk.'' 
+
+The estimated odds ratio in the study by Seliger et al was 0.75, with 95\% CIs of 0.48, 1.17. The ``previous sparse evidence'' they referred to were studies that reported odds ratios of 0.72 (0.52-1.00) and 0.76 (0.59-0.98).
+
+In 1/2 a page, please discuss whether you agree with the statement that the findings by Seliger et al ``do not support previous \ldots evidence.'' Explain why you agree/disagree with the statement.
+
+{\color{red} The statement by Seliger et al is simply nonsense, and based on a dramatic oversimplification of the information contained in the confidence intervals. To see specifically why, it is possible to construct distributions of the estimates from each study, and visualize the extent to which the information in each overlaps. To do this, we assume that the log of the estimator is normally distributed. 
+
+The log-OR estimated by Seliger was -0.29. We can use the upper and lower CI bounds by Seliger to obtain the standard error via the following equation:
+$$ SE = \frac{\log(UCL) - \log(LCL)}{2\times 1.96} $$
+
+Using the log-ORs and their respective standard errors, we can then derive the density functions representing the distribution of each estimator:
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=.8]{overlap_plot.pdf}
+\end{figure}  
+
+In the above Figure, the black line is the distribution of the OR from the Seliger et al study. The blue and red lines are from the other studies. Clearly, the information contained in both estimators are very similar, and support the same inferences about the relation between statins and the risk of glioma.
+
+}
+
+%\noindent{ \bf Question 5}: Can you interpret the confidence intervals provided by Seliger et al? Why or why not?
+
+
+\noindent{ \bf Question 5}: Suppose you conduct a study and estimate a mean difference with 95\% CIs of 1.71 and 3.23. Please indicate whether the following statements about these estimated CIs are true or false and why:
+\begin{itemize}
+  \item[1.] The probability that the true mean is greater than zero is 95\%.
+  \item[2.] The probability that the true mean equals zero is $\leq 5\%$.
+  \item[3.] There is a 95\% probability that the true mean lies between 1.71 and 3.23.
+  \item[4.] We can be 95\% confident that the true mean lies between 1.71 and 3.23.
+  \item[5.] If we were to repeat the experiment 100 times, the true mean would fall between 1.71 and 3.23 95\% of the time.
+\end{itemize}
+
+{\color{red} None of the above are correct. The key issue is that the specific values obtained for an upper and lower confidence bound do not possess any probabilistic interpretation: the truth is either contained in the bound, or it's not. Thus, for examples 1, 2, and 3, the fact that the probability of the truth is referred to at all is a giveaway that these interpretations are false. In example 4, the word ``confident'' is used instead of probability. Unless one clarifies some highly technical definition of the word confident that renders the statement tautologically true, this is simply a word game. Finally, for example 5, the truth will not fall in specific bounds at any percentage except 0\% or 100\%, making this last example false. }
+
+
 

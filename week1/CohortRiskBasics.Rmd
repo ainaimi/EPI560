@@ -3,21 +3,22 @@ title: "Basic Concepts in Survival Analysis"
 author: "Ashley I Naimi"
 date: "`r paste0('Spring ', 2022)`" #format(Sys.Date(), '%Y')
 urlcolor: blue
+bibliography: ref.bib
+link-citations: yes
 output: 
     bookdown::pdf_book:
       base_format: tint::tintPdf
       toc: true
       number_sections: true
       includes:
-        in_header: "../misc/preamble.tex"
+        in_header: ../misc/preamble.tex
       latex_engine: xelatex
     html_document:
       theme: readable
       toc: true
       toc_float: true
       number_sections: true
-      css: "../misc/style.css"
-bibliography: "../misc/ref_main_v4.bib"
+      css: ../misc/style.css
 ---
 
 ```{r setup, include=FALSE}
@@ -25,7 +26,7 @@ library(knitr)
 opts_chunk$set(tidy.opts=list(width.cutoff=60),tidy=TRUE)
 
 packages <- c( "data.table","tidyverse","ggplot2","ggExtra","formatR",
-               "gridExtra","skimr","here","Hmisc","RColorBrewer")
+               "gridExtra","skimr","here","RColorBrewer","survival")
 
 for (package in packages) {
   if (!require(package, character.only=T, quietly=T)) {
@@ -90,17 +91,17 @@ ggsave("../figures/2021_08_19-figure1.png")
 knitr::include_graphics("../figures/2021_08_19-figure1.png")
 ```
 
-Figure \@ref(fig:tenobs) shows ten simulated observations. In this setting, time zero is our start time. The start time should correspond to some well-defined event such as an age of interest (age as time-scale), a date of interest (calendar date as time-scale), or the timing of some important study marker (e.g., date of randomization to treatment versus placebo).
+Figure \ref{fig:tenobs} shows ten simulated observations. In this setting, time zero is our start time. The start time should correspond to some well-defined event such as an age of interest (age as time-scale), a date of interest (calendar date as time-scale), or the timing of some important study marker (e.g., date of randomization to treatment versus placebo).
 
 Consider the following examples from the literature with different study time-scales:
 
-1) ^!^Naimi2021 use data from a randomized trial to estimate the adherence adjusted per protocol effect of daily low-dose aspirin on pregnancy outcomes in ~1,200 women. In this study, the timescale was **weeks since randomization**, and ranged from 0 to 60 weeks.
+1) @Naimi2021a use data from a randomized trial to estimate the adherence adjusted per protocol effect of daily low-dose aspirin on pregnancy outcomes in ~1,200 women. In this study, the timescale was **weeks since randomization**, and ranged from 0 to 60 weeks.
 
-2) ^!^Getahun2005 examined stillbirth, small for gestational age, and infant mortality occurrence by the racial classification of both parents (e.g., white-white, white-black, black-white, black-black) in roughly 20 million pregnancies in the United States. In this study, the timescale was **gestational age**, starting at the 20th week of gestation.
+2) @Getahun2005 examined stillbirth, small for gestational age, and infant mortality occurrence by the racial classification of both parents (e.g., white-white, white-black, black-white, black-black) in roughly 20 million pregnancies in the United States. In this study, the timescale was **gestational age**, starting at the 20th week of gestation.
 
-3) ^!^Huang2018 looked at the relation between different post-operative management strategies, including the use of dexamethasone versus flurbiprofen axetil on survival in 588 patients undergoing surgical lung resection for non-small-cell lung cancer. In this study, the timescale was **time since surgical resection**.
+3) @Huang2018 looked at the relation between different post-operative management strategies, including the use of dexamethasone versus flurbiprofen axetil on survival in 588 patients undergoing surgical lung resection for non-small-cell lung cancer. In this study, the timescale was **time since surgical resection**.
 
-4) ^!^Schwarzinger2018 looked at the relation between alcohol use and dementia risk in nearly 31 million individuals in France between 2008 and 2013. In this analysis, the timescale was age, meaning that "time 0" was the age at which the individual entered into the study, corresponding to the **age at the calendar date during which the study started**.
+4) @Schwarzinger2018 looked at the relation between alcohol use and dementia risk in nearly 31 million individuals in France between 2008 and 2013. In this analysis, the timescale was age, meaning that "time 0" was the age at which the individual entered into the study, corresponding to the **age at the calendar date during which the study started**.
 
 ```{r, warning=F, message=F, echo=F, include=F}
 
@@ -147,23 +148,23 @@ ggsave(file="../figures/2021_11_23-figure2_cens_trunc.png",
 
 ```
 
-5) ^!^Sabia2019 looked at the association between cardiovascular health at age 50 and the risk of subsequent dementia in ~8,000 individuals enrolled in the Whitehall II study. In this analysis, the timescale was **calendar date**, with the starting date being the date of clinical examination at age 50.
+5) @Sabia2019 looked at the association between cardiovascular health at age 50 and the risk of subsequent dementia in ~8,000 individuals enrolled in the Whitehall II study. In this analysis, the timescale was **calendar date**, with the starting date being the date of clinical examination at age 50.
 
 # Censoring and Truncation
 
-Figure \@ref(fig:tenobs) is an important tool, particularly for exploratory data analysis. However, for now, we will generalize this figure to depict two key concepts: **censoring** and **truncation**. These concepts are illustrated in Figure \@ref(fig:censtrunc), showing a line diagram corresponding to Figure \@ref(fig:tenobs), but with six distinct scenarios.
+Figure \ref{fig:tenobs} is an important tool, particularly for exploratory data analysis. However, for now, we will generalize this figure to depict two key concepts: **censoring** and **truncation**. These concepts are illustrated in Figure \ref{fig:censtrunc}, showing a line diagram corresponding to Figure \ref{fig:tenobs}, but with six distinct scenarios.
 
 ```{r censtrunc, out.width="12cm", out.height="20cm", fig.fullwidth = TRUE, fig.align = "center", fig.cap="Six observations in a hypothetical study depicting censoring and truncation (left, right, and interval for both).",echo=F}
 knitr::include_graphics("../figures/2021_11_23-figure2_cens_trunc.png")
 ```
 
-The first three observations in Figure \@ref(fig:censtrunc) depict right, left, and interval censoring, respectively. The last three observations depict right, left, and interval truncation.^[Interval censoring and interval truncation are often referred to as double censoring and double truncation.]
+The first three observations in Figure \ref{fig:censtrunc} depict right, left, and interval censoring, respectively. The last three observations depict right, left, and interval truncation.^[Interval censoring and interval truncation are often referred to as double censoring and double truncation.]
 
-**Right Censoring** (ID = 1 in Figure \@ref(fig:censtrunc)): occurs when an individual is enrolled in the study, but we don't know whether the individual has had an event of interest or not. This type of censoring often occurs because either an enrolled individual leaves the study (withdrawal), or the study ends (administrative censoring). This distinction is sometimes referred to as "Type I" versus "Type II" censoring. It is an important one, which will come up several times in the class. Right censoring is often said to be the most common type of censoring. Generally, when we use the word "censoring" in this class, we are referring to right censoring.
+**Right Censoring** (ID = 1 in Figure \ref{fig:censtrunc}: occurs when an individual is enrolled in the study, but we don't know whether the individual has had an event of interest or not. This type of censoring often occurs because either an enrolled individual leaves the study (withdrawal), or the study ends (administrative censoring). This distinction is sometimes referred to as "Type I" versus "Type II" censoring. It is an important one, which will come up several times in the class. Right censoring is often said to be the most common type of censoring. Generally, when we use the word "censoring" in this class, we are referring to right censoring.
 
-**Left Censoring** (ID = 2 in Figure \@ref(fig:censtrunc)): occurs when an individual is enrolled in the study, and we know has experienced an event of interest (and we know which event it is), but we have no information on *when* the event occurred. I believe this to be the most common type of censoring, due to the fact that most often, we collect data on whether an event occurred or not during the course of our study, and not on the exact timing of events. Thus, outcomes in a typical cohort study that do not have information on the timing of events are left censored.
+**Left Censoring** (ID = 2 in Figure \ref{fig:censtrunc}: occurs when an individual is enrolled in the study, and we know has experienced an event of interest (and we know which event it is), but we have no information on *when* the event occurred. I believe this to be the most common type of censoring, due to the fact that most often, we collect data on whether an event occurred or not during the course of our study, and not on the exact timing of events. Thus, outcomes in a typical cohort study that do not have information on the timing of events are left censored.
 
-**Interval Censoring** (ID = 3 in Figure \@ref(fig:censtrunc)): occurs when an individual is enrolled in the study, and we know has experienced an event of interest (and we know which event it is), but we only know that the event occurred in a bounded *interval*, with the bounds occurring after the study start date and before the study end date.
+**Interval Censoring** (ID = 3 in Figure \ref{fig:censtrunc}: occurs when an individual is enrolled in the study, and we know has experienced an event of interest (and we know which event it is), but we only know that the event occurred in a bounded *interval*, with the bounds occurring after the study start date and before the study end date.
 
 :::{.rmdnote data-latex="{tip}"}
 
@@ -173,7 +174,7 @@ __Technical Note__:
 
 :::
 
-**Right Truncation** (ID = 4 in Figure \@ref(fig:censtrunc)): occurs when an individual is NOT enrolled in the study because the event happened after a particular date. One example is in ^!^Medley1987, who studied time from exposure to HIV contaminated blood or blood products and the development of AIDS. Data were collected retrospectively from individuals with confirmed AIDS diagnosis. The number of individuals who were exposed to HIV contaminated blood or blood products that had not yet developed AIDS was not known. In this study, only those individuals who developed AIDS by the time the study was enrolling could be identified for inclusion, which resulted in right truncated data.
+**Right Truncation** (ID = 4 in Figure \ref{fig:censtrunc}): occurs when an individual is NOT enrolled in the study because the event happened after a particular date. One example is in @Medley1987, who studied time from exposure to HIV contaminated blood or blood products and the development of AIDS. Data were collected retrospectively from individuals with confirmed AIDS diagnosis. The number of individuals who were exposed to HIV contaminated blood or blood products that had not yet developed AIDS was not known. In this study, only those individuals who developed AIDS by the time the study was enrolling could be identified for inclusion, which resulted in right truncated data.
 
 :::{.rmdnote data-latex="{note}"}
 
@@ -184,9 +185,9 @@ __Study Note__:
 :::
 
 
-**Left Truncation** (ID = 5 in Figure \@ref(fig:censtrunc)): occurs when an individual is NOT enrolled in the study because the event happened before a particular date. This type of truncation is common in studies of spontaneous abortion. For example, ^!^Waller1998 examined the relation between prenatal exposure to trihalomethanes in drinking water (a by product of chlorination) and spontaneous abortion. Women were recruited from prenatal care clinics. However, spontaneous abortion tends to be more common early in pregnancy (and can often be confused with normal menstruation). Thus, it is likely that many spontaneous abortions were missed because they occurred before enrollment began, resulting in left truncated data.
+**Left Truncation** (ID = 5 in Figure \ref{fig:censtrunc}: occurs when an individual is NOT enrolled in the study because the event happened before a particular date. This type of truncation is common in studies of spontaneous abortion. For example, @Waller1998 examined the relation between prenatal exposure to trihalomethanes in drinking water (a by product of chlorination) and spontaneous abortion. Women were recruited from prenatal care clinics. However, spontaneous abortion tends to be more common early in pregnancy (and can often be confused with normal menstruation). Thus, it is likely that many spontaneous abortions were missed because they occurred before enrollment began, resulting in left truncated data.
 
-**Interval Truncation** (ID = 6 in Figure \@ref(fig:censtrunc)): occurs when an individual is NOT enrolled in the study because the event happened between two dates. Interval truncation occurs in studies of, for example, autopsy confirmed neurodegenerative diseases (ND). On the one hand, diagnosing ND is difficult, and studies tend to focus on the occurrence of disease in older populations. Thus, individuals who experience ND early tend not to be included in these studies. On the other hand, because autopsy confirmation is required for inclusion in the study, individuals who survive past the study start date are also not included. This example, as well as methods to address interval truncation, are discussed in ^!^Rennert2018. 
+**Interval Truncation** (ID = 6 in Figure \ref{fig:censtrunc}): occurs when an individual is NOT enrolled in the study because the event happened between two dates. Interval truncation occurs in studies of, for example, autopsy confirmed neurodegenerative diseases (ND). On the one hand, diagnosing ND is difficult, and studies tend to focus on the occurrence of disease in older populations. Thus, individuals who experience ND early tend not to be included in these studies. On the other hand, because autopsy confirmation is required for inclusion in the study, individuals who survive past the study start date are also not included. This example, as well as methods to address interval truncation, are discussed in @Rennert2018. 
 
 There are some important takeaways from these definitions and examples: 
 
@@ -216,9 +217,9 @@ cohort %>%
   knitr::kable(., caption="Synthetic Data", digits = 2)
 ```
 
-These are the same data displayed in Figure \@ref(fig:tenobs).
+These are the same data displayed in Figure \ref{fig:tenobs}.
 
-We are going to focus here on risk. Risk is a central parameter in cohort studies [^!^Cole2015], and is often specified as the "probability of an event during a specified period of time." [^!^Rothman2008]^[It's useful to separate the linguistic connotations of the word "risk" from its mathematical definition, which can sometimes lead to confusion. For example, one might define the "risk of live birth". Linguistically, "risk" connotes something bad, whereas in scenarios in reproductive epidemiology successful live birth is good. Here, we will be using the word "risk" in its strictly mathematical sense. In practice, I will often use "probability" instead of risk to avoid this potential dissonance.] For now, let's evaluate the risk without looking at the role that the exposure plays in influencing the outcome. This is akin to a "no intervention" or "no treatment" scenario, by which we mean that we want to compute the risk of the outcome that we actually observed--i.e., the risk under the natural settings in the study. Importantly, this is **not** the risk if everyone's exposure were set to zero. It's the risk that would be observed if we did nothing. This is sometimes referred to as the **natural course** risk [^!^Rudolph2021].
+We are going to focus here on risk. Risk is a central parameter in cohort studies [@Cole2015], and is often specified as the "probability of an event during a specified period of time." [@Rothman2008]^[It's useful to separate the linguistic connotations of the word "risk" from its mathematical definition, which can sometimes lead to confusion. For example, one might define the "risk of live birth". Linguistically, "risk" connotes something bad, whereas in scenarios in reproductive epidemiology successful live birth is good. Here, we will be using the word "risk" in its strictly mathematical sense. In practice, I will often use "probability" instead of risk to avoid this potential dissonance.] For now, let's evaluate the risk without looking at the role that the exposure plays in influencing the outcome. This is akin to a "no intervention" or "no treatment" scenario, by which we mean that we want to compute the risk of the outcome that we actually observed--i.e., the risk under the natural settings in the study. Importantly, this is **not** the risk if everyone's exposure were set to zero. It's the risk that would be observed if we did nothing. This is sometimes referred to as the **natural course** risk [@Rudolph2021].
 
 :::{.rmdnote data-latex="{tip}"}
 
@@ -242,15 +243,15 @@ The risk and survival functions are complements to one another. Both equations a
 
 The risk function^[ The cumulative risk function, or cumulative distribution function, i.e., CDF] is a fundamental function in epidemiologic analyses specificaly, and data science more generally, for several reasons:
 
-1) It is the most complete summary available of a random variable of interest ^!^Wasserman2004 (p21). Statistically speaking, there is no other function that provides more information about a random variable of interest.^[ In the context of this class, and most epidemiologic analyses, the random variable of interest will be a time-to-event outcome, but this need not be the case. One can define a CDF for any continuous random variable of interest.]
+1) It is the most complete summary available of a random variable of interest @Wasserman2004 (p21). Statistically speaking, there is no other function that provides more information about a random variable of interest.^[ In the context of this class, and most epidemiologic analyses, the random variable of interest will be a time-to-event outcome, but this need not be the case. One can define a CDF for any continuous random variable of interest.]
 
-2) All other measures of effect or occurrence can be defined as a function of the CDF. The risk, rate, odds, and hazards, which are commonly used to analyse epidemiologic data, can all be derived from the CDF ^!^Klein2003.
+2) All other measures of effect or occurrence can be defined as a function of the CDF. The risk, rate, odds, and hazards, which are commonly used to analyse epidemiologic data, can all be derived from the CDF @Klein2005.
 
-3) It is among the most intuitive measures of occurrence available. There is a lot of literature now on how poorly humans reason with quantitive or probabalistic summaries ^!^Kahneman2011 (thinking fast and slow), ^!^Gilovich2002 (heuristics and biases), ^!^Taleb2001 (fooled by randomness). Measures such as the odds ratio or hazard ratio add an additional layer of complexity when reasoning with quantitative summaries ^!^Hernan2010 (hazards of hazard ratios) ^!^Greenland1987 (interpretation and choice) ^!^Kaufman2010 (marginalia) ^!^Kaufman2010 (decomposing with alot of supposing). Thus, focusing on risk has benefits in terms of keeping things simple.
+3) It is among the most intuitive measures of occurrence available. There is a lot of literature now on how poorly humans reason with quantitive or probabalistic summaries @Kahneman2011, @Gilovich2002, @Taleb2007. Measures such as the odds ratio or hazard ratio add an additional layer of complexity [@Hernan2010, @Greenland1987, @Kaufman2010, @Kaufman2010]. Thus, focusing on risk has benefits in terms of keeping things simple.
 
 For these reasons, we focus on risk extensively in this course.
 
-We can compute the cumulative risk function $F(t)$ in several ways. Consider the synthetic data in Table 1, but imagine that instead of "outcome = Withdrawal" for ID 4, they had "outcome = Event". If this were the case, one could simply compute the risk function by calculating the average number of events in the first, second, third, fourth, and fifth years on study.^[This **only** works in a simple setting where there is only a single event type, no censoring, and no left truncation. Because this is very unlikely the approach we are using here is only for demonstration.] The denominator for this risk is everyone in the sample. For example, using the ten observations from the synthetic data in Table \@ref(tab:synthdat), we have:
+We can compute the cumulative risk function $F(t)$ in several ways. Consider the synthetic data in Table 1, but imagine that instead of "outcome = Withdrawal" for ID 4, they had "outcome = Event". If this were the case, one could simply compute the risk function by calculating the average number of events in the first, second, third, fourth, and fifth years on study.^[This **only** works in a simple setting where there is only a single event type, no censoring, and no left truncation. Because this is very unlikely the approach we are using here is only for demonstration.] The denominator for this risk is everyone in the sample. For example, using the ten observations from the synthetic data in Table \ref{tab:synthdat}, we have:
 
 \begin{align*}
 \text{Year 1: } & \sfrac{4}{10} = .4 \\
@@ -308,16 +309,16 @@ It's important to note here that the KM and CIF estimators will estimate the sam
 
 # Kaplan-Meier Estimator
 
-The first estimator is the Kaplan-Meier (KM) approach. This approach should be used in a setting where you have a single time-to-event outcome of interest (e.g., all cause mortality).^[Some might dispute this. We'll find out why when we cover cause-specific and sub-distribution risks.] It can also "handle" right censoring and left-truncation.
+The first estimator is the Kaplan-Meier (KM) approach. This approach should be used in a setting where you have a single time-to-event outcome of interest (e.g., all cause mortality). It can also "handle" right censoring and left-truncation.
 
 The KM estimator for the survival curve is the product, taken over the ordered set of distinct event times, of the complement of the number of events divided by the number at risk:
 
 $$ \hat{S}(t) = \prod_{k \in t_k \leq t} (1 - d_k/n_k) $$
-where $d_k$ is the number of events, and $n_k$ is the number at risk, both at time $k = t_k$ [^!^Cole2020]. Here, $n_k = \sum_{i = 1}^n I(t_k \leq T_i)$, which is the number of individuals in the risk-set at time $t_k$. Taking the complement of this estimator gives us a KM estimator for the cumulative distribution function.
+where $d_k$ is the number of events, and $n_k$ is the number at risk, both at time $k = t_k$ [@Cole2020]. Here, $n_k = \sum_{i = 1}^n I(t_k \leq T_i)$, which is the number of individuals in the risk-set at time $t_k$. Taking the complement of this estimator gives us a KM estimator for the cumulative distribution function.
 
-To implement the KM estimator in R, we need to use the `survival` package, which includes the `Surv()` and the `survfit()` functions. We will use the data in Table \@ref(tab:synthdat), and we have to set up the data in so the `Surv()` and `survfit()` functions work as we want them to.
+To implement the KM estimator in R, we need to use the `survival` package, which includes the `Surv()` and the `survfit()` functions. We will use the data in Table ZZZ3, and we have to set up the data in so the `Surv()` and `survfit()` functions work as we want them to.
 
-The key issue we need to address is the following: in Table \@ref(tab:synthdat), we use the number "2" to denote Type I right censoring, and the number "0" to denote Type II right censoring. However, the functions in `R` do not distinguish between Type I and Type II censoring. We need set all these observation's (ID = 4, 8, 9, 10) outcome to the same value. We'll pick the number "0":
+The key issue we need to address is the following: in Table ZZZ3, we use the number "2" to denote Type I right censoring, and the number "0" to denote Type II right censoring. However, the functions in `R` do not distinguish between Type I and Type II censoring. We need set all these observation's (ID = 4, 8, 9, 10) outcome to the same value. We'll pick the number "0":
 
 ```{r}
 
@@ -358,7 +359,7 @@ ggsave("../figures/2021_12_06-KM_Example.png",
 knitr::include_graphics("../figures/2021_12_06-KM_Example.png")
 ```
 
-The CDF curve generated by the above code is presented in Figure \@ref(fig:KMcuminc) in the margin.
+The CDF curve generated by the above code is presented in Figure ZZZ4 in the margin.
 
 It's important to clarify here that left truncation and right censoring are so common in time-to-event analyses, that the `survfit` function in `R` handles them by default. The way these are handled is through the coding/selection of the start time (for left truncation) and the outcome (for censoring). 
 
@@ -383,7 +384,7 @@ The explanation for this higher than expected risk is the censored observation (
 
 A similar phenomenon occurs for left truncation. In effect, the "extended" KM estimator imputes the risks for the "ghosts" that were truncated, on the basis of the observed but delayed entries into the cohort. 
 
-Both the re-distribution of censored risks and imputing of ghost risks is a "hidden imputation" that is not often recognized with the KM estimator ^!^Cole2020.
+Both the re-distribution of censored risks and imputing of ghost risks is a "hidden imputation" that is not often recognized with the KM estimator @Cole2020.
 
 :::
 
@@ -408,7 +409,5 @@ Both the re-distribution of censored risks and imputing of ghost risks is a "hid
 - The Kaplan-Meier estimator is a useful tool for quantifying cumulative risk or survival when there is a single outcome, with observations potentially subject to right censoring or left truncation. When there is more than one outcome of interest (e.g., competing events) other estimators should be considered.
 
 \newpage
-
-
 
 # References
