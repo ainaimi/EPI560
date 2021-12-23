@@ -388,6 +388,10 @@ Both the re-distribution of censored risks and imputing of ghost risks is a "hid
 
 :::
 
+# Competing Events
+
+
+
 # Takeaways
 
 - Well defined cohorts are fundamental to clear and accurate interpretation of any result, particularly risk. To completely define a cohort, we need to clearly define a start or origin time, and a stop time. In the case of a closed cohort, without a well defined start and stop time, we would not be able to decisively state whether a given person should be in or has left the cohort.

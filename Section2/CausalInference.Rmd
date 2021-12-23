@@ -24,7 +24,7 @@ output:
 
 ```{r setup, include=FALSE}
 library(knitr)
-opts_chunk$set(tidy.opts=list(width.cutoff=60),tidy=TRUE)
+opts_chunk$set(tidy.opts=list(width.cutoff=40),tidy=TRUE)
 
 packages <- c( "data.table","tidyverse","ggplot2","ggExtra","formatR",
                "gridExtra","skimr","here","Hmisc","RColorBrewer","gmm")
@@ -54,31 +54,6 @@ theme_set(thm)
 
 \newpage
 \onehalfspacing
-
-- Risk Under Treatment
-- Risk Under Competing Events
-- 
-
-\newpage
-\noindent {\Large \bf Outline}
-\vskip .25cm
-\noindent \underline{Causal Inference}
-\begin{itemize}
-  \item Correlation and Causation
-  \item Introduction to Causal Inference
-  \item Complex Longitudinal Data
-  \item Potential Outcomes Notation
-  \item Estimand, Estimator, Estimate
-   \item Identifiability of the Average Treatment Effect
-  \begin{itemize}
-      \item[a.] Counterfactual Consistency
-      \item[b.] No Interference
-      \item[c.] Excheangability
-      \item[d.] Correct Model Specification
-      \item[e.] Positivity
-  \end{itemize}
-  \item Non-identifiability: Bounding Effects
-\end{itemize}
 
 \newpage
 \onehalfspacing
@@ -184,7 +159,7 @@ There are many other estimands that can be defined, including the local average 
 The estimand is the object we want to estimate. The **estimator** is an equation that allows us to use our data to quantify the estimand. Suppose, for example, we were explicitly interested in quantifying the causal risk difference for the relation between smoking and 5 year CVD risk. To do this, we **have to** start by quantifying the associational risk difference, but there are many ways to do this (e.g., ordinary least squares, maximum likelihood, or the method of moments).
 
 To be specific, let's simulate some hypothetical data on the relation between smoking and CVD. Let's look at ordinary least squares, maximum likelihood, the generalized method of moments, and augmented inverse probability weighting (AIPW) as estimators:
-```{r, echo=T,fig.star=T,tidy=F,highlight=T}
+```{r, echo=T,fig.star=T,tidy=F,highlight=T,warning=F,message=F}
 remotes::install_github("yqzhong7/AIPW")
 library(AIPW)
 
@@ -238,10 +213,65 @@ set.seed(123)
 n<-1e6;confounder<-rbinom(n,1,.5)
 smoking<-rbinom(n,1,expit(-2+log(2)*confounder))
 CVD<-rbinom(n,1,.1+.05*smoking+.05*confounder)
+python_data <- data.frame(cbind(CVD,smoking,confounder))
+python_data_x <- data.frame(cbind(smoking,confounder))
+python_data_y <- data.frame(CVD)
 pC<-round(mean(confounder),3)
 ols_RD<-round(coef(lm(CVD~smoking+confounder)),4)
 ```
-In our simple setting with 1 million observations, ordinary least squares, maximum likelihood, the generalized method of moments, and AIPW yield the same associational risk difference (as expected) even though they are (for some, completely) different **estimators**.^[A slightly deeper dive into these concepts can be found in Naimi and Whitcomb (2020) Estimating Risk Ratios and Risk Differences Using Regression. Am J Epidemiol. 189(6):508-10] 
+
+
+Let's try to fit the same estimators using python:
+
+```{r, echo=T,tidy=F,highlight=T,warning=F,message=F}
+## Need to install reticulate package to use python in R
+install.packages("reticulate",repos='http://lib.stat.cmu.edu/R/CRAN',dependencies=T)
+library(reticulate)
+
+## need to tell R where python is
+use_python("/usr/local/bin/python3")
+```
+
+Now we can run python directly from within RMarkdown:
+
+```{python, echo=T,tidy=F,highlight=T,warning=F,message=F}
+import statsmodels.api as sm
+import pandas as pd
+from zepid.causal.doublyrobust import AIPTW
+
+# defining the variables and data frames
+x = r.python_data_x
+y = r.python_data_y
+
+# adding the constant term for the ols, glm, and gmm functions
+x = sm.add_constant(x)
+
+# fitting the ols and glm models
+result_OLS = sm.OLS(y, x).fit()
+result_GLM1 = sm.GLM(y, x, family=sm.families.Poisson(sm.families.links.identity())).fit()
+result_GLM2 = sm.GLM(y, x, family=sm.families.Binomial(sm.families.links.identity())).fit()
+
+# no gmm
+
+# fitting the aipw estimator (NB: key difference in contrast to R code above is that we are 
+# not using super learner here, nor are we using cross fitting)
+df = r.python_data
+aipw = AIPTW(df,exposure='smoking', outcome='CVD')
+# Treatment model
+aipw.exposure_model('confounder')
+# Outcome model
+aipw.outcome_model('smoking + confounder')
+# Calculating estimate
+aipw.fit()
+
+# printing the results from each method
+print(result_OLS.params)
+print(result_GLM1.params)
+print(result_GLM2.params)
+aipw.summary()
+```
+
+In our simple setting with 1 million observations, ordinary least squares, maximum likelihood, the generalized method of moments, and AIPW yield the same associational risk difference (as expected) even though they are (for some, completely) different **estimators**.^[A slightly deeper dive into these concepts can be found in Naimi and Whitcomb (2020) Estimating Risk Ratios and Risk Differences Using Regression. Am J Epidemiol. 189(6):508-10]
 
 It is important to note that these estimates are not causal risk differences, but are associational. Even the results from the AIPW estimator are *associational*, even though this method is much more clearly motivated from within the causal inference framework [@Robins1994]. To interpret them as causal effects, we have to evaluate whether we can **identify** the effect we want to estimate. We discuss this next.
 
@@ -354,7 +384,7 @@ $$E(Y^x \mid C=0)P(C=0) + E(Y^x \mid C=1)P(C=1) + \ldots + E(Y^x \mid C=k)P(C=k)
 More generally (i.e., for a more general case where $C$ is not necessarily categorical), we can rewrite this as:
 
 $$E(E(Y^x \mid C))$$
-where the outer expectation is taken over $C$, and the inner expectation is taken over $Y^x$. This equation is sometimes referred to as the law of iterated expectations, the law of total expectation, or the tower rule. It plays an important role in causal inference, such as when we define the g computation estimator. It is useful to understand, both when reading the technical literature, as well as when implementing variations of the technique in software. 
+where the outer expectation is taken over $C$, and the inner expectation is taken over $Y^x$. This equation is sometimes referred to as the law of iterated expectations, the law of total expectation, or the tower rule. It plays an important role in causal inference, such as when we define (and sometimes implement) the g computation estimator. It is useful to understand, both when reading the technical literature, as well as when implementing variations of the technique in software. 
 :::
 
 ## Correct Model Specification
@@ -367,9 +397,9 @@ $$ E(Y \mid X, C_1, C_2, C_3, C_4) = \beta_0 + \beta_1 X + \beta_2 C_1 + \beta_3
 
 The problem with using the above model is that it makes fairly strong assumptions about exactly *how* $Y$ is related to $X$ and the confounders. Specifically, this equation states (or assumes) that the conditional mean of $Y$ is related to all the variables additively such that a single unit increase in each variable results in a linear and independent increase in the mean of $Y$. 
 
-However, consider that for five variables there can be a total of 
+However, consider that for five variables there can be a total of^[This equation is referred to as the binomial coefficient.] 
 
-$$ {5 \choose 2} = 10 $$
+$$ {5 \choose 2} = \frac{5!}{2!(5-2)!}= 10 $$
 two-way interactions that we could potentially add to the model. Additionally, we could include higher-order interactions, for example, a three-way interaction between $X$, $C_1$, and $C_3$. In fact, if we considered higher order interactions, for this simple model would could have up to:
 
 $$ 2^5 - 5 - 1 = 26$$
@@ -381,7 +411,7 @@ There are other ways in which this correct model specification assumption can be
 
 __Study Question__:
 
-|               Please come up with a clearly articulated connection between correct model misspecification and exchangeability? Can you convince yourself beyond a doubt that these two things are related?
+|               Can you come up with a clearly articulated connection between correct model misspecification and exchangeability?
 
 :::
 
@@ -404,22 +434,24 @@ In this case, the probability in the denominator is zero. And because $1/0$ is u
 
 When faced with positivity violations, one should either re-define the estimand so that there is no positivity violation, choose an estimator that is less affected by positivity problems, or both [@Petersen2012].^[Keep in mind: one cannot simply "avoid" positivity. In an extreme setting, nonpositivity means that those who were exposed in the sample are very unlikely to be exposed (and vice versa). In such a situation, it may not make sense to estimate the average treatment effect, because there is a subset of the population who may never realistically be exposed (or unexposed). In this case, g estimation, cTMLE, and the parametric g formula can actually estimate parameters that differ slightly or profoundly from the ATE.] Alternative estimands include the effect of treatment on the treated or untreated, various types of stochastic effects [including incremental propensity score effects [@Kennedy2019], which do not require that positivity hold [@Naimi2021]], or "blip" effects that are encoded in structural nested models, and can be estimated with g estimation. One can also use collaborative targeted minimum loss-based estimation,^[there is mounting evidence that standard (not collaborative) TMLE is very sensitive to positivity violations.] and the parametric g formula, which tend to be less sensitive to positivity violations [@Cole2013;@Porter2011;@Ju2017]. 
 
-There are a number of different procedures one can use to evaluate whether positivity is a problem. Among these include propensity score overlap plots. Consider again our simple simulation example:
-```{r, echo=T,fig.star=T,tidy=F,highlight=T}
+There are a number of different procedures one can use to evaluate whether positivity is a problem. Among these include propensity score overlap plots. Consider again our data from the last section. To get the propensity score for a binary exposure, we can fit a logistic model to the exposure data, conditional on all confounders:
+```{r, echo=F, message=F, warning=F}
 
 # define the expit function
-expit<-function(z){1/(1+exp(-(z)))}
-set.seed(123)
-n<-1e3
-confounder<-rbinom(n,1,.5)
-smoking<-rbinom(n,1,expit(-2+log(2)*confounder))
+cohort <- read_csv("../data/example_dat1.csv") %>%
+  mutate(ID=rank(time,ties="random"),
+         exposure=X,
+         confounder=L,
+         start_time=start,
+         stop_time=time) %>% 
+  select(ID,exposure,confounder,start_time,stop_time,outcome)
+
 ```
+```{r, echo=T}
 
-To get the propensity score for a binary exposure, we can fit a logistic model to the exposure data, conditional on all confounders:
+head(cohort)
 
-```{r, echo=T,fig.star=T,tidy=F,highlight=T}
-
-propensity_score <- glm(smoking ~ confounder,family=binomial(link="logit"))$fitted.values
+propensity_score <- glm(exposure ~ confounder, data=cohort, family=binomial(link="logit"))$fitted.values
 
 ## by appending a "$fitted.values" to the end
 ## of this glm function, we are 
@@ -430,21 +462,25 @@ propensity_score <- glm(smoking ~ confounder,family=binomial(link="logit"))$fitt
 
 We can now plot the density of this propensity score for each exposure group to see how they overlap:
 
-```{r, echo=T,fig.star=T,tidy=F,highlight=T}
+```{r, echo=T}
 
-plot_data <- data.frame(propensity_score,smoking=as.factor(smoking))
+exposure <- cohort$exposure
+
+plot_data <- data.frame(propensity_score,exposure=as.factor(exposure))
 
 library(ggplot2)
-ggplot(data=plot_data) + geom_density(aes(x=propensity_score,group=smoking,color=smoking)) + xlim(0,.5)
+ggplot(data=plot_data) + 
+  geom_density(aes(x=propensity_score,group=exposure,color=exposure)) + 
+  xlim(0,1)
 
 ```
 
 Since the mass of the density for the exposed occurs in the same place as the density mass for the unexposed, positivity does not seem to be much of an issue here. Another way to check positivity is to create stabilized inverse probability weights^[We won't get too deep into the theory for / definition of weights here. But here is the code for creating stabilized weights and evaluating positivity.] and look at their descriptive statistics. 
 
-```{r, echo=T,fig.star=T,tidy=F,highlight=T}
+```{r, echo=T}
 
-sw <- (mean(smoking)/propensity_score)*smoking + 
-  ((1 - mean(smoking))/(1 - propensity_score))*(1 - smoking)
+sw <- (mean(exposure)/propensity_score)*exposure + 
+  ((1 - mean(exposure))/(1 - propensity_score))*(1 - exposure)
 
 summary(sw)
 
@@ -468,7 +504,46 @@ knitr::include_graphics("../figures/bounds.png")
 
 The bottom right panel in Figure 4 tells us something critically important that we often fail to consider when conducting an empirical study. Without assumptions, data alone rarely provide much information about a causal effect of interest. Rather, when we interpret that a point estimate from a statistical model as a causal effect estimate, we are invoking a whole set of assumptions (knowingly or unknowingly) that allow us to get a single number out of our data, rather than a range of possible values. One of these sets of assumptions we discussed here (counterfactual consistency, no interference, positivity, exchangeability, correct model specification). Nonparametric bounds such as those depicted in the study by @Cole2019 help us understand exactly how much support our data provide for an effect of interest, and how much of our results rely on unverifiable assumptions.
 
-# Competing Events
+```{r, echo=T, message=F, warning=F}
+
+# 1. Bound 1, the worst case for treated.
+# 2. Alter the observed record.
+# If a = 1 and Δ = 0 then: a1 = a, Δ1 = 1, t1 = t.
+# Else if a = 0 and Δ = 0 then: a1 = a, Δ1 = 0, t1 = τ.
+# Else if Δ = 1 then: a1 = a, Δ1 = Δ, t1 = t.
+# 3. Augment data with a doppelganger.
+# If a = 1 then: a1 = 1 – a, Δ1 = 0, t1 = τ.
+# Else if a = 0 then: a1 = 1 – a, Δ1 = 1, t1 = ε.
+# 4. Adapt above steps for bound 2, the worst case for
+# untreated.
+# 5. Compute standard estimators for risk to the altered and
+# augmented data
+
+head(cohort)
+
+nonparametric_bounds <- function(){
+  
+  tau <- max(stop_time)
+  
+  if(exposure==1&delta==0){
+    a1 <- exposure
+    delta1 <- 1
+    t1 <- stop_time
+  } else if(exposure==0&delta==0){
+    a1 <- exposure
+    delta1 <- 0
+    t1 <- tau
+  } else if(delta==1){
+    a1 <- exposure
+    delta1 <- delta
+    t1 <- stop_time
+  }
+  
+  
+}
+
+```
+
 
 # Takeaway
 

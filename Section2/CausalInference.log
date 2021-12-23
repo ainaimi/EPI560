@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999993 (TeX Live 2021) (preloaded format=xelatex 2021.12.7)  17 DEC 2021 16:10
+This is XeTeX, Version 3.141592653-2.6-0.999993 (TeX Live 2021) (preloaded format=xelatex 2021.12.7)  20 DEC 2021 22:57
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1342,11 +1342,10 @@ Requested font "[RobotoCondensed-Regular.otf]/OT:script=latn;language=dflt;+pnum
 [1
 
 ]
-
-Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 390.
-
-[2]
+LaTeX Font Info:    Font shape `TU/RobotoCondensed(0)/m/it' will be
+(Font)              scaled to size 10.0pt on input line 392.
+Requested font "[RobotoCondensed-Italic.otf]/OT:script=latn;language=dflt;+pnum;+lnum;mapping=tex-text;" at 10.0pt
+ -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/google/roboto/RobotoCondensed-Italic.otf
 Requested font "[lmroman7-regular]:mapping=tex-text;" at 7.0pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/public/lm/lmroman7-regular.otf
 Requested font "[lmroman5-regular]:mapping=tex-text;" at 5.0pt
@@ -1375,21 +1374,12 @@ Requested font "msbm7" at 7.0pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm7.tfm
 Requested font "msbm5" at 5.0pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm5.tfm
-
-Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 413.
-
-[3]
-LaTeX Font Info:    Font shape `TU/RobotoCondensed(0)/m/it' will be
-(Font)              scaled to size 10.0pt on input line 424.
-Requested font "[RobotoCondensed-Italic.otf]/OT:script=latn;language=dflt;+pnum;+lnum;mapping=tex-text;" at 10.0pt
- -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/google/roboto/RobotoCondensed-Italic.otf
 LaTeX Font Info:    Font shape `TU/RobotoCondensed(0)/m/n' will be
-(Font)              scaled to size 7.0pt on input line 426.
+(Font)              scaled to size 7.0pt on input line 394.
 Requested font "[RobotoCondensed-Regular.otf]/OT:script=latn;language=dflt;+pnum;+lnum;mapping=tex-text;" at 7.0pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/google/roboto/RobotoCondensed-Regular.otf
 LaTeX Font Info:    Font shape `TU/RobotoCondensed(0)/m/n' will be
-(Font)              scaled to size 8.0pt on input line 426.
+(Font)              scaled to size 8.0pt on input line 394.
 Requested font "[RobotoCondensed-Regular.otf]/OT:script=latn;language=dflt;+pnum;+lnum;mapping=tex-text;" at 8.0pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/google/roboto/RobotoCondensed-Regular.otf
 Requested font "[lmroman8-regular]:mapping=tex-text;" at 8.0pt
@@ -1421,58 +1411,58 @@ Requested font "cmr8" at 8.0pt
 Requested font "cmr6" at 6.0pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/tfm/public/cm/cmr6.tfm
 LaTeX Font Info:    Font shape `TU/RobotoCondensed(0)/m/n' will be
-(Font)              scaled to size 6.0pt on input line 426.
+(Font)              scaled to size 6.0pt on input line 394.
 Requested font "[RobotoCondensed-Regular.otf]/OT:script=latn;language=dflt;+pnum;+lnum;mapping=tex-text;" at 6.0pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/google/roboto/RobotoCondensed-Regular.otf
 LaTeX Font Info:    Font shape `TU/RobotoCondensed(0)/m/n' will be
-(Font)              scaled to size 5.0pt on input line 426.
+(Font)              scaled to size 5.0pt on input line 394.
 Requested font "[RobotoCondensed-Regular.otf]/OT:script=latn;language=dflt;+pnum;+lnum;mapping=tex-text;" at 5.0pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/google/roboto/RobotoCondensed-Regular.otf
 
-LaTeX Warning: Marginpar on page 4 moved.
+LaTeX Warning: Marginpar on page 2 moved.
 
+
+LaTeX Warning: Marginpar on page 2 moved.
+
+
+Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
+This message occurred on input line 397.
+
+[2]
+
+LaTeX Warning: Marginpar on page 3 moved.
+
+
+LaTeX Warning: Marginpar on page 3 moved.
+
+
+LaTeX Warning: Marginpar on page 3 moved.
+
+
+LaTeX Warning: Marginpar on page 3 moved.
+
+
+Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
+This message occurred on input line 414.
+
+[3]
 
 LaTeX Warning: Marginpar on page 4 moved.
 
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 429.
+This message occurred on input line 445.
 
 [4]
-
-LaTeX Warning: Marginpar on page 5 moved.
-
-
-LaTeX Warning: Marginpar on page 5 moved.
-
-
-LaTeX Warning: Marginpar on page 5 moved.
-
-
-LaTeX Warning: Marginpar on page 5 moved.
-
-
-Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 446.
-
-[5]
-
-LaTeX Warning: Marginpar on page 6 moved.
-
-
-Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 477.
-
-[6]
 File: ../figures/tip.png Graphic file (type bmp)
 <../figures/tip.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 486--487
+Underfull \hbox (badness 10000) in paragraph at lines 454--455
 []              \TU/RobotoCondensed(0)/m/n/10 Suppose you collect data from a single person and find that they are exposed. Can you interpret the
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 486--487
+Underfull \hbox (badness 10000) in paragraph at lines 454--455
 \TU/RobotoCondensed(0)/m/n/10 outcome you observe to be the potential outcome that would have been observed had they been exposed?
  []
 
@@ -1480,151 +1470,322 @@ File: ../figures/tip.png Graphic file (type bmp)
 <../figures/tip.png>
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 501.
+This message occurred on input line 469.
+
+[5]
+
+LaTeX Warning: Marginpar on page 6 moved.
+
+
+LaTeX Warning: Marginpar on page 6 moved.
+
+
+Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
+This message occurred on input line 484.
+
+[6]
+
+Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
+This message occurred on input line 494.
 
 [7]
-
-LaTeX Warning: Marginpar on page 8 moved.
-
-
-LaTeX Warning: Marginpar on page 8 moved.
-
-
-Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 516.
-
-[8]
-
-Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 526.
-
-[9]
 Requested font "[lmmono10-regular]:" at 10.0pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/public/lm/lmmono10-regular.otf
-
-Overfull \hbox (249.75pt too wide) in paragraph at lines 542--542
-[]\TU/lmtt/m/n/10 ## Skipping install of 'AIPW' from a github remote, the SHA1 (3903609b) has not changed since last install. 
- []
-
-
-Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 546.
-
-[10]
-Overfull \hbox (13.5pt too wide) in paragraph at lines 555--555
-[]\TU/lmtt/m/n/10 ## Installing package into '/usr/local/lib/R/4.1/site-library' 
- []
-
-
-Overfull \hbox (13.5pt too wide) in paragraph at lines 560--560
-[]\TU/lmtt/m/n/10 ## Warning: dependencies 'genefilter', 'sva' are not available 
- []
-
-
-Overfull \hbox (328.5pt too wide) in paragraph at lines 564--564
-[]\TU/lmtt/m/n/10 ## also installing the dependencies 'gert', 'rJava', 'bartMachineJARs', 'usethis', 'bartMachine', 'devtools', 'extraTrees' 
- []
-
-
-Overfull \hbox (66.0pt too wide) in paragraph at lines 568--568
-[]\TU/lmtt/m/n/10 ## Warning in install.packages("SuperLearner", repos = "https://cloud.r- 
- []
-
-
-Overfull \hbox (81.75pt too wide) in paragraph at lines 569--569
-[]\TU/lmtt/m/n/10 ## project.org/", : installation of package 'gert' had non-zero exit status[] 
- []
-
-
-Overfull \hbox (66.0pt too wide) in paragraph at lines 573--573
-[]\TU/lmtt/m/n/10 ## Warning in install.packages("SuperLearner", repos = "https://cloud.r- 
- []
-
-
-Overfull \hbox (87.0pt too wide) in paragraph at lines 574--574
-[]\TU/lmtt/m/n/10 ## project.org/", : installation of package 'rJava' had non-zero exit status[] 
- []
-
-
-Overfull \hbox (66.0pt too wide) in paragraph at lines 578--578
-[]\TU/lmtt/m/n/10 ## Warning in install.packages("SuperLearner", repos = "https://cloud.r- 
- []
-
-
-Overfull \hbox (102.75pt too wide) in paragraph at lines 579--579
-[]\TU/lmtt/m/n/10 ## project.org/", : installation of package 'bartMachineJARs' had non-zero exit[] 
- []
-
-
-Overfull \hbox (66.0pt too wide) in paragraph at lines 584--584
-[]\TU/lmtt/m/n/10 ## Warning in install.packages("SuperLearner", repos = "https://cloud.r- 
- []
-
-
-Overfull \hbox (97.5pt too wide) in paragraph at lines 585--585
-[]\TU/lmtt/m/n/10 ## project.org/", : installation of package 'usethis' had non-zero exit status[] 
- []
-
-
-Overfull \hbox (66.0pt too wide) in paragraph at lines 589--589
-[]\TU/lmtt/m/n/10 ## Warning in install.packages("SuperLearner", repos = "https://cloud.r- 
- []
-
-
-Overfull \hbox (113.25pt too wide) in paragraph at lines 590--590
-[]\TU/lmtt/m/n/10 ## project.org/", : installation of package 'extraTrees' had non-zero exit status[] 
- []
-
-
-Overfull \hbox (66.0pt too wide) in paragraph at lines 594--594
-[]\TU/lmtt/m/n/10 ## Warning in install.packages("SuperLearner", repos = "https://cloud.r- 
- []
-
-
-Overfull \hbox (118.5pt too wide) in paragraph at lines 595--595
-[]\TU/lmtt/m/n/10 ## project.org/", : installation of package 'bartMachine' had non-zero exit status[] 
- []
-
-
-Overfull \hbox (66.0pt too wide) in paragraph at lines 599--599
-[]\TU/lmtt/m/n/10 ## Warning in install.packages("SuperLearner", repos = "https://cloud.r- 
- []
-
-
-Overfull \hbox (102.75pt too wide) in paragraph at lines 600--600
-[]\TU/lmtt/m/n/10 ## project.org/", : installation of package 'devtools' had non-zero exit status[] 
- []
-
-
-Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 627.
-
-[11]
 Requested font "[lmmono10-italic]:" at 10.0pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/public/lm/lmmono10-italic.otf
 LaTeX Font Info:    Font shape `TU/lmtt/bx/n' in size <10> not available
-(Font)              Font shape `TU/lmtt/b/n' tried instead on input line 655.
+(Font)              Font shape `TU/lmtt/b/n' tried instead on input line 512.
 Requested font "[lmmonolt10-bold]:" at 10.0pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/public/lm/lmmonolt10-bold.otf
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
+This message occurred on input line 522.
+
+[8]
+
+Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
+This message occurred on input line 569.
+
+[9]
+
+Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
+This message occurred on input line 627.
+
+[10]
+
+LaTeX Font Warning: Font shape `TU/lmtt/bx/it' in size <10> not available
+(Font)              Font shape `TU/lmtt/b/sl' tried instead on input line 637.
+
+Requested font "[lmmonolt10-boldoblique]:" at 10.0pt
+ -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/public/lm/lmmonolt10-boldoblique.otf
+
+Overfull \hbox (664.5pt too wide) in paragraph at lines 668--668
+[]\TU/lmtt/m/n/10 ## /usr/local/lib/python3.9/site-packages/statsmodels/genmod/generalized_linear_model.py:298: DomainWarning: The identity link function does not respect the domain of the Poisson family. 
+ []
+
+
+Overfull \hbox (55.5pt too wide) in paragraph at lines 669--669
+[]\TU/lmtt/m/n/10 ##   warnings.warn((f"The {type(family.link).__name__} link function "[] 
+ []
+
+
+Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
 This message occurred on input line 681.
 
-[12]
+[11]
+Overfull \hbox (669.75pt too wide) in paragraph at lines 684--684
+[]\TU/lmtt/m/n/10 ## /usr/local/lib/python3.9/site-packages/statsmodels/genmod/generalized_linear_model.py:298: DomainWarning: The identity link function does not respect the domain of the Binomial family. 
+ []
+
+
+Overfull \hbox (55.5pt too wide) in paragraph at lines 685--685
+[]\TU/lmtt/m/n/10 ##   warnings.warn((f"The {type(family.link).__name__} link function "[] 
+ []
+
+
+Overfull \hbox (113.25pt too wide) in paragraph at lines 699--699
+[]\TU/lmtt/m/n/10 ## ============================================================================== 
+ []
+
+
+Overfull \hbox (18.75pt too wide) in paragraph at lines 701--701
+[]\TU/lmtt/m/n/10 ##                  Generalized Linear Model Regression Results[] 
+ []
+
+
+Overfull \hbox (113.25pt too wide) in paragraph at lines 702--702
+[]\TU/lmtt/m/n/10 ## ==============================================================================[] 
+ []
+
+
+Overfull \hbox (113.25pt too wide) in paragraph at lines 703--703
+[]\TU/lmtt/m/n/10 ## Dep. Variable:                smoking   No. Observations:              1000000[] 
+ []
+
+
+Overfull \hbox (113.25pt too wide) in paragraph at lines 704--704
+[]\TU/lmtt/m/n/10 ## Model:                            GLM   Df Residuals:                   999998[] 
+ []
+
+
+Overfull \hbox (113.25pt too wide) in paragraph at lines 705--705
+[]\TU/lmtt/m/n/10 ## Model Family:                Binomial   Df Model:                            1[] 
+ []
+
+
+Overfull \hbox (113.25pt too wide) in paragraph at lines 706--706
+[]\TU/lmtt/m/n/10 ## Link Function:                  Logit   Scale:                          1.0000[] 
+ []
+
+
+Overfull \hbox (113.25pt too wide) in paragraph at lines 707--707
+[]\TU/lmtt/m/n/10 ## Method:                          IRLS   Log-Likelihood:            -4.4115e+05[] 
+ []
+
+
+Overfull \hbox (113.25pt too wide) in paragraph at lines 708--708
+[]\TU/lmtt/m/n/10 ## Date:                Mon, 20 Dec 2021   Deviance:                   8.8229e+05[] 
+ []
+
+
+Overfull \hbox (113.25pt too wide) in paragraph at lines 709--709
+[]\TU/lmtt/m/n/10 ## Time:                        22:57:16   Pearson chi2:                 1.00e+06[] 
+ []
+
+
+Overfull \hbox (113.25pt too wide) in paragraph at lines 710--710
+[]\TU/lmtt/m/n/10 ## No. Iterations:                     5   Pseudo R-squ. (CS):            0.01657[] 
+ []
+
+
+Overfull \hbox (113.25pt too wide) in paragraph at lines 712--712
+[]\TU/lmtt/m/n/10 ## ==============================================================================[] 
+ []
+
+
+Overfull \hbox (113.25pt too wide) in paragraph at lines 713--713
+[]\TU/lmtt/m/n/10 ##                  coef    std err          z      P>|z|      [0.025      0.975][] 
+ []
+
+
+Overfull \hbox (113.25pt too wide) in paragraph at lines 714--714
+[]\TU/lmtt/m/n/10 ## ------------------------------------------------------------------------------[] 
+ []
+
+
+Overfull \hbox (113.25pt too wide) in paragraph at lines 715--715
+[]\TU/lmtt/m/n/10 ## Intercept     -2.0089      0.004   -459.096      0.000      -2.017      -2.000[] 
+ []
+
+
+Overfull \hbox (113.25pt too wide) in paragraph at lines 716--716
+[]\TU/lmtt/m/n/10 ## confounder     0.7073      0.006    126.906      0.000       0.696       0.718[] 
+ []
+
+
+Overfull \hbox (113.25pt too wide) in paragraph at lines 717--717
+[]\TU/lmtt/m/n/10 ## ==============================================================================[] 
+ []
+
+
+Overfull \hbox (113.25pt too wide) in paragraph at lines 718--718
+[]\TU/lmtt/m/n/10 ## ==============================================================================[] 
+ []
+
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 755.
+This message occurred on input line 718.
+
+[12]
+Overfull \hbox (113.25pt too wide) in paragraph at lines 729--729
+[]\TU/lmtt/m/n/10 ## ============================================================================== 
+ []
+
+
+Overfull \hbox (18.75pt too wide) in paragraph at lines 731--731
+[]\TU/lmtt/m/n/10 ##                  Generalized Linear Model Regression Results[] 
+ []
+
+
+Overfull \hbox (113.25pt too wide) in paragraph at lines 732--732
+[]\TU/lmtt/m/n/10 ## ==============================================================================[] 
+ []
+
+
+Overfull \hbox (113.25pt too wide) in paragraph at lines 733--733
+[]\TU/lmtt/m/n/10 ## Dep. Variable:                    CVD   No. Observations:              1000000[] 
+ []
+
+
+Overfull \hbox (113.25pt too wide) in paragraph at lines 734--734
+[]\TU/lmtt/m/n/10 ## Model:                            GLM   Df Residuals:                   999997[] 
+ []
+
+
+Overfull \hbox (113.25pt too wide) in paragraph at lines 735--735
+[]\TU/lmtt/m/n/10 ## Model Family:                Binomial   Df Model:                            2[] 
+ []
+
+
+Overfull \hbox (113.25pt too wide) in paragraph at lines 736--736
+[]\TU/lmtt/m/n/10 ## Link Function:                  Logit   Scale:                          1.0000[] 
+ []
+
+
+Overfull \hbox (113.25pt too wide) in paragraph at lines 737--737
+[]\TU/lmtt/m/n/10 ## Method:                          IRLS   Log-Likelihood:            -3.8764e+05[] 
+ []
+
+
+Overfull \hbox (113.25pt too wide) in paragraph at lines 738--738
+[]\TU/lmtt/m/n/10 ## Date:                Mon, 20 Dec 2021   Deviance:                   7.7529e+05[] 
+ []
+
+
+Overfull \hbox (113.25pt too wide) in paragraph at lines 739--739
+[]\TU/lmtt/m/n/10 ## Time:                        22:57:17   Pearson chi2:                 9.99e+05[] 
+ []
+
+
+Overfull \hbox (113.25pt too wide) in paragraph at lines 740--740
+[]\TU/lmtt/m/n/10 ## No. Iterations:                     5   Pseudo R-squ. (CS):           0.009028[] 
+ []
+
+
+Overfull \hbox (113.25pt too wide) in paragraph at lines 742--742
+[]\TU/lmtt/m/n/10 ## ==============================================================================[] 
+ []
+
+
+Overfull \hbox (113.25pt too wide) in paragraph at lines 743--743
+[]\TU/lmtt/m/n/10 ##                  coef    std err          z      P>|z|      [0.025      0.975][] 
+ []
+
+
+Overfull \hbox (113.25pt too wide) in paragraph at lines 744--744
+[]\TU/lmtt/m/n/10 ## ------------------------------------------------------------------------------[] 
+ []
+
+
+Overfull \hbox (113.25pt too wide) in paragraph at lines 745--745
+[]\TU/lmtt/m/n/10 ## Intercept     -2.1853      0.005   -462.114      0.000      -2.195      -2.176[] 
+ []
+
+
+Overfull \hbox (113.25pt too wide) in paragraph at lines 746--746
+[]\TU/lmtt/m/n/10 ## smoking        0.3756      0.007     51.626      0.000       0.361       0.390[] 
+ []
+
+
+Overfull \hbox (113.25pt too wide) in paragraph at lines 747--747
+[]\TU/lmtt/m/n/10 ## confounder     0.4420      0.006     72.992      0.000       0.430       0.454[] 
+ []
+
+
+Overfull \hbox (113.25pt too wide) in paragraph at lines 748--748
+[]\TU/lmtt/m/n/10 ## ==============================================================================[] 
+ []
+
+
+Overfull \hbox (113.25pt too wide) in paragraph at lines 749--749
+[]\TU/lmtt/m/n/10 ## ==============================================================================[] 
+ []
+
+
+Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
+This message occurred on input line 768.
 
 [13]
+Overfull \hbox (71.25pt too wide) in paragraph at lines 801--801
+[]\TU/lmtt/m/n/10 ## ====================================================================== 
+ []
 
-LaTeX Warning: Marginpar on page 14 moved.
+
+Overfull \hbox (18.75pt too wide) in paragraph at lines 802--802
+[]\TU/lmtt/m/n/10 ##           Augmented Inverse Probability of Treatment Weights[] 
+ []
+
+
+Overfull \hbox (71.25pt too wide) in paragraph at lines 803--803
+[]\TU/lmtt/m/n/10 ## ======================================================================[] 
+ []
+
+
+Overfull \hbox (34.5pt too wide) in paragraph at lines 804--804
+[]\TU/lmtt/m/n/10 ## Treatment:        smoking         No. Observations:     1000000[] 
+ []
+
+
+Overfull \hbox (3.0pt too wide) in paragraph at lines 805--805
+[]\TU/lmtt/m/n/10 ## Outcome:          CVD             No. Missing Outcome:  0[] 
+ []
+
+
+Overfull \hbox (18.75pt too wide) in paragraph at lines 806--806
+[]\TU/lmtt/m/n/10 ## g-Model:          Logistic        Missing Model:        None[] 
+ []
+
+
+Overfull \hbox (71.25pt too wide) in paragraph at lines 808--808
+[]\TU/lmtt/m/n/10 ## ======================================================================[] 
+ []
+
+
+Overfull \hbox (71.25pt too wide) in paragraph at lines 811--811
+[]\TU/lmtt/m/n/10 ## ----------------------------------------------------------------------[] 
+ []
+
+
+Overfull \hbox (71.25pt too wide) in paragraph at lines 814--814
+[]\TU/lmtt/m/n/10 ## ======================================================================[] 
+ []
 
 
 LaTeX Warning: Marginpar on page 14 moved.
 
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 788.
+This message occurred on input line 820.
 
 [14]
 
@@ -1633,112 +1794,118 @@ LaTeX Warning: Marginpar on page 15 moved.
 
 LaTeX Warning: Marginpar on page 15 moved.
 
-LaTeX Font Info:    Font shape `TU/RobotoCondensed(0)/b/n' will be
-(Font)              scaled to size 8.0pt on input line 802.
-Requested font "[RobotoCondensed-Bold.otf]/OT:script=latn;language=dflt;+pnum;+lnum;mapping=tex-text;" at 8.0pt
- -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/google/roboto/RobotoCondensed-Bold.otf
-
-LaTeX Warning: Marginpar on page 15 moved.
-
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 803.
+This message occurred on input line 837.
 
 [15]
 
 LaTeX Warning: Marginpar on page 16 moved.
 
+LaTeX Font Info:    Font shape `TU/RobotoCondensed(0)/b/n' will be
+(Font)              scaled to size 8.0pt on input line 843.
+Requested font "[RobotoCondensed-Bold.otf]/OT:script=latn;language=dflt;+pnum;+lnum;mapping=tex-text;" at 8.0pt
+ -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/google/roboto/RobotoCondensed-Bold.otf
+
+LaTeX Warning: Marginpar on page 16 moved.
+
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 815.
+This message occurred on input line 850.
 
 [16]
 
 LaTeX Warning: Marginpar on page 17 moved.
 
 
+LaTeX Warning: Marginpar on page 17 moved.
+
+
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 834.
+This message occurred on input line 867.
 
 [17]
 File: ../figures/tip.png Graphic file (type bmp)
 <../figures/tip.png>
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 869.
+This message occurred on input line 902.
 
 [18]
+
+Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
+This message occurred on input line 920.
+
+[19]
 File: ../figures/tip.png Graphic file (type bmp)
 <../figures/tip.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 886--887
+Underfull \hbox (badness 10000) in paragraph at lines 927--928
 []              \TU/RobotoCondensed(0)/m/n/10 Consider the marginalization step in the identification equation above. This step involves transitioning
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 891--893
+Underfull \hbox (badness 10000) in paragraph at lines 932--934
 \TU/RobotoCondensed(0)/m/n/10 where the outer expectation is taken over $\OML/cmm/m/it/10 C$\TU/RobotoCondensed(0)/m/n/10 , and the inner expectation is taken over $\OML/cmm/m/it/10 Y[]$\TU/RobotoCondensed(0)/m/n/10 . This equation is
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 891--893
+Underfull \hbox (badness 10000) in paragraph at lines 932--934
 \TU/RobotoCondensed(0)/m/n/10 sometimes referred to as the law of iterated expectations, the law of total expectation, or the tower rule. It
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 891--893
-\TU/RobotoCondensed(0)/m/n/10 plays an important role in causal inference, such as when we define the g computation estimator. It is use-
+Underfull \hbox (badness 10000) in paragraph at lines 932--934
+\TU/RobotoCondensed(0)/m/n/10 plays an important role in causal inference, such as when we define (and sometimes implement) the g com-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 891--893
-\TU/RobotoCondensed(0)/m/n/10 ful to understand, both when reading the technical literature, as well as when implementing variations of the
+Underfull \hbox (badness 10000) in paragraph at lines 932--934
+\TU/RobotoCondensed(0)/m/n/10 putation estimator. It is useful to understand, both when reading the technical literature, as well as when
  []
 
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 894.
-
-[19]
-
-LaTeX Warning: Marginpar on page 20 moved.
-
-
-Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 906.
+This message occurred on input line 943.
 
 [20]
 
-Package amsmath Warning: Foreign command \atopwithdelims;
-(amsmath)                \frac or \genfrac should be used instead
-(amsmath)                 on input line 909.
-
-File: ../figures/tip.png Graphic file (type bmp)
-<../figures/tip.png>
-
-Underfull \hbox (badness 10000) in paragraph at lines 921--922
-[]              \TU/RobotoCondensed(0)/m/n/10 Please come up with a clearly articulated connection between correct model misspecification and
- []
+LaTeX Warning: Marginpar on page 21 moved.
 
 
 LaTeX Warning: Marginpar on page 21 moved.
 
 
+Package amsmath Warning: Foreign command \atopwithdelims;
+(amsmath)                \frac or \genfrac should be used instead
+(amsmath)                 on input line 950.
+
+
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 929.
+This message occurred on input line 957.
 
 [21]
+File: ../figures/tip.png Graphic file (type bmp)
+<../figures/tip.png>
+
+Underfull \hbox (badness 10000) in paragraph at lines 962--963
+[]              \TU/RobotoCondensed(0)/m/n/10 Can you come up with a clearly articulated connection between correct model misspecification and
+ []
+
 
 LaTeX Warning: Marginpar on page 22 moved.
 
 
-Overfull \hbox (11.87964pt too wide) detected at line 934
+LaTeX Warning: Marginpar on page 22 moved.
+
+
+Overfull \hbox (11.87964pt too wide) detected at line 975
 \OML/cmm/m/it/10 E\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 Y[]\OT1/cmr/m/n/10 ) = \OML/cmm/m/it/10 E\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 Y \OMS/cmsy/m/n/10 j \OML/cmm/m/it/10 X \OT1/cmr/m/n/10 = 1\OML/cmm/m/it/10 ; C \OT1/cmr/m/n/10 = 1)\OML/cmm/m/it/10 P\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 C \OT1/cmr/m/n/10 = 1) + \OML/cmm/m/it/10 E\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 Y \OMS/cmsy/m/n/10 j \OML/cmm/m/it/10 X \OT1/cmr/m/n/10 = 1\OML/cmm/m/it/10 ; C \OT1/cmr/m/n/10 = 0)\OML/cmm/m/it/10 P\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 C \OT1/cmr/m/n/10 = 0)
  []
 
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 942.
+This message occurred on input line 980.
 
 [22]
 
@@ -1751,87 +1918,86 @@ LaTeX Warning: Marginpar on page 23 moved.
 LaTeX Warning: Marginpar on page 23 moved.
 
 
-LaTeX Font Warning: Font shape `TU/lmtt/bx/it' in size <10> not available
-(Font)              Font shape `TU/lmtt/b/sl' tried instead on input line 964.
-
-Requested font "[lmmonolt10-boldoblique]:" at 10.0pt
- -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/public/lm/lmmonolt10-boldoblique.otf
-
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 973.
+This message occurred on input line 996.
 
 [23]
-File: CausalInference_files/figure-latex/unnamed-chunk-5-1.pdf Graphic file (type pdf)
-<use CausalInference_files/figure-latex/unnamed-chunk-5-1.pdf>
+File: CausalInference_files/figure-latex/unnamed-chunk-7-1.pdf Graphic file (type pdf)
+<use CausalInference_files/figure-latex/unnamed-chunk-7-1.pdf>
 
-Overfull \hbox (12.01027pt too wide) in paragraph at lines 982--983
+Overfull \hbox (12.01027pt too wide) in paragraph at lines 1035--1036
 [][]  
  []
 
 
-LaTeX Warning: Marginpar on page 24 moved.
-
-
-Overfull \hbox (3.39197pt too wide) in paragraph at lines 1003--1003
-|[]\TU/RobotoCondensed(0)/b/n/12 Non-Identifiability and Partial Identifiability: Bounding Effects| 
- []
-
-
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 1006.
+This message occurred on input line 1037.
 
 [24]
 
 LaTeX Warning: Marginpar on page 25 moved.
 
+
+Overfull \hbox (3.39197pt too wide) in paragraph at lines 1057--1057
+|[]\TU/RobotoCondensed(0)/b/n/12 Non-Identifiability and Partial Identifiability: Bounding Effects| 
+ []
+
+
+Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
+This message occurred on input line 1060.
+
+[25]
+
+LaTeX Warning: Marginpar on page 26 moved.
+
 File: ../figures/bounds.png Graphic file (type bmp)
 <../figures/bounds.png>
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 1023.
+This message occurred on input line 1077.
 
-[25]
-
-Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 1023.
-
-[26] (./CausalInference.bbl
+[26]
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 43.
+This message occurred on input line 1077.
 
-[27]
+[27] (./CausalInference.bbl
+
+Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
+This message occurred on input line 38.
+
+[28]
 LaTeX Font Info:    Font shape `TU/RobotoCondensed(0)/m/sc' will be
 (Font)              scaled to size 10.0pt on input line 94.
 Requested font "[RobotoCondensed-Regular.otf]/OT:script=latn;language=dflt;+pnum;+lnum;+smcp;mapping=tex-text;" at 10.0pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/google/roboto/RobotoCondensed-Regular.otf
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 114.
-
-[28]
-
-Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 184.
+This message occurred on input line 106.
 
 [29]
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 257.
+This message occurred on input line 175.
 
-[30])
+[30]
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 1035.
+This message occurred on input line 251.
 
-[31] (./CausalInference.aux) ) 
+[31])
+
+Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
+This message occurred on input line 1104.
+
+[32] (./CausalInference.aux) ) 
 Here is how much of TeX's memory you used:
- 30961 strings out of 478256
- 654365 string characters out of 5855373
- 1033974 words of memory out of 5000000
- 50867 multiletter control sequences out of 15000+600000
+ 30959 strings out of 478256
+ 654342 string characters out of 5855373
+ 1033934 words of memory out of 5000000
+ 50865 multiletter control sequences out of 15000+600000
  409055 words of font info for 94 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  108i,14n,112p,1473b,587s stack positions out of 5000i,500n,10000p,200000b,80000s
 
-Output written on CausalInference.pdf (31 pages).
+Output written on CausalInference.pdf (32 pages).
