@@ -77,7 +77,6 @@ hexes <- function(x) {
 ]
 
 ---
-# Some Items
 
 .font150[
 
@@ -88,13 +87,14 @@ hexes <- function(x) {
 * Course Grading
 
 * Some Course Considerations
-
    - COVID `r emo::ji("sick")`
    - My Philosophy `r emo::ji("thinking")`
    - How to Learn `r emo::ji("student")`
    - Asking Questions `r emo::ji("raised")`
 
 * R and General Coding Considerations
+
+* Course Logistics
 
 ]
 
@@ -186,7 +186,12 @@ Interim Executive Associate Dean for Academic Affairs
 
 --
 
-.font150[* My goal: promote a non-judgemental environment in which students comfortably **reveal their** strengths and **limitations**.]
+.font150[
+
+* My goal: promote a non-judgemental environment in which students comfortably **reveal their** strengths and **limitations**.
+   * Have you ever thought about different types of questions you can ask?: [A Typology of Questions](http://www.phy.ilstu.edu/pte/311content/questioning/typology.html)
+
+]
 
 --
 
@@ -293,3 +298,19 @@ install.packages(package,
 
 
 ```
+
+---
+# Course Logistics
+
+.font150[
+
+Email: 
+
+* [ashley.naimi@emory.edu](mailto:ashley.naimi@emory.edu)
+* [leah.m.moubadder@emory.edu](mailto:leah.m.moubadder@emory.edu)
+* [aniruddha.deshpande@emory.edu](mailto:aniruddha.deshpande@emory.edu)
+
+
+Join the Slack Channel: [click here](https://join.slack.com/t/slack-pb59049/shared_invite/zt-111cbcfrk-XNc6ioj2Em7gUytAhJNhOw)
+
+]
