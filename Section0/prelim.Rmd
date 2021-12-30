@@ -72,6 +72,10 @@ hexes <- function(x) {
 ---
 .font200[
 
+&nbsp;
+&nbsp;
+&nbsp;
+
 .center[![](https://media.giphy.com/media/l0HlHFRbmaZtBRhXG/giphy.gif)]
 
 ]
@@ -122,17 +126,17 @@ knitr::include_graphics('./images/aniheadshot.jpeg')
 
 # Course Content
 
-* Six Topics:
+Five Sections:
 
-   - Cohorts and Survival: Cohort and Timescale, Censoring and Truncation, Risk Functions, Kaplan-Meier Estimator, Competing Risks.
+   1. Cohorts and Survival: Cohort and Timescale, Censoring and Truncation, Risk Functions, Kaplan-Meier Estimator, Competing Risks.
    
-   - Causal Inference: Correlation and Causation; Introduction to Causal Inference; Potential Outcomes; Estimand, Estimator, Estimate; Identifiability.
+   2. Causal Inference: Correlation and Causation; Introduction to Causal Inference; Potential Outcomes; Estimand, Estimator, Estimate; Identifiability.
    
-   - Regression Modeling: Standard Regression, Marginal versus Conditional Models, Distributions and Link Functions, Marginal Standardization.
+   3. Regression Modeling: Standard and Survival Regression, Marginal versus Conditional Models, Distributions and Link Functions, Marginal Standardization.
    
-   - Time-Varying Data & g Methods: Longitudinal Data, Complex Longitudinal Data, Time Varying Confounding, Inverse Probability Weighting, G Computation, G Estimation of SNMMs.
+   4. Time-Varying Data & g Methods: Longitudinal Data, Complex Longitudinal Data, Time Varying Confounding, Inverse Probability Weighting, G Computation, G Estimation of SNMMs (and maybe SNAFTs).
    
-   - Bootstrapping, p Values, and Confidence Intervals
+   5. Bootstrapping, p Values, and Confidence Intervals
 
 ---
 # Course Grading
@@ -152,15 +156,14 @@ knitr::include_graphics('./images/aniheadshot.jpeg')
 
 .font150[
 
+&nbsp;
+&nbsp;
+&nbsp;
+
 .center[![](https://media.giphy.com/media/6R2mLi910HL4VXFwOG/giphy.gif)]
 
 ]
 
-.font150[
-
-.center[Will Follow Emory and RSPH Guidelines]
-
-]
 
 ---
 # Course Considerations: COVID
@@ -181,6 +184,14 @@ Interim Executive Associate Dean for Academic Affairs
 # Course Considerations: My Teaching Philosophy
 
 
+&nbsp;
+&nbsp;
+&nbsp;
+
+.center[![](https://imgs.xkcd.com/comics/confounding_variables.png)]
+
+---
+# Course Considerations: My Teaching Philosophy
 
 .font150[* My goal: discourage adversarialism and foster mutualism in the classroom.]
 
@@ -208,7 +219,7 @@ Interim Executive Associate Dean for Academic Affairs
 ---
 # Course Considerations: How to Learn
 
-.font150[Generally, there are incredible tools at your disposal that can facilitate learning. Some of my favorites:]
+.font150[Generally, there are incredible tools at your disposal that can facilitate learning. Two of my favorites:]
 
 .pull-left[
 
@@ -298,6 +309,8 @@ install.packages(package,
 
 
 ```
+
+If you run into trouble ...
 
 ---
 # Course Logistics

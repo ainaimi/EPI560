@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999993 (TeX Live 2021) (preloaded format=xelatex 2021.12.7)  20 DEC 2021 22:31
+This is XeTeX, Version 3.141592653-2.6-0.999993 (TeX Live 2021) (preloaded format=xelatex 2021.12.28)  29 DEC 2021 22:39
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -82,7 +82,7 @@ Package: ifluatex 2019/10/25 v1.5 ifluatex legacy package. Use iftex instead.
 ) (/Users/AIN8/Library/TinyTeX/texmf-dist/tex/latex/fontspec/fontspec.sty (/Users/AIN8/Library/TinyTeX/texmf-dist/tex/latex/l3packages/xparse/xparse.sty (/Users/AIN8/Library/TinyTeX/texmf-dist/tex/latex/l3kernel/expl3.sty
 Package: expl3 2021-11-22 L3 programming layer (loader) 
 (/Users/AIN8/Library/TinyTeX/texmf-dist/tex/latex/l3backend/l3backend-xetex.def
-File: l3backend-xetex.def 2021-10-18 L3 backend support: XeTeX
+File: l3backend-xetex.def 2021-12-14 L3 backend support: XeTeX
 (|extractbb --version)
 \c__kernel_sys_dvipdfmx_version_int=\count194
 \l__color_backend_stack_int=\count195
@@ -255,7 +255,7 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 28
 )
 \Hy@SectionHShift=\skip54
 ) (/Users/AIN8/Library/TinyTeX/texmf-dist/tex/latex/ragged2e/ragged2e.sty
-Package: ragged2e 2021/02/05 v3.0 ragged2e Package
+Package: ragged2e 2021/12/15 v3.1 ragged2e Package
 \CenteringLeftskip=\skip55
 \RaggedLeftLeftskip=\skip56
 \RaggedRightLeftskip=\skip57
@@ -531,7 +531,7 @@ Package: nicefrac 1998/08/04 v0.9b Nice fractions
 \L@UnitsRaiseTextstyle=\skip97
 \L@UnitsRaiseScriptstyle=\skip98
 )) (/Users/AIN8/Library/TinyTeX/texmf-dist/tex/latex/fancyvrb/fancyvrb.sty
-Package: fancyvrb 2021/11/24\nobreakspace {} 4.1a\nobreakspace {}verbatim text (tvz,hv)
+Package: fancyvrb 2021/12/21 4.1b verbatim text (tvz,hv)
 \FV@CodeLineNo=\count322
 \FV@InFile=\read2
 \FV@TabBox=\box107
@@ -915,7 +915,7 @@ Package: multirow 2021/03/15 v2.8 Span multiple rows of a table
 \multirow@dima=\skip106
 \bigstrutjot=\dimen260
 ) (/Users/AIN8/Library/TinyTeX/texmf-dist/tex/latex/tcolorbox/tcolorbox.sty
-Package: tcolorbox 2021/06/14 version 4.51 text color boxes
+Package: tcolorbox 2021/12/20 version 5.0.1 text color boxes
 (/Users/AIN8/Library/TinyTeX/texmf-dist/tex/latex/pgf/basiclayer/pgf.sty (/Users/AIN8/Library/TinyTeX/texmf-dist/tex/latex/pgf/utilities/pgfrcs.sty (/Users/AIN8/Library/TinyTeX/texmf-dist/tex/generic/pgf/utilities/pgfutil-common.tex
 \pgfutil@everybye=\toks33
 \pgfutil@tempdima=\dimen261
@@ -1089,7 +1089,7 @@ Package: bookmark 2020-11-06 v1.29 PDF bookmarks (HO)
 File: bkm-dvipdfm.def 2020-11-06 v1.29 bookmark driver for dvipdfm (HO)
 \BKM@id=\count350
 )) (/Users/AIN8/Library/TinyTeX/texmf-dist/tex/latex/tcolorbox/tcbskins.code.tex
-Library (tcolorbox): 'tcbskins.code.tex' version '4.51'
+Library (tcolorbox): 'tcbskins.code.tex' version '5.0.1'
 (/Users/AIN8/Library/TinyTeX/texmf-dist/tex/latex/pgf/frontendlayer/tikz.sty (/Users/AIN8/Library/TinyTeX/texmf-dist/tex/latex/pgf/utilities/pgffor.sty (/Users/AIN8/Library/TinyTeX/texmf-dist/tex/latex/pgf/utilities/pgfkeys.sty (/Users/AIN8/Library/TinyTeX/texmf-dist/tex/generic/pgf/utilities/pgfkeys.code.tex)) (/Users/AIN8/Library/TinyTeX/texmf-dist/tex/latex/pgf/math/pgfmath.sty (/Users/AIN8/Library/TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmath.code.tex)) (/Users/AIN8/Library/TinyTeX/texmf-dist/tex/generic/pgf/utilities/pgffor.code.tex
 Package: pgffor 2021/05/15 v3.1.9a (3.1.9a)
 (/Users/AIN8/Library/TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmath.code.tex)
@@ -1132,7 +1132,7 @@ File: tikzlibrarytopaths.code.tex 2021/05/15 v3.1.9a (3.1.9a)
 )))
 \tcb@waterbox=\box137
 (/Users/AIN8/Library/TinyTeX/texmf-dist/tex/latex/tcolorbox/tcbskinsjigsaw.code.tex
-Library (tcolorbox): 'tcbskinsjigsaw.code.tex' version '4.51'
+Library (tcolorbox): 'tcbskinsjigsaw.code.tex' version '5.0.1'
 )) (/Users/AIN8/Library/TinyTeX/texmf-dist/tex/latex/eqnarray/eqnarray.sty
 equationarray 1.3 <December 1, 2010>
 Package: eqnarray 
@@ -1738,42 +1738,93 @@ Underfull \hbox (badness 10000) in paragraph at lines 705--706
  []
 
 
+Underfull \hbox (badness 10000) in paragraph at lines 705--706
+\TU/RobotoCondensed(0)/m/n/10 recognized with the KM estimator [][]Cole et al.[][] ([][]2020[][]). Redistribution-to-the-right has particularly important
+ []
+
+
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
 This message occurred on input line 707.
 
 [14]
 
+LaTeX Warning: Marginpar on page 15 moved.
+
+
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 727.
+This message occurred on input line 719.
 
 [15]
 
-Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 736.
+LaTeX Warning: Marginpar on page 16 moved.
 
-[16] (./CohortRiskBasics.bbl
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 77.
+This message occurred on input line 758.
 
-[17])
+[16]
+Requested font "[lmromandemi10-regular]:mapping=tex-text;" at 8.0pt
+ -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/public/lm/lmromandemi10-regular.otf
+Requested font "[lmromandemi10-regular]:mapping=tex-text;" at 6.0pt
+ -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/public/lm/lmromandemi10-regular.otf
+Requested font "[lmromandemi10-regular]:mapping=tex-text;" at 5.0pt
+ -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/public/lm/lmromandemi10-regular.otf
+Requested font "[lmmono8-regular]:" at 8.0pt
+ -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/public/lm/lmmono8-regular.otf
+
+LaTeX Warning: Marginpar on page 17 moved.
+
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 743.
+This message occurred on input line 802.
 
-[18] (./CohortRiskBasics.aux)
+[17]
+Requested font "[lmromandemi10-regular]:mapping=tex-text;" at 10.0pt
+ -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/public/lm/lmromandemi10-regular.otf
+Requested font "[lmromandemi10-regular]:mapping=tex-text;" at 7.0pt
+ -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/public/lm/lmromandemi10-regular.otf
+
+LaTeX Warning: Marginpar on page 18 moved.
+
+File: ../figures/2022_12_29-cum_risk_section1.pdf Graphic file (type pdf)
+<use ../figures/2022_12_29-cum_risk_section1.pdf>
+
+Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
+This message occurred on input line 840.
+
+[18]
+
+Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
+This message occurred on input line 861.
+
+[19]
+
+Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
+This message occurred on input line 863.
+
+[20] (./CohortRiskBasics.bbl
+
+Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
+This message occurred on input line 84.
+
+[21])
+
+Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
+This message occurred on input line 870.
+
+[22] (./CohortRiskBasics.aux)
 
 LaTeX Font Warning: Size substitutions with differences
 (Font)              up to 3.25pt have occurred.
 
  ) 
 Here is how much of TeX's memory you used:
- 30965 strings out of 478256
- 655624 string characters out of 5855373
- 1027051 words of memory out of 5000000
- 50868 multiletter control sequences out of 15000+600000
- 412965 words of font info for 117 fonts, out of 8000000 for 9000
+ 31019 strings out of 478256
+ 657248 string characters out of 5855372
+ 1028255 words of memory out of 5000000
+ 50913 multiletter control sequences out of 15000+600000
+ 413013 words of font info for 123 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 108i,18n,112p,1339b,587s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 108i,18n,112p,1339b,589s stack positions out of 5000i,500n,10000p,200000b,80000s
 
-Output written on CohortRiskBasics.pdf (18 pages).
+Output written on CohortRiskBasics.pdf (22 pages).

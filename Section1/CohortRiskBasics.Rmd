@@ -66,16 +66,16 @@ To completely define a cohort, we need to clearly define a start or origin time,
 
 ```{r, warning=F, message=F, echo=F, include=F}
 
-cohort <- read_csv("../data/example_dat1.csv")
+cohort <- read_csv("../data/section1_cohort.csv")
 
 cohort %>% 
   filter(ID<=10) %>%
-  mutate(ID=rank(time,ties="random"),
-         outcome=if_else(time<5,"Event","No Event"),
+  mutate(ID=rank(stop,ties="random"),
+         outcome=if_else(stop<5,"Event","No Event"),
          outcome=if_else(ID==4,"Withdraw",outcome)) %>% 
   ggplot(.) + 
-  geom_linerange(aes(y=ID,xmin=start,xmax=time)) +
-  geom_point(aes(y=ID,x=time,shape=factor(outcome))) +
+  geom_linerange(aes(y=ID,xmin=start,xmax=stop)) +
+  geom_point(aes(y=ID,x=stop,shape=factor(outcome))) +
   scale_y_continuous(expand=c(0.05,0.05), 
                      breaks=seq(1,10,1)) +
   scale_x_continuous(expand=c(0,0.05)) +
@@ -205,16 +205,15 @@ Let's say we did a study of the effect of some exposure on an outcome of interes
 
 cohort %>% 
   filter(ID<=10) %>%
-  mutate(ID=rank(time,ties="random"),
-         exposure=X,
-         confounder=L,
+  mutate(ID=rank(stop,ties="random"),
          start_time=start,
-         stop_time=time,
-         outcome=if_else(time<5,"Event","No Event"),
+         stop_time=stop,
+         outcome=if_else(stop<5,"Event","No Event"),
          outcome=if_else(ID==4,"Withdrawal",outcome)) %>% 
   arrange(ID) %>% 
   select(ID, exposure, confounder, start_time, stop_time, outcome) %>% 
   knitr::kable(., caption="Synthetic Data", digits = 2)
+
 ```
 
 These are the same data displayed in Figure \ref{fig:tenobs}.
@@ -273,12 +272,10 @@ d1 <- tibble(Year=c(0,1,2,3,4,5), Risk=c(0,.4,.4,.6,.7,.7))
 
 surv_dat <- cohort %>% 
   filter(ID<=10) %>%
-  mutate(ID=rank(time,ties="random"),
-         exposure=X,
-         confounder=L,
+  mutate(ID=rank(stop,ties="random"),
          start_time=start,
-         stop_time=time,
-         outcome=if_else(time<5,1,0))
+         stop_time=stop,
+         outcome=if_else(stop<5,1,0))
 
 example_surv <- survival::survfit(Surv(time=start_time,time2=stop_time,event=outcome)~1,data=surv_dat)
 d2 <- tibble(Year=c(0,example_surv$time),Risk=c(0,1-example_surv$surv))
@@ -303,9 +300,9 @@ knitr::include_graphics("../figures/2021_11_24-CumincExample.png")
 
 The approach we just used to compute the cumulative distribution function above was used to simply illustrate the core idea behind the risk function $F(t)$. This is not the approach one would use in typical settings, because we often have to deal with issues such as right censoring and left truncation.
 
-The next section will be about **how** to estimate the cumulative distribution function for a time-to-event outcome. We will be introduced to two different approaches, first the Kaplan-Meier estimator, and then later (when we cover competing risks) the cumulative incidence function estimator (from !^!Gray1988). We'll also discuss the factors that should lead you to decide choosing one or the other, and go over how to use them in the R programming language. 
+The next section will be about **how** to estimate the cumulative distribution function for a time-to-event outcome. We will be introduced to two different approaches, first the Kaplan-Meier estimator, and then later (when we cover competing risks) the cumulative incidence function estimator (from @Gray1988). We'll also discuss the factors that should lead you to decide choosing one or the other, and go over how to use them in the R programming language. 
 
-It's important to note here that the KM and CIF estimators will estimate the same thing and yield the same results when there are no competing risks present. We will cover what competing risks are, and what happens to these estimators when competing risks are present in later sections.
+It's important to note here that the KM and CIF estimators will estimate the same thing and yield the same results when there are no competing risks present. We will cover what competing risks are, and what happens to these estimators when competing risks are present subsequently.
 
 # Kaplan-Meier Estimator
 
@@ -316,9 +313,9 @@ The KM estimator for the survival curve is the product, taken over the ordered s
 $$ \hat{S}(t) = \prod_{k \in t_k \leq t} (1 - d_k/n_k) $$
 where $d_k$ is the number of events, and $n_k$ is the number at risk, both at time $k = t_k$ [@Cole2020]. Here, $n_k = \sum_{i = 1}^n I(t_k \leq T_i)$, which is the number of individuals in the risk-set at time $t_k$. Taking the complement of this estimator gives us a KM estimator for the cumulative distribution function.
 
-To implement the KM estimator in R, we need to use the `survival` package, which includes the `Surv()` and the `survfit()` functions. We will use the data in Table ZZZ3, and we have to set up the data in so the `Surv()` and `survfit()` functions work as we want them to.
+To implement the KM estimator in R, we need to use the `survival` package, which includes the `Surv()` and the `survfit()` functions. We will use the data in Table \ref{fig:tenobs}, and we have to set up the data in so the `Surv()` and `survfit()` functions work as we want them to.
 
-The key issue we need to address is the following: in Table ZZZ3, we use the number "2" to denote Type I right censoring, and the number "0" to denote Type II right censoring. However, the functions in `R` do not distinguish between Type I and Type II censoring. We need set all these observation's (ID = 4, 8, 9, 10) outcome to the same value. We'll pick the number "0":
+The key issue we need to address is the following: in Table \ref{fig:tenobs}, we use "Withdrawal" to denote Type I right censoring, and the "No Event" to denote Type II right censoring. However, the functions in `R` do not distinguish between Type I and Type II censoring. We need set all these observation's (ID = 4, 8, 9, 10) outcome to the same value. We'll pick the number "0":
 
 ```{r}
 
@@ -359,7 +356,7 @@ ggsave("../figures/2021_12_06-KM_Example.png",
 knitr::include_graphics("../figures/2021_12_06-KM_Example.png")
 ```
 
-The CDF curve generated by the above code is presented in Figure ZZZ4 in the margin.
+The CDF curve generated by the above code is presented in Figure \ref{fig:KMcuminc} in the margin.
 
 It's important to clarify here that left truncation and right censoring are so common in time-to-event analyses, that the `survfit` function in `R` handles them by default. The way these are handled is through the coding/selection of the start time (for left truncation) and the outcome (for censoring). 
 
@@ -384,13 +381,79 @@ The explanation for this higher than expected risk is the censored observation (
 
 A similar phenomenon occurs for left truncation. In effect, the "extended" KM estimator imputes the risks for the "ghosts" that were truncated, on the basis of the observed but delayed entries into the cohort. 
 
-Both the re-distribution of censored risks and imputing of ghost risks is a "hidden imputation" that is not often recognized with the KM estimator @Cole2020.
+Both the re-distribution of censored risks and imputing of ghost risks is a "hidden imputation" that is not often recognized with the KM estimator @Cole2020. Redistribution-to-the-right has particularly important implications when competing risks are present.
 
 :::
 
 # Competing Events
 
+Thus far we've discussed estimating risk under the unique and relatively uncommon scenario where there are only two possible events that can occur in the study: 1) the single event of interest, and 2) right censoring (either due to loss-to-follow-up or administrative censoring). 
 
+This scenario is uncommon because in a typical study, there are several events that occur. For example, when studying cause specific death (e.g., death due to myocardial infarction), it is likely that death from other causes occurs in the sample. When studying preterm birth, it is likely that fetal loss (either due to early pregnancy loss, or stillbirth) occurs in the sample. When studying time to relapse among patients undergoing bone marrow transplants for leukemia, death^[There is a common theme: death is often an important competing event.] from any causes is possible.
+
+When multiple events can occur in a study, the possibility of competing events (or competing risks) arises. **A competing event (or risk) is an event whose occurrence precludes the event of interest from occuring.**
+
+When competing events are possible, one needs to more carefully evaluate exactly what the risk function is quantifying. The fundamental question one must ask is: "what should I do with the events that aren't of primary interest?" One approach, which is the simplest, is to create a **composite endpoint**. Composite endpoints can be created by coding *any* event as an "Event" with a KM or other estimator, even though the research question may be focused on a single component of the composite endpoint.
+
+Unfortunately, while easy, creating composite endpoints to deal with competing events is often unsatisfying and potentially misleading. For example, if the exposure of interest has a large effect on a secondary endpoint, but a very small effect on the event of interest, the exposure effect on the event of interest would be overwhelmed by the effect that is not of primary interest.
+
+To more appropriately handle competing events, we need to introduce two different *versions of risk*. The first is **cause-specific** risk. This is the risk we'd obtain if we prevented competing risks from occurring.^[Be aware that while the language here sounds very much like we're using the potential outcomes framework, we're not. You may have learned of this risk as the "conditional risk" in EPI 545.] We can estimate this risk very simply by censoring the competing risks.
+
+To explore how we obtain estimates of the cause-specific risk function, let's use the cohort dataset (`section1_cohort.csv`). This dataset has 100 observations and six variables.
+
+```{r}
+dim(cohort)
+```
+
+Here are the first six observations from the dataset:
+
+```{r}
+head(cohort)
+```
+
+Notice that the outcome has three different levels:
+
+```{r}
+cohort %>% count(outcome)
+```
+
+Suppose we were primarily interested in the event labeled "outcome = 2", where "outcome = 1" denotes a competing risk, and "outcome = 0" denotes right censoring. To estimate the cause specific risk function for "outcome = 2", we can again use the KM estimator. What needs to be different this time around is that we have to treat as censored those with both "outcome = 0" as well as "outcome = 1". We can do this by creating an indicator^[Note that generally, the *indicator function* refers to a function that takes the value of 1 if the argument of the function is true, and zero otherwise. The function is usually denoted with an "$I()$" or a "$\mathbf{1}()$". In our case, if our outcome was denoted $Y$, the indicator variable we need to estimate the cause specific risk is $I(Y = 2)$ or $\mathbf{1}(Y = 2)$. In `R`, the `as.numeric()` function can serve as an indicator function.] variable for the outcome: 
+
+```{r}
+
+cohort <- cohort %>% mutate(cs_outcome = as.numeric(outcome==2))
+
+```
+
+This new variable converts all competing events to censored observations:
+
+```{r}
+cohort %>% count(cs_outcome)
+```
+
+And we can use this with the KM estimator to obtain an estimate of the cause-specific risk function:
+
+```{r}
+surv_model <- survfit(Surv(time = start, time2 = stop, event = cs_outcome)~1,data=cohort)
+
+plot_dat <- tibble(time=surv_model$time,risk=1-surv_model$surv)
+
+plot1 <- ggplot(plot_dat) + 
+  scale_y_continuous(expand=c(0,0), limits=c(0,1)) + 
+  scale_x_continuous(expand=c(0,0)) + 
+  ylab("Cumulative Risk") +
+  xlab("Time on Study") +
+  geom_step(aes(x=time,y=risk))
+
+ggsave(filename = "../figures/2022_12_29-cum_risk_section1.pdf",
+       plot=plot1)
+```
+
+The above code generates the `surv_model` object, creates a plot using this object with `ggplot`, and saves it to the `figures` folder. We can include the saved figure in our RMarkdown document using the following code:^[One could also use the generic `plot()` function to obtain the KM curve. For example: `plot(surv_model)`. However, it is much easier to modify the figure and adapt it to meet certain submission requirements using ggplot.]:
+
+```{r cs_figure, out.width="10cm", fig.align='center', echo=T}
+knitr::include_graphics("../figures/2022_12_29-cum_risk_section1.pdf")
+```
 
 # Takeaways
 
@@ -407,6 +470,12 @@ Both the re-distribution of censored risks and imputing of ghost risks is a "hid
 - Risk is a central measure in the empirical sciences, and is defined as "the probability of an event during a specified period of time."
 
 - Risk, cumulated over time $T$, is defined as $F(t) = P(T \leq t)$. This equation quantifies the probability (or risk) that the observed failure time $T$ is less than or equal to some arbitrary threshold $t$, where the threshold $t$ is defined over the domain of follow-up.
+
+- Competing risks
+
+- Subdistribution
+
+- Cause Specific
 
 - Survival, cumulated over time $T$, is defined as $S(t) = 1 - F(t) = P(T>t)$. This equation quantifies the probability that the observed failure time $T$ is greater than some arbitrary threshold $t$, where the threshold $t$ is defined over the domain of follow-up (i.e., the probability of surviving past some time).
 

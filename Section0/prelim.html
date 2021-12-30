@@ -4,7 +4,7 @@
     <title>EPI 560: Some Preliminaries</title>
     <meta charset="utf-8" />
     <meta name="author" content="" />
-    <meta name="date" content="2021-12-23" />
+    <meta name="date" content="2021-12-28" />
     <script src="libs/header-attrs-2.11/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
@@ -31,6 +31,10 @@ class: title-slide, left, bottom
 ---
 .font200[
 
+&amp;nbsp;
+&amp;nbsp;
+&amp;nbsp;
+
 .center[![](https://media.giphy.com/media/l0HlHFRbmaZtBRhXG/giphy.gif)]
 
 ]
@@ -46,10 +50,10 @@ class: title-slide, left, bottom
 * Course Grading
 
 * Some Course Considerations
-   - COVID 💊
+   - COVID 🤢
    - My Philosophy 🤔
-   - How to Learn 👩‍🎓
-   - Asking Questions 🙋
+   - How to Learn 👨‍🎓
+   - Asking Questions 🤚
 
 * R and General Coding Considerations
 
@@ -77,17 +81,17 @@ Ani
 
 # Course Content
 
-* Six Topics:
+Five Sections:
 
-   - Cohorts and Survival: Cohort and Timescale, Censoring and Truncation, Risk Functions, Kaplan-Meier Estimator, Competing Risks.
+   1. Cohorts and Survival: Cohort and Timescale, Censoring and Truncation, Risk Functions, Kaplan-Meier Estimator, Competing Risks.
    
-   - Causal Inference: Correlation and Causation; Introduction to Causal Inference; Potential Outcomes; Estimand, Estimator, Estimate; Identifiability.
+   2. Causal Inference: Correlation and Causation; Introduction to Causal Inference; Potential Outcomes; Estimand, Estimator, Estimate; Identifiability.
    
-   - Regression Modeling: Standard Regression, Marginal versus Conditional Models, Distributions and Link Functions, Marginal Standardization.
+   3. Regression Modeling: Standard and Survival Regression, Marginal versus Conditional Models, Distributions and Link Functions, Marginal Standardization.
    
-   - Time-Varying Data &amp; g Methods: Longitudinal Data, Complex Longitudinal Data, Time Varying Confounding, Inverse Probability Weighting, G Computation, G Estimation of SNMMs.
+   4. Time-Varying Data &amp; g Methods: Longitudinal Data, Complex Longitudinal Data, Time Varying Confounding, Inverse Probability Weighting, G Computation, G Estimation of SNMMs (and maybe SNAFTs).
    
-   - Bootstrapping, p Values, and Confidence Intervals
+   5. Bootstrapping, p Values, and Confidence Intervals
 
 ---
 # Course Grading
@@ -107,15 +111,14 @@ Ani
 
 .font150[
 
+&amp;nbsp;
+&amp;nbsp;
+&amp;nbsp;
+
 .center[![](https://media.giphy.com/media/6R2mLi910HL4VXFwOG/giphy.gif)]
 
 ]
 
-.font150[
-
-.center[Will Follow Emory and RSPH Guidelines]
-
-]
 
 ---
 # Course Considerations: COVID
@@ -136,6 +139,14 @@ Interim Executive Associate Dean for Academic Affairs
 # Course Considerations: My Teaching Philosophy
 
 
+&amp;nbsp;
+&amp;nbsp;
+&amp;nbsp;
+
+.center[![](https://imgs.xkcd.com/comics/confounding_variables.png)]
+
+---
+# Course Considerations: My Teaching Philosophy
 
 .font150[* My goal: discourage adversarialism and foster mutualism in the classroom.]
 
@@ -163,7 +174,7 @@ Interim Executive Associate Dean for Academic Affairs
 ---
 # Course Considerations: How to Learn
 
-.font150[Generally, there are incredible tools at your disposal that can facilitate learning. Some of my favorites:]
+.font150[Generally, there are incredible tools at your disposal that can facilitate learning. Two of my favorites:]
 
 .pull-left[
 
@@ -247,6 +258,8 @@ packages &lt;- c("tidyverse", "skimr", "here", "remotes", "boot", "survival", "G
 
 install.packages(package, repos = "http://cran.rstudio.com")
 ```
+
+If you run into trouble ...
 
 ---
 # Course Logistics
