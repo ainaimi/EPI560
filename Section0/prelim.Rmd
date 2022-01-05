@@ -170,13 +170,11 @@ Five Sections:
 
 .font150[
 
-2021-12-23
+December 28 2021
 
-As we prepare for Spring semester, Emory continues to monitor the COVID-19 situation and we understand things may shift quickly. Currently, Emory is still operating on a [moderate yellow status](https://www.emory.edu/forward/covid-19/operating-condition-status.html). We recommend that all faculty continue to prepare for an online option should the current guidance change. The [CFDE Teaching Toolkit](https://cfde.emory.edu/toolkit/index.html) and RSPH ROTE course are available resources as needed. Please continue to monitor your [emory.edu](https://www.emory.edu/home/index.html) email and the [Emory Forward](https://www.emory.edu/forward/) website over the break for updates.
+... to continue all aspects of our academic mission, undergraduate, graduate, and professional courses will start the spring semester in a remote format, ... . Classes will transition back to in-person learning on January 31, should conditions permit. 
 
-Delia L. Lang, PhD, MPH
-
-Interim Executive Associate Dean for Academic Affairs  
+President Gregory Fenves
 
 ]
 
@@ -206,15 +204,19 @@ Interim Executive Associate Dean for Academic Affairs
 
 --
 
-.font150[* My view: don't just read. Understand!]
+.font150[* My view: don't just read. *Understand!*
+   * You should really consider watching this [video](https://www.youtube.com/watch?v=3un_VbXVefk)
+]
 
 --
 
-.font150[* Your goal: quickly and clearly articulate concepts succinctly and precisely, recognize and elaborate on nuances, and proﬁciently implement technical (coding) procedures in practical settings.]
+.font150[* Your goal: quickly and clearly articulate concepts succinctly and precisely, recognize and elaborate on nuances, and proﬁciently implement technical (coding) procedures in practical settings.
+  * Have you watched the [video](https://www.youtube.com/watch?v=3un_VbXVefk) yet?
+]
 
 --
 
-.font150[* Major point we will not cover: practical (analytic) dimensions of any rigorous scientific approach cannot be separated from context. Context matters.]
+.font150[* Major point we will not cover: practical (analytic) dimensions of any rigorous scientific approach cannot be separated from context. *Context matters.*]
 
 ---
 # Course Considerations: How to Learn
@@ -312,6 +314,8 @@ install.packages(package,
 
 If you run into trouble ...
 
+  what will you do once you've graduated and you run into trouble?
+
 ---
 # Course Logistics
 
@@ -325,5 +329,7 @@ Email:
 
 
 Join the Slack Channel: [click here](https://join.slack.com/t/slack-pb59049/shared_invite/zt-111cbcfrk-XNc6ioj2Em7gUytAhJNhOw)
+
+Please use Slack for all relevant class communication/questions. If you would like to ask a question anonymously, use the "/anonymous " argument before your question.
 
 ]
