@@ -134,9 +134,9 @@ Five Sections:
    
    3. Regression Modeling: Standard and Survival Regression, Marginal versus Conditional Models, Distributions and Link Functions, Marginal Standardization.
    
-   4. Time-Varying Data & g Methods: Longitudinal Data, Complex Longitudinal Data, Time Varying Confounding, Inverse Probability Weighting, G Computation, G Estimation of SNMMs (and maybe SNAFTs).
+   4. Time-Varying Data & g Methods: Longitudinal Data, Complex Longitudinal Data, Time Varying Confounding, Inverse Probability Weighting, G Computation, G Estimation of SNMMs.
    
-   5. Bootstrapping, p Values, and Confidence Intervals
+   5. Variance (standard error) estimation, Bootstrapping, p Values, and Confidence Intervals.
 
 ---
 # Course Grading

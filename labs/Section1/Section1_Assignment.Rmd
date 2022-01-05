@@ -1,0 +1,145 @@
+---
+title: "Section 1 Assignment"
+header-includes:
+    - \usepackage{setspace}
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+\doublespacing
+
+## Instructions (read carefully): 
+
+* Each student must submit one assignment as. Members of the same group can submit the same assignment.
+* Each member of the same group will receive the same grade. 
+* Please put the name of each group member on the first page. 
+* Assignments must be done using RMarkdown.
+* Submissions must include the .pdf file and the reproducible .rmd file used to do the homework. R code for all applied questions must be provided and be executable in the .rmd file.
+* This assignment is due electronically through CANVAS on *?* at the beginning of class.
+
+
+**Question 1)** Using the language of "censoring" and/or "truncation" (left, right, and/or interval), explain why a prospective cohort study is often seen as higher quality than a retrospective cohort study.
+
+The key to correctly answering this question is to recognize that prospective studies are less likely to suffer from left truncation. The reason is that in a prospective study, the start time is determined, and eligible individuals are identified as a result of this. On the other hand, with a retrospective study, the converse is usually the case: individuals are identified, and then the start time is determined. The problem with this is that individuals would have to make it at least to the point where they can be identified for inclusion in the retrospective study.
+
+**Question 2)** Using Figure 1, draw the line diagram for for ID = 0 that would result if this individual was left truncated.
+
+```{r tenobs, out.width="10cm", fig.align='center', fig.cap="Line diagram with six hypothetical individuals who enter into a study at age 46 and who exit at age 56.",echo=F}
+knitr::include_graphics("../../figures/2021_12_08-hw-fig.pdf")
+```
+
+\newpage
+
+**Question 3)** Please do a basic exploratory analysis of the "section1_cohort.csv" dataset. No more than 1/2 page of results. Provide results for the exposure, the confounder, and the outcome.
+
+This should be an easy question to answer. I am looking for basic descriptives for the exposure, the confounder, and the outcome, in tabular and/or graphical form.
+
+```{r, warning=F, message=F}
+library(tidyverse)
+library(gridExtra)
+
+cohort <- read_csv("../../data/section1_cohort.csv")
+
+thm <- theme_classic() +
+  theme(
+    legend.position = "top",
+    legend.background = element_rect(fill = "transparent", colour = NA),
+    legend.key = element_rect(fill = "transparent", colour = NA)
+  )
+theme_set(thm)
+
+p1 <- ggplot(cohort) + 
+  scale_y_continuous(expand=c(0,0)) + 
+  scale_x_continuous(expand=c(0,0)) + 
+  geom_bar(aes(exposure))
+p2 <- ggplot(cohort) + 
+  scale_y_continuous(expand=c(0,0)) + 
+  scale_x_continuous(expand=c(0,0)) + 
+  geom_bar(aes(confounder))
+p3 <- ggplot(cohort) + 
+  scale_y_continuous(expand=c(0,0)) + 
+  scale_x_continuous(expand=c(0,0)) + 
+  geom_bar(aes(outcome))
+
+grid.arrange(p1,p2,p3,nrow=1)
+
+cohort %>% 
+  group_by(outcome) %>% 
+  summarize_at(vars(exposure,confounder,stop),mean)
+
+```
+
+
+
+**Question 4)** Describe, in words, the interpretation of the CDF: 
+$$F(t) = P(T \leq t)$$
+
+AND the survival function:
+
+$$S(t) = P(T > t)$$
+
+if $T$ represents age at death from all causes, and $t$ represents 64 years of age.
+
+The interpretation for the CDF in the given context is the probability of the death from any cause occurring at time 64 years of age or before.
+
+The interpretation of the survival function in the given context is the probability of death from any cause occurring after 64 years of age. (note: not at or after 64 years, but after 64 years).
+
+To get full points for this question, the students must: 1) interpret F(t) and S(t) in the specified context (i.e., all cause mortality, 64 years of age); and 2) they must correctly (and precisely) interpret the equations.
+
+**Question 5)** Using the first five observations from the synthetic data in Table 1 of the course notes, write out (but do not solve for) the terms for the Kaplan-Meier estimator $\hat{S}(t) = \prod_{k \in t_k \leq t} (1 - d_k/n_k)$. Assume that the total population at risk includes all 10 observations in Table 1.
+
+$$ \hat{S}(t) = \prod_{k \in t_k \leq t} (1 - d_k/n_k) =  \underset{\color{red}\text{for } t = 0.03}{\bigg ( 1 -  \frac{1}{10} \bigg )} \times \underset{\color{red}\text{for } t = 0.49}{\bigg ( 1 -  \frac{1}{9} \bigg )} \times \underset{\color{red}\text{for } t = 0.65}{\bigg ( 1 -  \frac{1}{8} \bigg )} \times \underset{\color{red}\text{for } t = 2.61}{\bigg ( 1 -  \frac{1}{6} \bigg )} $$
+The key here is to recognize that the risk-set for the last term excludes the censored observation occuring in ID = 4.
+
+**Question 6)** Fit the `survfit()` function to the "section1_cohort.csv" data. Before you fit, be sure to re-code the outcome so that any non-zero event counts as an event (i.e., re-code outcome=2 to outcome=1). Examine the R object that you get from this fit. How many elements are in this object? What are the first six elements (describe them briefly, don't just provide their element names). Is there enough information in this object for you to determine the median survival time for the outcome? If so, what is the median survival time.
+
+```{r, warning=F,message=F}
+library(tidyverse)
+library(survival)
+
+cohort <- read_csv("../../data/section1_cohort.csv") %>% mutate(outcome = as.numeric(outcome>0))
+
+surv_obj <- survfit(Surv(time=start,time2=stop,event=outcome)~1,data=cohort)
+
+names(surv_obj)
+str(surv_obj)
+
+med_time <- tibble(time=surv_obj$time,risk=surv_obj$surv) %>% filter(round(risk,2)==0.50)
+
+med_time
+
+```
+
+
+There are `r length(names(surv_obj))` elements in the object created by `survfit`. The first six elements are: `r names(surv_obj)[1:6]`. These are the original sample size, the unique event times, the number at risk at each event time, the number of events at each event time, the number of censored observations at each event time, and the estimated survival probability at each event time. There is, in fact, enough information to evaluate median survival time in this cohort, which is the time at which 50 percent of the sample survives. The median survival time is `r round(med_time$time,2)`.
+
+Some important elements to answer this question: the median survival time should be reported to 1 or 2 decimal places. Any more is unwarranted, and should probably result in loss of points.
+
+**Question 7)** Using the fit from Question 6, plot the cumulative distribution function (not the survival function) using the KM estimator. Interpret the curve assuming that the outcome is death from any cause and the time-scale is year on study.
+
+```{r}
+plot_dat <- tibble(time = surv_obj$time,
+                   risk = 1 - surv_obj$surv)
+
+ggplot(plot_dat) + 
+  scale_y_continuous(expand=c(0,0), limits=c(0,1)) + 
+  scale_x_continuous(expand=c(0,0)) + 
+  ylab("Risk of Death") +
+  xlab("Year on Study") +
+  ggtitle("Cumulative Risk of Death Over Five Years") +
+  geom_step(aes(x=time,y=risk))
+```
+
+This figure shows a steady increase in the risk of death from the start to the end of study. By year `r ceiling(med_time$time)` on study, just over 50% of the sample died, and by the 5th year on study, `r round(max(plot_dat$risk),2)*100`% of the sample died.
+
+**Question 8)** competing risks
+
+**Question 9)** competing risks
+
+**Question 10)** competing risks
+
+
+**Bonus Question 1)** Referring to question 7, can you provide the same plot with 95% confidence intervals?

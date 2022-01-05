@@ -33,13 +33,13 @@ psi.mat<-matrix(0,nrow=K,ncol=N+1)
 
 ##Here are the effect sizes for the K=2 causes
 
-psi.mat[1,]<-- -log(2.5)
-psi.mat[2,]<-- log(4.5)
+psi.mat[1,] <-- -log(2.5)
+psi.mat[2,] <-- log(4.5)
 
 ##Here the (untreated) all-cause rate is set to lambda=0.01, with
 ##lambda/K per cause; muK=lambda is used in the algorithm.
 
-lambda<-0.0375
+lambda<-0.375
 gamma.vec<-rep(log(lambda/K))
 muK<-sum(exp(gamma.vec))
 A<-L<-ID<-Y<-Z<-Tv<-Int<-ALast<-LLast<-LFirst<-numeric()
@@ -47,13 +47,13 @@ T0.vec<-T.vec<-Y.vec<-Z.vec<-rep(0,n)
 
 ##Here are the coefficients determining the
 ##mediation and treatment assignment mechanisms.
-bevec<-c(log(3/7),log(2),log(.5),log(2))
-alvec<-c(log(2/7),log(2),log(2),log(2))
+bevec<-c(log(3/7),log(1.5),log(1.5),log(2))
+alvec<-c(log(2/7),log(2.75),log(2.75),log(2.75))
 ##Begin the data-generation loop
 for(i in 1:n){
   ##Generate the counterfactual (untreated) survival time
   T0<-rexp(1,lambda)
-  Ival<-as.numeric(T0 < 15) # median T0 introduces confounding
+  Ival<-as.numeric(T0 < 3) # median T0 introduces confounding
   ##Begin the interval-by-interval simulation
   m<-0
   mu.tot<-0
@@ -121,8 +121,17 @@ names(D)<-c("ID","int","time","X","Xm1","Z","Zm1","Y")
 D$timem1<-D$int-1
 D$last_flag<-as.numeric(D$Y!=0|D$time==N)
 
-head(D,10)
+D <- D %>% 
+  mutate(stop=time*5,
+         exposure=X,
+         confounder=Z,
+         outcome=Y,
+         start=timem1) %>% 
+  tibble(.) %>% 
+  select(ID,stop,exposure,confounder,outcome,start)
 
-print(aggregate(D$Y,list(D$int),mean))
+D
 
-write_csv(D,"../data/example_dat.csv")
+D %>% count(outcome)
+
+write_csv(D,"./data/2022_12_30-section1_cohort.csv")

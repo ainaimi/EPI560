@@ -66,7 +66,7 @@ To completely define a cohort, we need to clearly define a start or origin time,
 
 ```{r, warning=F, message=F, echo=F, include=F}
 
-cohort <- read_csv("../data/section1_cohort.csv")
+cohort <- read_csv("../data/2022_12_30-section1_cohort.csv")
 
 cohort %>% 
   filter(ID<=10) %>%
@@ -399,7 +399,7 @@ Unfortunately, while easy, creating composite endpoints to deal with competing e
 
 To more appropriately handle competing events, we need to introduce two different *versions of risk*. The first is **cause-specific** risk. This is the risk we'd obtain if we prevented competing risks from occurring.^[Be aware that while the language here sounds very much like we're using the potential outcomes framework, we're not. You may have learned of this risk as the "conditional risk" in EPI 545.] We can estimate this risk very simply by censoring the competing risks.
 
-To explore how we obtain estimates of the cause-specific risk function, let's use the cohort dataset (`section1_cohort.csv`). This dataset has 100 observations and six variables.
+To explore how we obtain estimates of the cause-specific risk function, let's use the cohort dataset (`2022_12_30-section1_cohort.csv`). This dataset has 100 observations and six variables.
 
 ```{r}
 dim(cohort)
@@ -421,7 +421,7 @@ Suppose we were primarily interested in the event labeled "outcome = 2", where "
 
 ```{r}
 
-cohort <- cohort %>% mutate(cs_outcome = as.numeric(outcome==2))
+cohort <- cohort %>% mutate(cs_outcome = as.numeric(outcome==1))
 
 ```
 
@@ -449,11 +449,17 @@ ggsave(filename = "../figures/2022_12_29-cum_risk_section1.pdf",
        plot=plot1)
 ```
 
-The above code generates the `surv_model` object, creates a plot using this object with `ggplot`, and saves it to the `figures` folder. We can include the saved figure in our RMarkdown document using the following code:^[One could also use the generic `plot()` function to obtain the KM curve. For example: `plot(surv_model)`. However, it is much easier to modify the figure and adapt it to meet certain submission requirements using ggplot.]:
+The above code generates the `surv_model` object, creates a plot using this object with `ggplot`, and saves it to the `figures` folder. We can include the saved figure in our RMarkdown document using the following code:
 
-```{r cs_figure, out.width="10cm", fig.align='center', echo=T}
+```{r csfigure, out.width="10cm", fig.align='center', fig.cap="Cumulative cause-specific risk of the outcome in the example dataset for section 1 (outcome = 1).", echo=T}
 knitr::include_graphics("../figures/2022_12_29-cum_risk_section1.pdf")
 ```
+
+One could also use the generic `plot()` function to obtain the KM curve. For example: `plot(surv_model)` (try it!). However, it is much easier to modify the figure and adapt it (e.g., to meet submission requirements) using ggplot.
+
+It's important to understand precisely and exactly how to interpret the risk curve in Figure \ref{fig:csfigure}. First, we combined into a single category all individuals who were censored and who had the competing risk event (outcome = 2), and we treated this entire category as censored. Second, and perhaps more importantly, the Kaplan-Meier estimator imputes the risk of the outcome of interest for censored observations (see Technical Note above). As a result, one has to interpret the cumulative risk curve in Figure \ref{fig:csfigure} as the risk that would be observed in a situation where we were able to prevent `outcome = 2` from occurring, thus keeping these individuals at risk for `outcome = 1`.^[Note that the same is true for other methods that adjust or account for censoring, such as inverse probability of censoring weighting or imputation [e.g. ,@Cain2009 or @vanBurren2012].]
+
+This subtle point (the imputation of `outcome = 1` risk for competing events) is a controversial topic, but is unfortunately not always recognized as an issue. To place this issue into some context, imagine that in our dataset of 100 observations, `outcome = 1` denotes individuals who experience a myocardial infarction, and `outcome = 2` denotes death from any cause. In this case, estimating the cause specific risk of myocardial infarction translates directly to estimating the risk of myocardial infarction in a world where we prevent death from any cause from occurring.^[Again, even though these sentences are fundamentally counterfactual in nature, these risks are not typically formulated using potential outcomes.] 
 
 # Takeaways
 
