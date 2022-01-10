@@ -23,6 +23,7 @@ output:
 
 ```{r setup, include=FALSE}
 library(knitr)
+library(formatR)
 opts_chunk$set(tidy.opts=list(width.cutoff=60),tidy=TRUE)
 
 packages <- c( "data.table","tidyverse","ggplot2","ggExtra","formatR",
@@ -66,7 +67,7 @@ To completely define a cohort, we need to clearly define a start or origin time,
 
 ```{r, warning=F, message=F, echo=F, include=F}
 
-cohort <- read_csv("../data/2022_12_30-section1_cohort.csv")
+cohort <- read_csv("../data/2021_12_30-section1_cohort.csv")
 
 cohort %>% 
   filter(ID<=10) %>%
@@ -253,14 +254,14 @@ For these reasons, we focus on risk extensively in this course.
 We can compute the cumulative risk function $F(t)$ in several ways. Consider the synthetic data in Table 1, but imagine that instead of "outcome = Withdrawal" for ID 4, they had "outcome = Event". If this were the case, one could simply compute the risk function by calculating the average number of events in the first, second, third, fourth, and fifth years on study.^[This **only** works in a simple setting where there is only a single event type, no censoring, and no left truncation. Because this is very unlikely the approach we are using here is only for demonstration.] The denominator for this risk is everyone in the sample. For example, using the ten observations from the synthetic data in Table \ref{tab:synthdat}, we have:
 
 \begin{align*}
-\text{Year 1: } & \sfrac{4}{10} = .4 \\
-\text{Year 2: } & \sfrac{4}{10} + \sfrac{0}{10} = .4 \\
-\text{Year 3: } & \sfrac{4}{10} + \sfrac{0}{10} + \sfrac{2}{10} = .6 \\
-\text{Year 4: } & \sfrac{4}{10} + \sfrac{0}{10} + \sfrac{2}{10} + \sfrac{1}{10} = .7 \\
-\text{Year 5: } & \sfrac{4}{10} + \sfrac{0}{10} + \sfrac{2}{10} + \sfrac{1}{10} + \sfrac{0}{10} = .7 \\
+\text{Year 1: } & \sfrac{0}{10} = 0 \\
+\text{Year 2: } & \sfrac{0}{10} + \sfrac{3}{10} = .3 \\
+\text{Year 3: } & \sfrac{0}{10} + \sfrac{3}{10} + \sfrac{1}{10} = .4 \\
+\text{Year 4: } & \sfrac{0}{10} + \sfrac{3}{10} + \sfrac{1}{10} + \sfrac{1}{10} = .5 \\
+\text{Year 5: } & \sfrac{0}{10} + \sfrac{3}{10} + \sfrac{1}{10} + \sfrac{1}{10} + \sfrac{0}{10} = .5 \\
 \end{align*}
 
-This simple approach is sometimes referred to as the empirical distribution function (ECDF) estimator, but (again) doesn't usually work in survival data (becuase of censoring and truncation).
+This simple approach is sometimes referred to as the empirical distribution function (ECDF) estimator, but (again) doesn't usually work in survival data (because of censoring and truncation).
 
 \newpage
 
@@ -268,7 +269,7 @@ If we plot these risks using a step-function with Year as the $x$-axis and risk 
 
 ```{r, warning=F, message=F, echo=F, include=F}
 
-d1 <- tibble(Year=c(0,1,2,3,4,5), Risk=c(0,.4,.4,.6,.7,.7))
+d1 <- tibble(Year=c(0,1,2,3,4,5), Risk=c(0,0,.3,.4,.5,.5))
 
 surv_dat <- cohort %>% 
   filter(ID<=10) %>%
@@ -317,7 +318,7 @@ To implement the KM estimator in R, we need to use the `survival` package, which
 
 The key issue we need to address is the following: in Table \ref{fig:tenobs}, we use "Withdrawal" to denote Type I right censoring, and the "No Event" to denote Type II right censoring. However, the functions in `R` do not distinguish between Type I and Type II censoring. We need set all these observation's (ID = 4, 8, 9, 10) outcome to the same value. We'll pick the number "0":
 
-```{r}
+```{r, warning=F, message=F}
 
 install.packages("survival",repos='http://cran.us.r-project.org')
 library(survival)
@@ -399,7 +400,7 @@ Unfortunately, while easy, creating composite endpoints to deal with competing e
 
 To more appropriately handle competing events, we need to introduce two different *versions of risk*. The first is **cause-specific** risk. This is the risk we'd obtain if we prevented competing risks from occurring.^[Be aware that while the language here sounds very much like we're using the potential outcomes framework, we're not. You may have learned of this risk as the "conditional risk" in EPI 545.] We can estimate this risk very simply by censoring the competing risks.
 
-To explore how we obtain estimates of the cause-specific risk function, let's use the cohort dataset (`2022_12_30-section1_cohort.csv`). This dataset has 100 observations and six variables.
+To explore how we obtain estimates of the cause-specific risk function, let's use the cohort dataset (`2021_12_30-section1_cohort.csv`). This dataset has 100 observations and six variables.
 
 ```{r}
 dim(cohort)
@@ -417,15 +418,18 @@ Notice that the outcome has three different levels:
 cohort %>% count(outcome)
 ```
 
+## Cause Specific Risk
+
 Suppose we were primarily interested in the event labeled "outcome = 2", where "outcome = 1" denotes a competing risk, and "outcome = 0" denotes right censoring. To estimate the cause specific risk function for "outcome = 2", we can again use the KM estimator. What needs to be different this time around is that we have to treat as censored those with both "outcome = 0" as well as "outcome = 1". We can do this by creating an indicator^[Note that generally, the *indicator function* refers to a function that takes the value of 1 if the argument of the function is true, and zero otherwise. The function is usually denoted with an "$I()$" or a "$\mathbf{1}()$". In our case, if our outcome was denoted $Y$, the indicator variable we need to estimate the cause specific risk is $I(Y = 2)$ or $\mathbf{1}(Y = 2)$. In `R`, the `as.numeric()` function can serve as an indicator function.] variable for the outcome: 
 
 ```{r}
 
-cohort <- cohort %>% mutate(cs_outcome = as.numeric(outcome==1))
+# note this is a numeric variable!
+cohort <- cohort %>% mutate(cs_outcome = as.numeric(outcome==1)) 
 
 ```
 
-This new variable converts all competing events to censored observations:
+This new variable converts all events (i.e., censoring and competing events) to censored observations:
 
 ```{r}
 cohort %>% count(cs_outcome)
@@ -434,7 +438,7 @@ cohort %>% count(cs_outcome)
 And we can use this with the KM estimator to obtain an estimate of the cause-specific risk function:
 
 ```{r}
-surv_model <- survfit(Surv(time = start, time2 = stop, event = cs_outcome)~1,data=cohort)
+surv_model <- survfit(Surv(time=stop, event=cs_outcome) ~ 1, data=cohort)
 
 plot_dat <- tibble(time=surv_model$time,risk=1-surv_model$surv)
 
@@ -445,21 +449,198 @@ plot1 <- ggplot(plot_dat) +
   xlab("Time on Study") +
   geom_step(aes(x=time,y=risk))
 
-ggsave(filename = "../figures/2022_12_29-cum_risk_section1.pdf",
+ggsave(filename = "../figures/2021_12_29-cum_risk_section1.pdf",
        plot=plot1)
+
+
+plot_dat_km <- plot_dat
 ```
 
-The above code generates the `surv_model` object, creates a plot using this object with `ggplot`, and saves it to the `figures` folder. We can include the saved figure in our RMarkdown document using the following code:
+The above code generates the `surv_model` object, creates a plot using this object with `ggplot`, and saves it to the `figures` folder using `ggsave`. We can include the saved figure in our RMarkdown document using the following code:
 
-```{r csfigure, out.width="10cm", fig.align='center', fig.cap="Cumulative cause-specific risk of the outcome in the example dataset for section 1 (outcome = 1).", echo=T}
-knitr::include_graphics("../figures/2022_12_29-cum_risk_section1.pdf")
+````
+```{r csfigure, out.width="10cm", fig.align='center', fig.cap="Cumulative cause-specific ...", echo=T}`r ''`
+knitr::include_graphics("../figures/2021_12_29-cum_risk_section1.pdf")
 ```
+````
+
+which provides the following Figure:
+
+```{r csfigure, out.width="10cm", fig.align='center', fig.cap="Cumulative cause-specific risk of the outcome in the example dataset for section 1 (outcome = 1).", echo=F}
+knitr::include_graphics("../figures/2021_12_29-cum_risk_section1.pdf")
+```
+
+\newpage
 
 One could also use the generic `plot()` function to obtain the KM curve. For example: `plot(surv_model)` (try it!). However, it is much easier to modify the figure and adapt it (e.g., to meet submission requirements) using ggplot.
 
 It's important to understand precisely and exactly how to interpret the risk curve in Figure \ref{fig:csfigure}. First, we combined into a single category all individuals who were censored and who had the competing risk event (outcome = 2), and we treated this entire category as censored. Second, and perhaps more importantly, the Kaplan-Meier estimator imputes the risk of the outcome of interest for censored observations (see Technical Note above). As a result, one has to interpret the cumulative risk curve in Figure \ref{fig:csfigure} as the risk that would be observed in a situation where we were able to prevent `outcome = 2` from occurring, thus keeping these individuals at risk for `outcome = 1`.^[Note that the same is true for other methods that adjust or account for censoring, such as inverse probability of censoring weighting or imputation [e.g. ,@Cain2009 or @vanBurren2012].]
 
-This subtle point (the imputation of `outcome = 1` risk for competing events) is a controversial topic, but is unfortunately not always recognized as an issue. To place this issue into some context, imagine that in our dataset of 100 observations, `outcome = 1` denotes individuals who experience a myocardial infarction, and `outcome = 2` denotes death from any cause. In this case, estimating the cause specific risk of myocardial infarction translates directly to estimating the risk of myocardial infarction in a world where we prevent death from any cause from occurring.^[Again, even though these sentences are fundamentally counterfactual in nature, these risks are not typically formulated using potential outcomes.] 
+This subtle point (the imputation of `outcome = 1` risk for competing events) is a controversial topic, but is unfortunately not always recognized as an issue. To place this issue into some context, imagine that in our dataset of 100 observations, `outcome = 1` denotes individuals who experience a myocardial infarction, and `outcome = 2` denotes death from any cause. In this case, estimating the cause specific risk of myocardial infarction translates directly to estimating the risk of myocardial infarction in a world where we'd prevent death from any cause from occurring.^[Again, even though these sentences are fundamentally counterfactual in nature, these risks are not typically formulated using potential outcomes.] For this reason, estimating cause-specific risks in the presence of competing events is my least favored approach. 
+
+## Sub-Distribution Risk
+
+One alternative to cause-specific risks is **sub-distribution** risks.^[You may have learned of this as an "unconditional" risk in EPI545.] These risks are useful even if we are interested in a primary outcome, and we have several other "nuisance" outcomes to deal with. 
+
+Suppose again our interest lies in the event labeled "outcome = 1", where "outcome = 2" is a competing risk, and "outcome = 0" is right censoring. To estimate the sub-distribution risk function for "outcome = 1", we can no longer use the KM estimator. There are several options available to us to estimate sub-distribution risks, including the Aalen-Johansen estimator or Gray's cumulative incidence function (CIF) estimator. 
+
+We'll first fit the Aalen-Johansen estimator to quantify the sub-distribution risk function for both "outcome = 1" and "outcome = 2". The code to fit the Aalen-Johansen estimator in R is nearly identical to the code we used to fit the KM estimator. The key difference lies in how the outcome is coded. To fit the Aalen-Johansen estimator, the outcome variable must be of the proper **type** and must be in a specific **order**. For example:
+
+```{r, warning=F, message=F}
+
+cohort <- read_csv("../data/2021_12_30-section1_cohort.csv")
+
+cohort
+
+table(cohort$outcome)
+
+cohort <- cohort %>% mutate(outcome = factor(outcome, 0:2, labels=c("censor", "event", "competing risk"))) # note converted to factor
+
+table(cohort$outcome)
+
+```
+
+In the `2021_12_30-section1_cohort.csv` data, the outcome is coded as a numeric variable. In the above code, we convert this numeric variable to a factor variable. The conversion and ordering of this factor variable is accomplished using the `factor()` function in `R`. In the arguments of this function, we tell it to convert the "outcome" variable (argument 1), we tell it that the order of the levels are `0, 1, and 2` (argument 2, coded as `0:2` in R), and we tell it that the labels for this order are "censor", "event", and "competing risk". Importantly, the censoring level has to come first, but the "event" and "competing risk" levels can come in any order.^[This becomes relevant when there are several competing risks and/or events of interest.] Once the outcome is coded in this way, we can use the same code we used to fit the KM estimator to obtain the AJ estimator of the sub-distribution function:
+
+```{r, warning=F, message=F, fig.show=F}
+
+aj_fit <- survfit(Surv(time=stop,event=outcome) ~ 1, data=cohort)
+
+plot_dat0 <- tibble(time=aj_fit$time,risk=aj_fit$pstate[,2])
+
+plot_dat1 <- tibble(time=aj_fit$time,risk=aj_fit$pstate[,3])
+
+p1 <- ggplot() +
+  scale_y_continuous(expand=c(0,0), limits=c(0,1)) +
+  scale_x_continuous(expand=c(0,0)) +
+  ylab("Cumulative Risk") +
+  xlab("Time on Study") +
+  geom_step(data=plot_dat0,aes(x=time,y=risk)) +
+  geom_step(data=plot_dat1,aes(x=time,y=risk),color="#D55E00") +
+  geom_step(data=plot_dat_km,aes(x=time,y=risk), linetype=2)
+
+ggsave(filename = "../figures/2021_12_29-subdist_risk_aj_section1.pdf",
+       plot=p1)
+
+```
+
+Again, we can include the saved figure in our RMarkdown document using the following code:
+
+````
+```{r sdajfigure, out.width="10cm", fig.align='center', fig.cap="Cumulative sub-dist ...", echo=T}`r ''`
+knitr::include_graphics("../figures/2021_12_29-subdist_risk_aj_section1.pdf")
+```
+````
+
+Which provides the following Figure:
+
+```{r sdajfigure, out.width="10cm", fig.align='center', fig.cap="Cumulative sub-distribution risks of the outcomes obtained from the Aalen-Johansen estimator in the example dataset for section 1. Black line represents outcome = 1. Orange line represents outcome = 2. Dashed line represents cumulative cause-specific risks obtained with the Kaplan-Meier Estimator.", echo=F}
+knitr::include_graphics("../figures/2021_12_29-subdist_risk_section1.pdf")
+```
+
+Gray's CIF estimator is available in the `cmprsk` package in R. To fit this estimator to our data, we can use the following:
+
+```{r, warning=F, message=F}
+
+library(cmprsk)
+
+cohort <- read_csv("../data/2021_12_30-section1_cohort.csv")
+
+gray_cif <- cuminc(cohort$stop, cohort$outcome, cencode=0) # note outcome is back to numeric!
+
+str(gray_cif)
+
+```
+
+As we can see from the `structure` command above, the `cuminc()` function provides two sets of information, each with a `time`, `est`, and `var` element. In this case, the `est` element is an estimate of the sub-distribution risk of the outcome. In the list indexed by `1 1`, `est` represents the risk of "outcome = 1". In the list indexed by `1 2`, `est` represents the risk of "outcome = 2". We can use these risks and the `time` element for each to plot the relevant cumulative incidence functions of interest: 
+
+```{r, warning=F, message=F, fig.show='hide'}
+
+plot_dat1 <- tibble(time=gray_cif$`1 1`$time,
+                   risk=gray_cif$`1 1`$est,
+                   Outcome=1) # capital for legend purposes
+
+plot_dat2 <- tibble(time=gray_cif$`1 2`$time,
+                   risk=gray_cif$`1 2`$est,
+                   Outcome=2)  # capital for legend purposes
+
+plot_dat <- rbind(plot_dat1, plot_dat2)
+
+plot_dat <- plot_dat %>% mutate(Outcome=factor(Outcome))  # convert to factor here for legend purposes
+
+plot1 <- ggplot() + 
+  scale_y_continuous(expand=c(0,0), limits=c(0,1)) + 
+  scale_x_continuous(expand=c(0,0)) + 
+  ylab("Cumulative Risk") +
+  xlab("Time on Study") +
+  scale_color_manual(values=c("#000000","#D55E00")) +
+  geom_step(data=plot_dat,aes(x=time,y=risk,color=Outcome)) +
+  geom_step(data=plot_dat_km,aes(x=time,y=risk), linetype=2)
+
+ggsave(filename = "../figures/2021_12_29-subdist_risk_cif_section1.pdf",
+       plot=plot1)
+```
+
+Again, we can include the saved figure in our RMarkdown document using the following code:
+
+````
+```{r sdciffigure, out.width="10cm", fig.align='center', fig.cap="Cumulative sub-dist ...", echo=T}`r ''`
+knitr::include_graphics("../figures/2021_12_29-subdist_risk_section1.pdf")
+```
+````
+
+Which provides the following Figure:
+
+```{r sdciffigure, out.width="10cm", fig.align='center', fig.cap="Cumulative sub-distribution risks of the outcomes obtained from Gray's CIF estimator in the example dataset for section 1. Black line represents outcome = 1. Orange line represents outcome = 2. Dashed line represents cumulative cause-specific risks obtained with the Kaplan-Meier Estimator.", echo=F}
+knitr::include_graphics("../figures/2021_12_29-subdist_risk_cif_section1.pdf")
+```
+
+\newpage
+
+The key now is to clarify the interpretation of the sub-distribution risk in Figure \ref{fig:sdajfigure} or Figure \ref{fig:sdciffigure}, and the cause specific risk which is represented in both Figures with a dashed line. As we've already stated, the dashed line represents the cumulative risk of outcome = 1 we'd observe if we could prevent outcome = 2 from occurring. 
+
+On the other hand, the sub-distribution quantifies the risk for outcome 1 if outcome 2 were allowed to occur naturally. The same interpretation is obtained if outcome 2 is the primary outcome of interest. Why is this called a sub-distribution? 
+
+```{r, include=F}
+
+library(zoo)
+
+plot_dat1 <- tibble(time=round(gray_cif$`1 1`$time,1),
+                   risk1=gray_cif$`1 1`$est) 
+
+plot_dat2 <- tibble(time=round(gray_cif$`1 2`$time,1),
+                   risk2=gray_cif$`1 2`$est) 
+
+plot_dat <- left_join(plot_dat1,plot_dat2,by="time")
+
+plot_dat <- plot_dat %>% na.locf(.)
+
+plot1 <- ggplot() +
+  scale_y_continuous(expand=c(0,0), limits=c(0,1)) +
+  scale_x_continuous(expand=c(0,0)) +
+  ylab("Cumulative Risk") +
+  xlab("Time on Study") +
+  theme_minimal() +
+  geom_step(data=plot_dat,aes(x=time,y=risk1),color="#000000") +
+  geom_step(data=plot_dat,aes(x=time,y=risk1+risk2),color="#D55E00")
+
+ggsave(filename = "../figures/2021_12_29-subdist_stacked_section1.pdf",
+       plot=plot1)
+
+```
+
+
+```{r sdstacked, echo=F, out.width="5cm", fig.margin=T, fig.align='center', fig.cap="Stacked sub-distribution function curves. Black line represents the cumulative sub-distribution risk for outcome 1. Orange line represents cumulative sub-distribution risk for the combined outcome 1 and outcome 2 (composite outcome)."}
+knitr::include_graphics("../figures/2021_12_29-subdist_stacked_section1.pdf")
+```
+
+Figure \ref{fig:sdstacked} shows the same sub-distribution function displayed in Figure \ref{fig:sdfigure} except this time the risks are stacked. That is, the orange line represents the risk of the composite outcome (i.e., 1 and 2), while the black line represents the risk of outcome 1 alone. Since the risk displayed in the orange line is composed of two risks, one can think of the black line as a subset of the distribution of the composite outcome risk. Hence, sub-distribution. 
+
+Both cause-specific and sub-distribution risks have been around for a long time. They are sometimes referred to as classical statistical quantities because they were not formulated within the potential outcomes (or some other formal) causal framework. This has had one very important implication that we should clarify here. There has long been an argument in the competing risks literature that cause-specific risks are better aligned with understanding etiology, while sub-distribution risks are better aligned with generating predictive models. For example, in a great paper, Bryan Lau and colleagues have stated that "The [cause-specific relative hazard] might be more applicable for studying the etiology of diseases, whereas the [sub-distribution relative hazard] might be more appropriate for predicting an individual’s risk for an outcome or resource allocation."
+
+I believe this interpretation to be incorrect. The main reason is that in order to interpret the cause specific risk in the presence of competing risks as causal, there needs to be a clear way to prevent the competing risk from occurring. But when the competing risk is something like mortality (either all cause, or other cause), it is often not possible to prevent the competing risk from occurring. In an actual intervention aimed at improving a health outcome, we would not typically create secondary interventions to prevent competing risks from occurring, and in most settings it would be impossible to do so (can you prevent death?). For this reason, my view is that sub-distribution risks are actually easier to interpret causally than cause-specific risks [@Rudolph2020].
+
+A number of other types of quantities exist when interest lies in analyzing competing risks data [@Young2020]. Here, we only discussed two. Making an informed decision about whether to use cause-specific or sub-distribution estimators is the bare minimum set one should consider when handling competing risks [@Cole2020]. 
 
 # Takeaways
 
@@ -477,15 +658,18 @@ This subtle point (the imputation of `outcome = 1` risk for competing events) is
 
 - Risk, cumulated over time $T$, is defined as $F(t) = P(T \leq t)$. This equation quantifies the probability (or risk) that the observed failure time $T$ is less than or equal to some arbitrary threshold $t$, where the threshold $t$ is defined over the domain of follow-up.
 
-- Competing risks
-
-- Subdistribution
-
-- Cause Specific
 
 - Survival, cumulated over time $T$, is defined as $S(t) = 1 - F(t) = P(T>t)$. This equation quantifies the probability that the observed failure time $T$ is greater than some arbitrary threshold $t$, where the threshold $t$ is defined over the domain of follow-up (i.e., the probability of surviving past some time).
 
 - The Kaplan-Meier estimator is a useful tool for quantifying cumulative risk or survival when there is a single outcome, with observations potentially subject to right censoring or left truncation. When there is more than one outcome of interest (e.g., competing events) other estimators should be considered.
+
+- A competing risk is an event or outcome that is not of primary interest, and that prevents the event or outcome of primary interest from occurring.
+
+- Cause specific risks can be estimated in the presence of competing events using a Kaplan-Meier estimator by censoring the competing risks. They are interpreted as the risk of the outcome of interest if we completely prevented the competing event(s) from occurring.
+
+- Subdistribution risks can be estimated with the Aalen-Johansen estimator or Gray's cumulative incidence function estimator. They provide a measure of risk for the event of interest if the competing risk(s) were allowed to occur naturally.
+
+- Statisticians and scientists have long espoused the view that cause-specific risks are better for etiologic questions, while subdistribution risks are better for predictive questions, or for the allocation of resources. However, because cause-specific risks require we prevent competing events from occurring, and subdistribution risks incorporate the impact of competing events, the latter are better suited to answering real-world causal questions. 
 
 \newpage
 

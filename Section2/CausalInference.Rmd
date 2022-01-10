@@ -104,7 +104,7 @@ Potential outcomes are functions of exposures. For a given exposure $x$, we will
 
 In the survival setting, the notation for potential outcomes is usually modified. This is because the standard notation in survival analysis does not typically include the outcome $Y$ directly in the notation. Some examples include the cumulative risk function $F(t)$, the survival function $S(t)$.
 
-To denote potential outcomes in the survival setting, one would typically write $S_{T^x}(t)$, $F_{T^x}(t)$, or some variation thereof [@Hernan2005 (SNFT Paper)]. The important takeaway is that, once a potential outcome is written, it must be defined appropriately. In other words, one should always include a sentence such as: "where $S_{T^x}(t)$ is the survival function that would be observed for survival time $T$ had the individuals been exposed to $X = x$.
+To denote potential outcomes in the survival setting, one would typically write $S_{T^x}(t)$, $F_{T^x}(t)$, or some variation thereof [@Hernan2005]. The important takeaway is that, once a potential outcome is written, it must be defined appropriately. In other words, one should always include a sentence such as: "where $S_{T^x}(t)$ denotes the probability of surviving past time $T>t$ under exposure $X = x$.
 
 When the exposure and/or outcome are measured repeatedly over follow-up, notation must account for that. We thus use subscripts to denote when the variable was measured. For example, if the exposure is measured twice, we can denote the first measurement $X_0$ and the second $X_1$. Additionally, we use overbars to denote the history of a variable over follow-up time. For example, $\overline{X}_1$ denotes the set $\{X_0,X_1\}$. More generally, for some arbitrary point over follow-up $m$, $\overline{X}_m$ denotes $\{X_0,X_1,X_2, \ldots X_m\}$. We can then define potential outcomes as a function of these exposure histories: For two exposure measurements, $\overline{X}_j = \{1,1\}$, $Y^{\overline{x}_j = \overline{1}}$ is the outcome that would be observed if $X_0$ were set to $1$ and $X_1$ were set to $1$.
 
@@ -118,7 +118,7 @@ __Study Question__:
 
 # Estimand, Estimator, Estimate
 
-Causal inference starts with a clear idea of the effect of interest (the target causal parameter). To do this, it helps to distinguish between estimands, estimators, and estimates.
+Causal inference starts with a clear idea of the effect of interest (the target causal parameter, or **estimand**). To do this, it helps to distinguish between estimands, estimators, and estimates.
 
 :::{.rmdnote data-latex="{tip}"}
 
@@ -137,7 +137,13 @@ Furthermore, the estimand need not always be causal [@Casella2002]. We may be in
 
 $$ E( Y \mid X = 1  ) - E( Y \mid X = 0  ),\;\;\;\frac{E( Y \mid X = 1)}{E( Y \mid X = 0)},\;\;\; \frac{Odds( Y \mid X=1)}{ Odds( Y\mid X=0)}, $$
 
-The above causal estimands represent **average treatment effects** (on the risk difference, risk ratio, and odds ratio scale, respectively). This effect is also referred to as a marginal treatment effect, because it averages (or marginalizes) the effect over the entire sample. For instance, if we consider the risk difference, it is easy to show that^[Recall that $Y^x$ is not the observed (or sample) value of the outcome, so how do we actually get this average? When we discuss identifiability, we will see how we use observed data to quantify these contrasts.] 
+What's important is that one is clear about the objective. For example, in a 2016 paper @Naimi2016 define counterfacutal disparity measures, such as:
+
+$$ E(Y^m \mid X = 1) - E( Y^m \mid X = 0)$$
+
+which is a mix of statistical and counterfactual estimands. It is a measure of disparity (statistical estimand) that would be observed if some variable $M$ were set to a value $m$ (counterfactual estimand).
+
+The causal estimands presented above represent **average treatment effects** (on the risk difference, risk ratio, and odds ratio scale, respectively). This effect is referred to as a marginal treatment effect, because it averages (or marginalizes) the effect over the entire sample. For instance, if we consider the risk difference, it is easy to show that^[Recall that $Y^x$ is not the observed (or sample) value of the outcome, so how do we actually get this average? When we discuss identifiability, we will see how we use observed data to quantify these contrasts.] 
 $$ E(Y^1 - Y^0) = \frac{1}{N}\sum_{i=1}^N Y^1_i - \frac{1}{N}\sum_{i=1}^N Y^0_i  $$
 
 However, we may want to estimate this effect in a subset of the population. For instance, $E( Y^1 - Y^0 \mid C = c )$ is the effect of $x = 1$ versus $x = 0$ among those with $C = c$. There are many different conditional treatment effects, this latter one being the simplest. Another common conditional treatment effect is the effect of treatment on the treated (ETT):
@@ -378,7 +384,7 @@ The only difference is that now we have to incorporate an additional step in whi
 
 __Technical Note__:
 
-|               Consider the marginalization step in the identification equation above. This step involves transitioning from $\sum_c E(Y^x \mid C)$ to $\sum_c E(Y^x \mid C)$. This simply denotes taking a weighted sum of $E(Y^x \mid C)$, where the weights are defined as a probability function of $C$. For example, if $C \in \{0,1, \ldots k\}$, then this sum becomes:
+|               Consider the marginalization step in the identification equation above. This step involves transitioning from $\sum_c E(Y^x \mid C)$ to $E(Y^x)$. This simply denotes taking a weighted sum of $E(Y^x \mid C)$, where the weights are defined as a probability function of $C$. For example, if $C \in \{0,1, \ldots k\}$, then this sum becomes:
 
 $$E(Y^x \mid C=0)P(C=0) + E(Y^x \mid C=1)P(C=1) + \ldots + E(Y^x \mid C=k)P(C=k)$$
 More generally (i.e., for a more general case where $C$ is not necessarily categorical), we can rewrite this as:

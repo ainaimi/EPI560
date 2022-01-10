@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999993 (TeX Live 2021) (preloaded format=xelatex 2021.12.11)  30 DEC 2021 18:43
+This is XeTeX, Version 3.141592653-2.6-0.999993 (TeX Live 2021) (preloaded format=xelatex 2021.12.11)  9 JAN 2022 11:21
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1609,7 +1609,14 @@ Requested font "[RobotoCondensed-Bold.otf]/OT:script=latn;language=dflt;+pnum;+
 lnum;mapping=tex-text;" at 12.0pt
  -> /usr/local/texlive/2021/texmf-dist/fonts/opentype/google/roboto/RobotoConde
 nsed-Bold.otf
-(./CohortRiskBasics.toc)
+(./CohortRiskBasics.toc
+LaTeX Font Info:    Font shape `TU/RobotoCondensed(0)/m/n' will be
+(Font)              scaled to size 10.95pt on input line 6.
+Requested font "[RobotoCondensed-Regular.otf]/OT:script=latn;language=dflt;+pnu
+m;+lnum;mapping=tex-text;" at 10.95pt
+ -> /usr/local/texlive/2021/texmf-dist/fonts/opentype/google/roboto/RobotoConde
+nsed-Regular.otf
+)
 \tf@toc=\write7
 \openout7 = `CohortRiskBasics.toc'.
 
@@ -2035,8 +2042,8 @@ Requested font "[lmmono10-regular]:" at 10.0pt
 r.otf
 
 Overfull \hbox (129.0pt too wide) in paragraph at lines 599--599
-[]\TU/lmtt/m/n/10 ##  /var/folders/z_/cty0tpg97wz_x1d1zgdhwllr0000gs/T//Rtmp6Be
-gya/downloaded_packages[] 
+[]\TU/lmtt/m/n/10 ##  /var/folders/z_/cty0tpg97wz_x1d1zgdhwllr0000gs/T//RtmpxeC
+h9D/downloaded_packages[] 
  []
 
 Requested font "[lmmono10-italic]:" at 10.0pt
@@ -2144,31 +2151,105 @@ Requested font "[lmmono8-regular]:" at 8.0pt
 LaTeX Warning: Marginpar on page 17 moved.
 
 [17]
-File: ../figures/2022_12_29-cum_risk_section1.pdf Graphic file (type pdf)
-<use ../figures/2022_12_29-cum_risk_section1.pdf>
+Overfull \hbox (223.5pt too wide) in paragraph at lines 835--835
+[]\TU/lmtt/m/n/10 ```{r csfigure, out.width="10cm", fig.align='center', fig.cap
+="Cumulative cause-specific ...", echo=T} 
+ []
+
+
+Overfull \hbox (55.5pt too wide) in paragraph at lines 836--836
+[]\TU/lmtt/m/n/10 knitr::include_graphics("../figures/2021_12_29-cum_risk_secti
+on1.pdf")[] 
+ []
+
+File: ../figures/2021_12_29-cum_risk_section1.pdf Graphic file (type pdf)
+<use ../figures/2021_12_29-cum_risk_section1.pdf>
+[18]
 Requested font "[lmromandemi10-regular]:mapping=tex-text;" at 10.0pt
  -> /usr/local/texlive/2021/texmf-dist/fonts/opentype/public/lm/lmromandemi10-r
 egular.otf
 Requested font "[lmromandemi10-regular]:mapping=tex-text;" at 7.0pt
  -> /usr/local/texlive/2021/texmf-dist/fonts/opentype/public/lm/lmromandemi10-r
 egular.otf
-[18]
 
 LaTeX Warning: Marginpar on page 19 moved.
 
-[19] [20] (./CohortRiskBasics.bbl [21] [22]) [23] (./CohortRiskBasics.aux)
+
+LaTeX Warning: Marginpar on page 19 moved.
+
+[19]
+
+LaTeX Warning: Marginpar on page 20 moved.
+
+[20]
+
+LaTeX Warning: Marginpar on page 21 moved.
+
+[21]
+Overfull \hbox (202.5pt too wide) in paragraph at lines 948--948
+[]\TU/lmtt/m/n/10 ```{r sdajfigure, out.width="10cm", fig.align='center', fig.c
+ap="Cumulative sub-dist ...", echo=T} 
+ []
+
+
+Overfull \hbox (92.25pt too wide) in paragraph at lines 949--949
+[]\TU/lmtt/m/n/10 knitr::include_graphics("../figures/2021_12_29-subdist_risk_a
+j_section1.pdf")[] 
+ []
+
+File: ../figures/2021_12_29-subdist_risk_section1.pdf Graphic file (type pdf)
+<use ../figures/2021_12_29-subdist_risk_section1.pdf>
+[22]
+Overfull \hbox (71.25pt too wide) in paragraph at lines 982--982
+[]\TU/lmtt/m/n/10 ##   ..$ est : num [1:58] 0 0 0.01 0.01 0.02 0.02 0.03 0.03 0
+.04 0.04 ...[] 
+ []
+
+
+Overfull \hbox (71.25pt too wide) in paragraph at lines 986--986
+[]\TU/lmtt/m/n/10 ##   ..$ est : num [1:54] 0 0 0.01 0.01 0.02 0.02 0.03 0.03 0
+.04 0.04 ...[] 
+ []
+
+[23]
+Overfull \hbox (207.75pt too wide) in paragraph at lines 1021--1021
+[]\TU/lmtt/m/n/10 ```{r sdciffigure, out.width="10cm", fig.align='center', fig.
+cap="Cumulative sub-dist ...", echo=T} 
+ []
+
+
+Overfull \hbox (76.5pt too wide) in paragraph at lines 1022--1022
+[]\TU/lmtt/m/n/10 knitr::include_graphics("../figures/2021_12_29-subdist_risk_s
+ection1.pdf")[] 
+ []
+
+File: ../figures/2021_12_29-subdist_risk_cif_section1.pdf Graphic file (type pd
+f)
+<use ../figures/2021_12_29-subdist_risk_cif_section1.pdf>
+[24]
+File: ../figures/2021_12_29-subdist_stacked_section1.pdf Graphic file (type pdf
+)
+<use ../figures/2021_12_29-subdist_stacked_section1.pdf>
+
+LaTeX Warning: Reference `fig:sdfigure' on page 25 undefined on input line 1052
+.
+
+[25] [26] [27] (./CohortRiskBasics.bbl [28] [29]) [30] (./CohortRiskBasics.aux)
 
 LaTeX Font Warning: Size substitutions with differences
 (Font)              up to 3.25pt have occurred.
 
+
+LaTeX Warning: There were undefined references.
+
  ) 
 Here is how much of TeX's memory you used:
- 29902 strings out of 476919
- 613363 string characters out of 5821839
- 1021537 words of memory out of 5000000
- 49232 multiletter control sequences out of 15000+600000
- 413342 words of font info for 126 fonts, out of 8000000 for 9000
+ 29944 strings out of 476919
+ 614864 string characters out of 5821839
+ 1023353 words of memory out of 5000000
+ 49270 multiletter control sequences out of 15000+600000
+ 413350 words of font info for 127 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
  118i,18n,124p,1339b,587s stack positions out of 5000i,500n,10000p,200000b,80000s
 
-Output written on CohortRiskBasics.pdf (23 pages).
+Output written on CohortRiskBasics.pdf (30 pages).
