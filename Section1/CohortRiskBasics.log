@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999993 (TeX Live 2021) (preloaded format=xelatex 2021.12.11)  9 JAN 2022 11:21
+This is XeTeX, Version 3.141592653-2.6-0.999993 (TeX Live 2021) (preloaded format=xelatex 2021.12.11)  15 JAN 2022 15:02
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -2042,8 +2042,8 @@ Requested font "[lmmono10-regular]:" at 10.0pt
 r.otf
 
 Overfull \hbox (129.0pt too wide) in paragraph at lines 599--599
-[]\TU/lmtt/m/n/10 ##  /var/folders/z_/cty0tpg97wz_x1d1zgdhwllr0000gs/T//RtmpxeC
-h9D/downloaded_packages[] 
+[]\TU/lmtt/m/n/10 ##  /var/folders/z_/cty0tpg97wz_x1d1zgdhwllr0000gs/T//RtmpJKX
+Iey/downloaded_packages[] 
  []
 
 Requested font "[lmmono10-italic]:" at 10.0pt
@@ -2069,13 +2069,13 @@ s the Year and the Risk plotted in
 
 Underfull \hbox (badness 10000) in paragraph at lines 698--699
 \TU/RobotoCondensed(0)/m/n/10 the margin figure. Notice that the last number is
- 0.65, effectively stating that the overall risk in the sample of
+ 0.42, effectively stating that the overall risk in the sample of
  []
 
 
 Underfull \hbox (badness 10000) in paragraph at lines 698--699
-\TU/RobotoCondensed(0)/m/n/10 10 observations is 0.65. But, out of the 10 indiv
-iduals, only six of them had the event. This suggests that the
+\TU/RobotoCondensed(0)/m/n/10 10 observations is 0.42. But, out of the 10 indiv
+iduals, only 4 of them had the event (out of 10). This suggests
  []
 
 

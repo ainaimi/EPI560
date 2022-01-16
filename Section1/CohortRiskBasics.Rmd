@@ -376,7 +376,7 @@ surv_model <- survfit(Surv(time = entry_time, time2 = exit_time, event = outcome
 
 __Technical Note__:
 
-|               Consider the Table (the `tibble`) in the R output above that includes the Year and the Risk plotted in the margin figure. Notice that the last number is 0.65, effectively stating that the overall risk in the sample of 10 observations is 0.65. But, out of the 10 individuals, only six of them had the event. This suggests that the overall risk should be 0.60, and not 0.65. Why the discrepancy? Is the KM estimator wrong?
+|               Consider the Table (the `tibble`) in the R output above that includes the Year and the Risk plotted in the margin figure. Notice that the last number is `r round(1-last(example_surv$surv),2)`, effectively stating that the overall risk in the sample of 10 observations is `r round(1-last(example_surv$surv),2)`. But, out of the 10 individuals, only `r sum(surv_dat$outcome)` of them had the event (out of `r nrow(surv_dat)`). This suggests that the overall risk should be `r sum(surv_dat$outcome)/nrow(surv_dat)`, and not `r round(1-last(example_surv$surv),2)`. Why the discrepancy? Is the KM estimator wrong?
 
 The explanation for this higher than expected risk is the censored observation (ID=4), and the fact that, built into the KM estimator is the "redistribution to the right" algorithm. This algorithm spreads the risk that would have resulted from any censored observations had they not been censored, and redistributes it proportionally to the events that occur after the censoring for this observation takes place. In effect, this algorithm redistributes the risk from censored observations to remaining observations. As a result, the end of study risk estimated with a KM estimator is usually higher in the presence of censoring than the empirical risk function.
 
@@ -552,7 +552,7 @@ str(gray_cif)
 
 ```
 
-As we can see from the `structure` command above, the `cuminc()` function provides two sets of information, each with a `time`, `est`, and `var` element. In this case, the `est` element is an estimate of the sub-distribution risk of the outcome. In the list indexed by `1 1`, `est` represents the risk of "outcome = 1". In the list indexed by `1 2`, `est` represents the risk of "outcome = 2". We can use these risks and the `time` element for each to plot the relevant cumulative incidence functions of interest: 
+As we can see from the `structure` command above, the `cuminc()` function provides two sets of information, each with a `time`, `est`, and `var` element. In this case, the `est` element is an estimate of the sub-distribution risk of the outcome. In the list indexed by `1 1`, `est` represents the risk of "outcome = 1". In the list indexed by `1 2`, `est` represents the risk of "outcome = 2". We can use these risks and the `time` element for each to plot the relevant cumulative incidence functions of interest:
 
 ```{r, warning=F, message=F, fig.show='hide'}
 
