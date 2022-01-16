@@ -440,24 +440,15 @@ In this case, the probability in the denominator is zero. And because $1/0$ is u
 
 When faced with positivity violations, one should either re-define the estimand so that there is no positivity violation, choose an estimator that is less affected by positivity problems, or both [@Petersen2012].^[Keep in mind: one cannot simply "avoid" positivity. In an extreme setting, nonpositivity means that those who were exposed in the sample are very unlikely to be exposed (and vice versa). In such a situation, it may not make sense to estimate the average treatment effect, because there is a subset of the population who may never realistically be exposed (or unexposed). In this case, g estimation, cTMLE, and the parametric g formula can actually estimate parameters that differ slightly or profoundly from the ATE.] Alternative estimands include the effect of treatment on the treated or untreated, various types of stochastic effects [including incremental propensity score effects [@Kennedy2019], which do not require that positivity hold [@Naimi2021]], or "blip" effects that are encoded in structural nested models, and can be estimated with g estimation. One can also use collaborative targeted minimum loss-based estimation,^[there is mounting evidence that standard (not collaborative) TMLE is very sensitive to positivity violations.] and the parametric g formula, which tend to be less sensitive to positivity violations [@Cole2013;@Porter2011;@Ju2017]. 
 
-There are a number of different procedures one can use to evaluate whether positivity is a problem. Among these include propensity score overlap plots. Consider again our data from the last section. To get the propensity score for a binary exposure, we can fit a logistic model to the exposure data, conditional on all confounders:
-```{r, echo=F, message=F, warning=F}
+There are a number of different procedures one can use to evaluate whether positivity is a problem. Among these include propensity score overlap plots. Consider again our data from the last section. To get the propensity score for a binary exposure, we can fit a logistic model to the exposure data, conditional on confounders. Here, we use the Lalonde dataset, which is well known in econometric circles. This dataset was originally obtained from a study used to evaluate the effect of a training program (treat) on income:
+```{r, echo=T, message=F, warning=F}
 
-# define the expit function
-cohort <- read_csv("../data/example_dat1.csv") %>%
-  mutate(ID=rank(time,ties="random"),
-         exposure=X,
-         confounder=L,
-         start_time=start,
-         stop_time=time) %>% 
-  select(ID,exposure,confounder,start_time,stop_time,outcome)
+library(MatchIt)
+data("lalonde")
 
-```
-```{r, echo=T}
+head(lalonde)
 
-head(cohort)
-
-propensity_score <- glm(exposure ~ confounder, data=cohort, family=binomial(link="logit"))$fitted.values
+propensity_score <- glm(treat ~ age + educ + re75 + re75, data=lalonde, family=binomial(link="logit"))$fitted.values
 
 ## by appending a "$fitted.values" to the end
 ## of this glm function, we are 
@@ -468,17 +459,29 @@ propensity_score <- glm(exposure ~ confounder, data=cohort, family=binomial(link
 
 We can now plot the density of this propensity score for each exposure group to see how they overlap:
 
-```{r, echo=T}
+```{r, echo=T, message=F, warning=F}
 
-exposure <- cohort$exposure
+exposure <- lalonde$treat
 
-plot_data <- data.frame(propensity_score,exposure=as.factor(exposure))
+plot_data <- data.frame(propensity_score,Exposure=as.factor(lalonde$treat))
 
-library(ggplot2)
-ggplot(data=plot_data) + 
-  geom_density(aes(x=propensity_score,group=exposure,color=exposure)) + 
+p1 <- ggplot(data=plot_data) + 
+  scale_y_continuous(expand=c(0,0)) +
+  scale_x_continuous(expand=c(0,0)) +
+  ylab("Density") +
+  xlab("Propensity Score") +
+  scale_color_manual(values=c("#000000","#D55E00")) +
+  geom_density(aes(x=propensity_score,
+                   group=Exposure,
+                   color=Exposure)) + 
   xlim(0,1)
 
+ggsave("../figures/2022_01_10-ps_overlap.pdf",plot=p1)
+
+```
+
+```{r psfigure, out.width="10cm", fig.align='center', fig.cap="Propensity score overlap plot for the training intervention in 614 individuals in the Lalonde dataset.", echo=F}
+knitr::include_graphics("../figures/2022_01_10-ps_overlap.pdf")
 ```
 
 Since the mass of the density for the exposed occurs in the same place as the density mass for the unexposed, positivity does not seem to be much of an issue here. Another way to check positivity is to create stabilized inverse probability weights^[We won't get too deep into the theory for / definition of weights here. But here is the code for creating stabilized weights and evaluating positivity.] and look at their descriptive statistics. 
@@ -512,6 +515,8 @@ The bottom right panel in Figure 4 tells us something critically important that 
 
 ```{r, echo=T, message=F, warning=F}
 
+cohort <- read_csv("../data/2021_12_30-section1_cohort.csv")
+
 # 1. Bound 1, the worst case for treated.
 # 2. Alter the observed record.
 # If a = 1 and Δ = 0 then: a1 = a, Δ1 = 1, t1 = t.
@@ -524,6 +529,8 @@ The bottom right panel in Figure 4 tells us something critically important that 
 # untreated.
 # 5. Compute standard estimators for risk to the altered and
 # augmented data
+
+
 
 head(cohort)
 
