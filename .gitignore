@@ -1,4 +1,5 @@
 .Rhistory
 .Rproj.user
-/labs/*
-/misc/*
+.gitignore
+/labs/**
+/misc/**
