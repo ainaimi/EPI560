@@ -1,11 +1,4 @@
-.Rproj.user
 .Rhistory
-.RData
-.Ruserdata
-./misc/W10SpatializingRegressionLABHANDOUT.Rmd
-./misc/ref_main_v4.bib
-./misc/intro_R_ain.pptx
-./misc/EPI560_Topics.md
-./misc/Cohort.docx
-./labs/question_repo.md
-./labs/**
+.Rproj.user
+/labs/*
+/misc/*
