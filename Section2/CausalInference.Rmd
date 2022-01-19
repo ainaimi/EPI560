@@ -1,6 +1,5 @@
 ---
 title: "Causal Inference"
-subtitle: "Cohorts and Risk"
 author: "Ashley I Naimi"
 date: "Spring 2022"
 urlcolor: blue
