@@ -26,7 +26,7 @@ library(knitr)
 opts_chunk$set(tidy.opts=list(width.cutoff=40),tidy=TRUE)
 
 packages <- c( "data.table","tidyverse","ggplot2","ggExtra","formatR",
-               "gridExtra","skimr","here","Hmisc","RColorBrewer","gmm")
+               "gridExtra","skimr","here","Hmisc","RColorBrewer")#,"gmm")
 
 for (package in packages) {
   if (!require(package, character.only=T, quietly=T)) {
@@ -59,21 +59,21 @@ theme_set(thm)
 
 # Intro
 
-In the last section, we discussed the concepts of a cohort, censoring and truncation, the relation between cumulative distribution functions (CDFs, a.k.a cumulative incidence functions, cumulative risk, other), and how to use the Kaplan-Meier, Aalan-Johansen, and Gray's CIF estimators to obtain cause-specific or sub-distribution estimates of the CDF. In this section, we'll try to extend these concepts into other areas. In particular, we'll discuss what happens when we're interested in exposure effects. We'll start with a basic introduction to causal inference and potential outcomes. We'll discuss identifiability and what this means. Finally, we'll be introduced to some strategies that exist when our parameters of interest are not identified. 
+In the last section, we discussed the concepts of a cohort, censoring and truncation, the relation between cumulative distribution functions (CDFs, a.k.a cumulative incidence functions, cumulative risk, other), and how to use the Kaplan-Meier, Aalan-Johansen, and Gray's CIF estimators to obtain cause-specific or sub-distribution estimates of the CDF. In this section, we'll build on the practice of estimating risks. In particular, we'll discuss what happens when we're interested in exposure effects, particularly in an observational setting. This requires accounting for problems (potential biases) that can arise. We'll start with a basic introduction to causal inference and potential outcomes. We'll discuss identifiability and what this means. Finally, we'll be introduced to some strategies that exist when our parameters of interest are not identified. 
 
 # Correlation and Causation
 
 In the *The Grammar of Science,* Karl @Pearson1911 wrote: "[b]eyond such discarded fundamentals as 'matter' and 'force' lies still another fetish amidst the inscrutable arcana of modern science, namely, the category of cause and effect." He suggested that rather than pursue an understanding of cause-effect relations, scientists would be best served by measuring correlations through tables that classify individuals into specific categories. "Such a table is termed a contingency table, and the ultimate scientific statement of description of the relation between two things can always be thrown back upon such a contingency table."
 
-Over a century later, a majority of statistics courses treat causal inference by simply stating that "correlation is not causation." This treatment is hardly sufficient, for at least two reasons: 1) As scientists, our primary interest is (should be) in cause-effect relations; 2) People continue to conflate correlation with causation^[Daniel Westreich and I reviewed a book whose authors were so caught up in the allure of "Big Data" was so strong, they thoroughly forgot that correlation $\neq$ causation. See @Naimi2014d]. For both of these reasons, we very much need to **clarify the conditions that would allow us to understand causality better.** This is what "causal inference" is all about.
+Over a century later, a majority of statistics courses tend to treat causal inference by simply stating that "correlation is not causation." This treatment is hardly sufficient, for at least two reasons: 1) As scientists, our primary interest is (should be) in cause-effect relations; 2) People continue to conflate correlation with causation^[Daniel Westreich and I reviewed a book whose authors were so caught up in the allure of "Big Data", they thoroughly forgot that correlation $\neq$ causation. See @Naimi2014d]. For both of these reasons, we very much need to **clarify the conditions that would allow us to understand causality better.** This is what "causal inference" is all about.
 
 Generally, I adopt the view that **the causal and statistical aspects of a scientific study should be kept as separate as possible.** The objective is to first define the effect and articulate the conditions under which causal inference is possible for this effect, and then to understand what statistical tools will enable us to answer the causal question.^[Loosely speaking: Causal inference is the "what?" Statistics is the "how?" Epidemiology is the "why?"] Causal inference tells us what we should estimate, and whether we can. Statistics tells us how to estimate it. By implication, we should avoid treating statistical models as if they were causal. For example, the practice of reading the risk ratio, odds ratio, or risk difference for an exposure of interest from a generalized linear (statistical) model^[or the hazard ratio from a Cox model, or the mean ratio from a Poisson model, or host of other types of regression models] will sometimes work under very specific conditions, but is not the best approach for quantifying exposure effects [@Naimi2020]. In this section, we will cover exactly how the cumulative risk function can be integrated into this framework.
 
-An additional element that we won't have an opportunity to get into in this course is how we can avoid making unnecessary parametric assumptions when estimating causal effects. Specifically, the objective is to avoid imposing unnecessary parametric forms^[e.g., additivity, linearity, distributional, and other.] on the causal models that we believe are generating the data. Machine learning in particular is central to this idea of not "imposing unnecessary parametric forms," which is one reason why it's becoming so popular. We'll be introduced to these ideas when we discuss the correct model specification assumption.
+An additional element that we won't have an opportunity to get into in this course is how we can avoid making unnecessary parametric assumptions when estimating causal effects. Specifically, the objective is to avoid imposing unnecessary parametric forms^[e.g., additivity, linearity, distributional, and other.] on the causal models that we believe are generating the data. Machine learning in particular is central to this idea of not "imposing unnecessary parametric forms," which is one reason why it's becoming so popular. We'll be introduced to what all this means when we discuss the correct model specification assumption.
 
 # Introduction to Causal Inference
 
-"Causal inference" deals primarily with the formal mechanisms by which we can combine data, assumptions, and models to interpret a correlation (or association) as a causal relation.^[There are a number of introductory books and articles on causal inference in the empirical sciences. Here are some excellent options: @Hernan2015, @Pearl2016, @Imbens2015] The framework by which we define what we mean by "causal relation" or "causal effect" is the **potential outcomes framework**.
+"Causal inference" deals primarily with the **formal mechanisms by which we can combine data, assumptions, and models to interpret a correlation (or association) causally**.^[There are a number of introductory books and articles on causal inference in the empirical sciences. Here are some excellent options: @Hernan2015, @Pearl2016, @Imbens2015, @Cunningham2021] The framework in which we define what we mean by "causal relation" or "causal effect" is the **potential outcomes framework**.
 
 A central notion in the potential outcomes framework is the counterfactual. This notion stems from the intuitive and informal practice of interpreting cause-effect relations as **circumstances (e.g., health outcomes) that would have arisen had things (e.g., exposures) been different**.
 
@@ -101,11 +101,11 @@ Importantly, these are conceptually distinct from **observed outcomes**. That is
 
 Potential outcomes are functions of exposures. For a given exposure $x$, we will write the potential outcome as $Y^x$.^[Alternate notation includes: $Y_x$, $Y(x)$, $Y\mid Set(X=x)$, and $Y|do(X=x)$.] **This is interpreted as "the outcome ($Y$) that would be observed if $X$ were set to some value $x$"**. For example, if $X$ is binary [denoted $X \in (0,1)$], then $Y^x$ is the outcome that would be observed if $X=0$ or $X=1$. If we wanted to be specific about the value of $x$, we could write $Y^{x=0}$ or $Y^{x=1}$ (or, more succinctly,  $Y^{0}$ or $Y^{1}$).
 
-In the survival setting, the notation for potential outcomes is usually modified. This is because the standard notation in survival analysis does not typically include the outcome $Y$ directly in the notation. Some examples include the cumulative risk function $F(t)$, the survival function $S(t)$.
+In the survival setting, the notation for potential outcomes is usually modified. This is because the standard notation in survival analysis does not typically include the outcome $Y$ directly in the notation. Recall the cumulative risk and survival functions are denoted $F(t)$ and $S(t)$, respectively.
 
-To denote potential outcomes in the survival setting, one would typically write $S_{T^x}(t)$, $F_{T^x}(t)$, or some variation thereof [@Hernan2005]. The important takeaway is that, once a potential outcome is written, it must be defined appropriately. In other words, one should always include a sentence such as: "where $S_{T^x}(t)$ denotes the probability of surviving past time $T>t$ under exposure $X = x$.
+To denote potential outcomes in the survival setting, one would typically write $S_{T^x}(t)$, $F_{T^x}(t)$, or some variation thereof [e.g., @Hernan2005]. The important thing is that, once a potential outcome is written, it must be defined appropriately. In other words, one should always include a sentence such as: "where $S_{T^x}(t)$ denotes the probability of surviving past time $T>t$ that would be observed if the exposure were set to $X = x$.
 
-When the exposure and/or outcome are measured repeatedly over follow-up, notation must account for that. We thus use subscripts to denote when the variable was measured. For example, if the exposure is measured twice, we can denote the first measurement $X_0$ and the second $X_1$. Additionally, we use overbars to denote the history of a variable over follow-up time. For example, $\overline{X}_1$ denotes the set $\{X_0,X_1\}$. More generally, for some arbitrary point over follow-up $m$, $\overline{X}_m$ denotes $\{X_0,X_1,X_2, \ldots X_m\}$. We can then define potential outcomes as a function of these exposure histories: For two exposure measurements, $\overline{X}_j = \{1,1\}$, $Y^{\overline{x}_j = \overline{1}}$ is the outcome that would be observed if $X_0$ were set to $1$ and $X_1$ were set to $1$.
+Similarly, when the exposure and/or outcome are measured repeatedly over follow-up, notation must account for that. We thus use subscripts to denote when the variable was measured. For example, if the exposure is measured twice, we can denote the first measurement $X_0$ and the second $X_1$. Additionally, we use overbars to denote the history of a variable over follow-up time. For example, $\overline{X}_1$ denotes the set $\{X_0,X_1\}$. More generally, for some arbitrary point over follow-up $m$, $\overline{X}_m$ denotes $\{X_0,X_1,X_2, \ldots X_m\}$.^[Note that this notation presumes a discrete time framework, where study time is broken up into distinct chunks that can be indexed by $0, 1, ... $. This is related to the issue of discrete versus continuous time survival outcomes mentioned in Section 1, Technical Note on page 6.] We can then define potential outcomes as a function of these exposure histories: For two exposure measurements, $\overline{X}_j = \{1,1\}$, $Y^{\overline{x}_j = \overline{1}}$ is the outcome that would be observed if $X_0$ were set to $1$ and $X_1$ were set to $1$.
 
 :::{.rmdnote data-latex="{tip}"}
 
@@ -117,7 +117,9 @@ __Study Question__:
 
 # Estimand, Estimator, Estimate
 
-Causal inference starts with a clear idea of the effect of interest (the target causal parameter, or **estimand**). To do this, it helps to distinguish between estimands, estimators, and estimates.
+### Estimand
+
+Causal inference starts with a clear idea of the effect of interest (the target causal parameter, or **estimand**). We use potential outcomes to do this, but it is important first to distinguish between estimands, estimators, and estimates.
 
 :::{.rmdnote data-latex="{tip}"}
 
@@ -130,30 +132,30 @@ __Study Question__:
 The **estimand** is the (mathematical) object we want to quantify. It is, for example, the causal risk difference, risk ratio, or odds ratio for our exposure and outcome of interest. In our smoking CVD example, we might be interested in:
 
 $$ E( Y^{1} - Y^{0} ),\;\;\;\frac{E( Y^{1})}{E( Y^{0} )},\;\;\; \frac{Odds( Y^{1} = 1)}{ Odds( Y^{0} = 1)}, $$
-where $Odds(Y^x = 1) = E(Y^x )/[1-E(Y^x)]$, and where $E(.)$ is the expectation operator taken with respect to the total population.^[Throughout this course, if the outcome $Y$ is binary, then $E(Y) \equiv P(Y = 1)$. Or, the expectation of $Y$ is equivalent to the probability that $Y = 1$. For the more technially oriented, $$ E(Y) = \int y f(y) dy $$ where $f(y)$ is the probability density function of $Y$.] There are many other causal estimands besides these (effect of treatment on the treated, complier average causal effect, survivor average causal effect, stochastic effects, other).
+where $Odds(Y^x = 1) = E(Y^x )/[1-E(Y^x)]$, and where $E(.)$ is the expectation operator taken with respect to the total population.^[Throughout this course, if the outcome $Y$ is binary, then $E(Y) \equiv P(Y = 1)$. Or, the expectation of $Y$ is equivalent to the probability that $Y = 1$. This assumes that the binary outcome variable $Y$ is coded as $\{0,1\}$, and not, e.g., $\{1,2\}$. For the more technically oriented, $$ E(Y) = \int y f(y) dy $$ where $f(y)$ is the probability density function of $Y$.] There are many other causal estimands besides these (effect of treatment on the treated, complier average causal effect, survivor average causal effect, stochastic effects, other).
 
 Furthermore, the estimand need not always be causal [@Casella2002]. We may be interested in a statistical estimand, such as the conditional risk difference, risk ratio, or odds ratio:
 
 $$ E( Y \mid X = 1  ) - E( Y \mid X = 0  ),\;\;\;\frac{E( Y \mid X = 1)}{E( Y \mid X = 0)},\;\;\; \frac{Odds( Y \mid X=1)}{ Odds( Y\mid X=0)}, $$
 
-What's important is that one is clear about the objective. For example, in a 2016 paper @Naimi2016 define counterfacutal disparity measures, such as:
+What's important is that one is clear about the objective. For example, in @Naimi2016 we defined counterfacutal disparity measures as:
 
 $$ E(Y^m \mid X = 1) - E( Y^m \mid X = 0)$$
 
-which is a mix of statistical and counterfactual estimands. It is a measure of disparity (statistical estimand) that would be observed if some variable $M$ were set to a value $m$ (counterfactual estimand).
+which is a mixed statistical and counterfactual estimand. It is a measure of disparity (statistical estimand) that would be observed if some variable $M$ were set to a value $m$ (counterfactual estimand).
 
-The causal estimands presented above represent **average treatment effects** (on the risk difference, risk ratio, and odds ratio scale, respectively). This effect is referred to as a marginal treatment effect, because it averages (or marginalizes) the effect over the entire sample. For instance, if we consider the risk difference, it is easy to show that^[Recall that $Y^x$ is not the observed (or sample) value of the outcome, so how do we actually get this average? When we discuss identifiability, we will see how we use observed data to quantify these contrasts.] 
+The causal estimands presented above represent **average treatment effects** (on the risk difference, risk ratio, and odds ratio scale, respectively). This effect is sometimes referred to as a marginal treatment effect, because it averages (or marginalizes) the effect over the entire sample. For instance, if we consider the risk difference, it is easy to show that^[Recall that $Y^x$ is not the observed (or sample) value of the outcome, so how do we actually get this average? When we discuss identifiability, we will see how we use observed data to quantify these contrasts.] 
 $$ E(Y^1 - Y^0) = \frac{1}{N}\sum_{i=1}^N Y^1_i - \frac{1}{N}\sum_{i=1}^N Y^0_i  $$
 
-However, we may want to estimate this effect in a subset of the population. For instance, $E( Y^1 - Y^0 \mid C = c )$ is the effect of $x = 1$ versus $x = 0$ among those with $C = c$. There are many different conditional treatment effects, this latter one being the simplest. Another common conditional treatment effect is the effect of treatment on the treated (ETT):
+However, we may want to estimate this effect in a subset of the population. For instance, $E( Y^1 - Y^0 \mid C = c )$ is the effect of $x = 1$ versus $x = 0$ among those with $C = c$. There are many different conditional treatment (in contrast to marginal) effects, this latter one being one of the simplest. Another common conditional treatment effect is the effect of treatment on the treated (ETT):
 $$ E(Y^1 - Y^0 \mid X = 1) $$
-This effect compares the outcomes that would be observed if the exposure were set to 1 ($Y^1$) versus if the exposure were set to 0 ($Y^0$) among those who were observed to be exposed in the sample ($X = 1$). 
+This effect compares the outcomes that would be observed if the exposure were set to 1 ($Y^1$) versus if the exposure were set to 0 ($Y^0$) among those who were observed to be or actually exposed in the sample ($X = 1$). 
 
-To illustrate the relevance of this effect, consider the following (entirely fictional) scenario: Suppose that during gestation of a high-risk pregnancy, two clinical options are available to manage the risk of death: premature delivery induction versus expectant management. Suppose further a researcher is interested in quantifying the effect of inducing delivery prematurely on fetal and infant death. This researcher collects data on a cohort of high-risk pregnant women, including whether delivery was induced prematurely, fetal/infant death, and a host of confounding variables. All parties involved agree the study is designed perfectly (no confounding, measurement error, loss to follow-up). They calculate the average treatment effect of premature delivery induction on fetal and infant death on the risk difference scale:
+To illustrate the relevance of this effect, consider the following (entirely fictional) scenario: Suppose that during gestation of a high-risk pregnancy, two clinical options are available to manage the risk of fetal death: premature delivery induction versus expectant management. Suppose further a researcher is interested in quantifying the effect of inducing delivery prematurely on fetal and infant death. This researcher collects data on a cohort of high-risk pregnant women, including whether delivery was induced prematurely, fetal/infant death, and a host of confounding variables. All parties involved agree the study is designed perfectly (no confounding, measurement error, loss to follow-up). They calculate the average treatment effect of premature delivery induction on fetal and infant death on the risk difference scale:
 $$ E(Y^1 - Y^0) = 0.15 $$
 This researcher concludes that, if all high-risk pregnancies were induced prematurely ($X = 1$), 15 more out of every 100 pregnancies would end in death, relative to what would happen if all high-risk pregnancies were left to expectant management ($X = 0$). In light of this incredibly high excess risk of death, this researcher advises abandoning the practice of premature delivery induction entirely.
 
-Another researcher questions the relevance of the average treatment effect. They argue that physicians would never induce delivery prematurely in all versus no high-risk pregnancies. Rather, the more interesting question is: **for those women whose pregnancies were actually induced**, what would the risk of death have been had they not been induced? This researcher thus calculates the effect of treatment on the treated:
+Another researcher questions the relevance of the average treatment effect. They argue that physicians would never induce delivery prematurely in all versus no high-risk pregnancies. Rather, the more interesting question is: **for those women whose pregnancies were actually induced**, what would the risk of death have been had they not been induced? Underlying this more nuanced question is an understanding that physicians may be inducing pregnancy in women because of a number of reasons that make these women different from the rest. These differences, in turn, can lead to a different effect. This researcher thus calculates the effect of treatment on the treated:
 $$ E(Y^1 - Y^0 \mid X = 1) = -0.05 $$
 This other researcher concludes that, among those whose pregnancies were actually delivered prematurely, the risk of death would have been higher had they not been delivered prematurely.
 
@@ -161,7 +163,9 @@ This hypothetical example demonstrates a fundamental difference between the ATE 
 
 There are many other estimands that can be defined, including the local average treatment effect @Angrist1996, the survivor average causal effect @Tchetgen2014a, the complier average causal effect @Shrier2014, principal strata effects @Frangakis2002, stochastic effects @Munoz2012, incremental propensity score effects @Naimi2021, and others. We will not discuss these in the context of this course, but it's good to be aware of their existence.
 
-The estimand is the object we want to estimate. The **estimator** is an equation that allows us to use our data to quantify the estimand. Suppose, for example, we were explicitly interested in quantifying the causal risk difference for the relation between smoking and 5 year CVD risk. To do this, we **have to** start by quantifying the associational risk difference, but there are many ways to do this (e.g., ordinary least squares, maximum likelihood, or the method of moments).
+### Estimator
+
+The estimand is the object we want to estimate. The **estimator** is an equation that allows us to use our data to quantify the estimand. Suppose, for example, we were explicitly interested in quantifying the causal risk difference for the relation between smoking and 5 year CVD risk. To do this, we **have to** start by quantifying the associational risk difference, but there are many ways to do this (e.g., ordinary least squares, maximum likelihood, or many others).
 
 To be specific, let's simulate some hypothetical data on the relation between smoking and CVD. Let's look at ordinary least squares, maximum likelihood, the generalized method of moments, and augmented inverse probability weighting (AIPW) as estimators:
 ```{r, echo=T,fig.star=T,tidy=F,highlight=T,warning=F,message=F}
@@ -196,7 +200,7 @@ round(coef(glm(CVD~smoking+confounder,family=poisson("identity"))),4)
 round(coef(glm(CVD~smoking+confounder,family=binomial("identity"))),4)
 
 #GMM
-round(gmm(CVD~smoking+confounder,x=cbind(smoking, confounder))$coefficients,4)
+# round(gmm(CVD~smoking+confounder,x=cbind(smoking, confounder))$coefficients,4)
 
 #AIPW
 AIPW_SL <- AIPW$new(Y = CVD,
@@ -234,7 +238,7 @@ install.packages("reticulate",repos='http://lib.stat.cmu.edu/R/CRAN',dependencie
 library(reticulate)
 
 ## need to tell R where python is
-use_python("/usr/local/bin/python3")
+use_python("/opt/homebrew/bin/python3")
 ```
 
 Now we can run python directly from within RMarkdown:
@@ -280,37 +284,39 @@ In our simple setting with 1 million observations, ordinary least squares, maxim
 
 It is important to note that these estimates are not causal risk differences, but are associational. Even the results from the AIPW estimator are *associational*, even though this method is much more clearly motivated from within the causal inference framework [@Robins1994]. To interpret them as causal effects, we have to evaluate whether we can **identify** the effect we want to estimate. We discuss this next.
 
+### Estimates
+
 Finally, the values obtained from each estimation approach (~0.05) are our **estimates**. 
 
 # Identifiability: Average Treatment Effect
 
-In our simulation example, we estimated the associational (as opposed to causal) risk difference using five different estimators (ordinary least squares, two different maximum likelihood estimators, the generalized method of moments, and AIPW). Estimating associations is all we can do with empirical data. Any time you use software to obtain a point estimate, you get an associational measure, irrespective of the method used.^[This is true with ANY estimator, including IP-weighting, g computation, g estimation, or double robust approaches, such as AIPW (as demonstrated) or targeted maximum likelihood estimation.] 
+In our simulation example, we estimated the associational (as opposed to causal) risk difference using four different estimators (ordinary least squares, two different maximum likelihood estimators, and AIPW). Estimating associations is all we can do with empirical data. Any time you use software to obtain a point estimate, you get an associational measure, irrespective of the method used.^[This is true with ANY estimator, including IP-weighting, g computation, g estimation, or double robust approaches, such as AIPW (as demonstrated) or targeted maximum likelihood estimation.] 
 
-But our primary interest is (most often, see note 2 below) in causal quantities. In our simulated case, we want to estimate the causal risk difference for the effect of smoking on CVD. We can only do so if this causal risk difference is **identified**. Formally, _a parameter (e.g., causal risk difference) is identified if we can write it as a function of the observed data._
+But our primary interest is often in causal quantities. In our simulated case, we want to estimate the causal risk difference for the effect of smoking on CVD. We can only do so if this causal risk difference is **identified**. Formally, _a parameter (e.g., causal risk difference) is identified if we can write it as a function of the observed data._
 
-The causal risk difference is defined as a contrast of potential outcomes. Referring back to our simulated example,^[To simplify the explanation here, I am ignoring the fact that we conditioned on (or adjusted for) confounders $C$. Of course, without adjusting for $C$, we get a confounded estimate. However, if we adjust for $C$, we no longer obtain the average treatment effect. Instead, we obtain the conditional treatment effect. Their are important distinctions between average and conditional treatment effects that we will unfortunately not have time to discuss.] we want to estimate the causal risk difference which is an example of an average treatment effect:
+The causal risk difference is defined as a contrast of potential outcomes. Referring back to our simulated example,^[To simplify the explanation here, I am ignoring the fact that we conditioned on (or adjusted for) confounders $C$. Of course, without adjusting for $C$, we get a confounded estimate. However, if we adjust for $C$, we no longer obtain the average treatment effect. Instead, we obtain the conditional treatment effect. Their are important distinctions between average and conditional treatment effects that we will discuss in a subsequent section.] we want to estimate the causal risk difference which is an example of an average treatment effect:
 $$ E( Y^{1} - Y^{0} ), $$
 where $Y^1$, $Y^0$ are the potential CVD outcomes that would be observed if smoking were set to 1 and 0, respectively. On the other hand, the associational risk difference is defined as a contrast of observed outcomes:
 $$ E( Y \mid X = 1) - E( Y\mid X = 0), $$
 where each term in this equation is interpreted as the risk of CVD **among those who had $X=x$**. 
 
-The causal risk difference is identified if the following equation holds:^[Throughout this course, we will assume that the target parameter of interest is a causal contrast of potential outcomes. Sometimes, the target parameter of interest is an associational contrast, and the assumptions needed are less demanding. See, e.g., @Naimi2016c.]
-$$E(Y^x) = E(Y \mid X = x) $$
-which says that the risk of CVD that would be observed if everyone were set to $X=x$ is equal to the risk of CVD that we observe among those with $X=x$. In this equation, the right hand side equation is written entirely in terms of observed data ($Y=1$). The left hand side is a function of unobserved potential outcomes ($Y^x=1$). This equivalence will only hold if we can make some assumptions.
+The causal risk difference is identified if the following equation holds:
+$$E(Y^x) = E(Y \mid X = x). $$
+This equation says that the risk of CVD that would be observed if everyone were set to $X=x$ is equal to the risk of CVD that we observe among those with $X=x$. In this equation, the right hand side equation is written entirely in terms of observed data ($Y=1$). The left hand side is a function of unobserved potential outcomes ($Y^x=1$). Because potential outcomes are unobservable abstractions, this equivalence will only hold if we can make some assumptions.
 
 ## Counterfactual Consistency
 
-The first is **counterfactual consistency**, which states that the potential outcome that would be observed if we set the exposure to the observed value is the observed outcome [@Hernan2005b,@Hernan2008a,@Hernan2011a,@VanderWeele2013b].^[While somewhat convoluted, this assumption is about legitimizing the connection between our observational study, and future interventions in actual populations. In our observational study, we **see** people with with a certain value of the exposure. In a future intervention, we **set** people to a certain value of the exposure.] Formally, counterfactual consistency states that:
+The first is **counterfactual consistency**, which states that the potential outcome that would be observed if we set the exposure to the observed value is the observed outcome [@Hernan2005b,@Hernan2008a,@Hernan2011a,@VanderWeele2013b].^[While somewhat convoluted, this assumption is primarily about legitimizing the connection between our observational study, and future interventions in actual populations based on this study. In our observational study, we **see** people with with a certain value of the exposure. In a future intervention, we **set** people to a certain value of the exposure. The differences between seeing and setting can be profound.] Formally, counterfactual consistency states that:
 $$\text{ if }X = x\text{ then }Y^x = Y $$
 The status of this assumption remains unaffected by the choice of analytic method (e.g., standard regression versus g methods). Rather, this assumption’s validity depends on the nature of the exposure assignment mechanism.
 
-One way to grasp what counterfactual consistency is all about is to use the example of the "effect" of obesity on mortality [@Hernan2008a]. We know that obesity is associated with an increased risk of mortality, but interpreting this excess risk into a causal statement is tricky. In an observational study, the association between obesity and mortality is obtained by contrasting the risk of mortality among obese versus non-obese individuals. However, causally acting on this information would require us to find a way to make obese individuals non-obese. This might consist of getting obese individuals to diet, exercise, start smoking, or to undergo a single leg amputation (!). Each of these interventions could reduce BMI, thus getting obese individuals to become non-obese. However, each intervention will likely have (dramatically) different effects on mortality.
+One way to grasp what counterfactual consistency is about is to use the example of the "effect" of obesity on mortality [@Hernan2008a]. We know that obesity is associated with an increased risk of mortality, but interpreting this excess risk into a causal statement is tricky. In an observational study, the association between obesity and mortality is obtained by contrasting the risk of mortality among, say, obese versus non-obese individuals. However, causally acting on this information would require us to find a way to make obese individuals non-obese. This might consist of getting obese individuals to diet, exercise, start smoking, or to undergo a single leg amputation (!). Each of these interventions could reduce BMI, and thus getting obese individuals to become non-obese. However, each intervention will likely have (dramatically) different effects on mortality.
 
-They key here is that obesity is not a manipulable construct (on the other hand, dieting, exercise, smoking, and leg amuptation are). As a result, precisely translating what we mean by "the effect of obesity" is difficult. The same problem arises with other variables, such as the "effect of education," the "effect of race/ethnicity," and the "effect of socieoeconomic status," to name a few [@Naimi2015].
+They key here is that obesity is not a manipulable construct (on the other hand, dieting, exercise, smoking, and leg amuptation, more or less, are). As a result, precisely translating what we mean by "the effect of obesity" is difficult. The same problem arises with other variables, such as the "effect of education," the "effect of race/ethnicity," and the "effect of socieoeconomic status," to name a few [@Naimi2015].
 
 ## Interference
 
-We must also assume **no interference**, which states that the potential outcome for any given individual does not depend on the exposure status of another individual [@Hudgens2008,@Naimi2015]. If this assumption were not true, we would have to write the potential outcomes as a function of the exposure status of multiple individuals. For example, for two different people indexed by $i$ and $j$, we might write: $Y_i^{x_i,x_j}$.^[Together, counterfactual consistency and no interference make up the stable-unit treatment value assumption (SUTVA), first articulated by @Rubin1980.] Notation and methods that account for interference can become very complex very quickly [@Tchetgen2012,@Halloran2016], and we will not consider the impact of interference here.
+We must also assume **no interference**, which states that the potential outcome for any given individual does not depend on the exposure status of another individual [@Hudgens2008,@Naimi2015]. If this assumption were not true, we would have to write the potential outcomes as a function of the exposure status of multiple individuals. For example, for two different people indexed by $i$ and $j$, we might write: $Y_i^{x_i,x_j}$.^[Together, counterfactual consistency and no interference make up the stable-unit treatment value assumption (SUTVA), first articulated by @Rubin1980.] Notation and methods that account for interference can become very complex very quickly [@Tchetgen2012, @Halloran2016, @Hudgens2008]. As a result, we will not consider the impact of interference here, except only to say that different estimands and estimators should be used to properly account for them. 
 
 Together, counterfactual consistency and no interference allow us to make some progress in writing the potential risk $E(Y^x)$ as a function of the observed risk $E(Y \mid X=x)$. Specifically, by counterfactual consistency and no interference, we can do the following:
 
@@ -321,15 +327,15 @@ Together, counterfactual consistency and no interference allow us to make some p
 
 ## Exchangeability
 
-A third assumption is **exchangeability**, which implies that the potential outcomes under a specific exposure ($Y^x$) are independent of the observed exposures $X$ [@Greenland1986,@Greenland1999,@Greenland2009]. To explain the intuition behind exchangeability [@Hernan2015], consider a setting in which we are estimating the effect of aspirin on headache incidence in a cohort of individuals aged 18-40 years.^[Assume that our sample size is sufficiently large so as to avoid any sampling variability problems.] To do this experiment, a researcher randomly assigns 50% of the cohort to aspirin, and the remaining 50% to placebo. However, to overcome some logistical complications, before actually giving them aspirin/placebo, this researcher hands out cards that indicate whether the participant was assigned to aspirin (white card) versus placebo (black card). 
+A third assumption is **exchangeability**, which implies that the potential outcomes under a specific exposure ($Y^x$) are independent of the observed exposures $X$ [@Greenland1986,@Greenland1999,@Greenland2009]. To explain the intuition behind exchangeability [@Hernan2015], consider a setting in which we are estimating the effect of aspirin on headache incidence in a cohort of individuals aged 18-40 years.^[Assume that our sample size is sufficiently large so as to avoid any sampling variability problems.] To do this experiment, a researcher randomly assigns 50% of the cohort to aspirin, and the remaining 50% to placebo. However, to overcome some logistical complications, before actually giving them aspirin/placebo, this researcher hands out cards that indicate whether the participant was assigned to aspirin (red card) versus placebo (blue card). 
 
 After the cards/aspirin/placebo are distributed and the follow-up period transpires, the researcher tallies up the number of headaches in each exposure group. He finds the following results:
 \begin{align*}
-  \text{Aspirin (White Card): } E(Y \mid X = 1) & = 0.6 \\ 
-  \text{Placebo (Black Card): } E(Y \mid X = 0) & = 0.1
+  \text{Aspirin (Red Card): } E(Y \mid X = 1) & = 0.6 \\ 
+  \text{Placebo (Blue Card): } E(Y \mid X = 0) & = 0.1
 \end{align*}
 
-However, after reviewing the study protocol, he realizes that he accidentally assigned placebo to those with the white card, and aspirin to those with the black card, instead of the other way around. Fortunately, this has no actual impact on the study, with the exception of needing to switch the aspirin label with the placebo label. Why? Randomization (in a sufficiently large enough sample) creates independencies between outcome that would be observed under some exposure value (the potential outcome) and the observed exposure. In our case, $E(Y^{x=1}) = 0.1$, and this is the case whether the exposure received was placebo ($0$) or aspirin ($1$):
+However, after reviewing the study protocol, he realizes that he accidentally assigned placebo to those with the red card, and aspirin to those with the blue card, instead of the other way around. Fortunately, this has no actual impact on the study, with the exception of needing to switch the aspirin label with the placebo label. Why? Randomization (in a sufficiently large enough sample) creates independencies between outcome that would be observed under some exposure value (the potential outcome) and the observed exposure. In our case, $E(Y^{x=1}) = 0.1$, and this is the case whether the exposure received was placebo ($X=0$) or aspirin ($X=1$):
 \begin{align*}
   E(Y^{x=1}) = 0.1 \implies \left \{ \begin{matrix}
     E(Y^{x=1} \mid X = 1) = 0.1 \\ 
@@ -437,7 +443,7 @@ The second problem with positivity violations has to do with estimators. Conside
 $$ \frac{1}{P(X = 1 \mid C = 1)} $$
 In this case, the probability in the denominator is zero. And because $1/0$ is undefined, we can't use IP-weighting to estimate the effect we're after with this estimator. The same type of problem arises even if there are only a very small number people in the sample with $X = 1$ if $C = 1$. In this latter case, imagine that the probability of being exposed is very small, say 0.0001. Then, the above weight would be equivalent to $1/0.0001 = 10,000$. The above weight means that one or more of these individuals will contribute $10,000$ observations to the weighted analysis (usually well more than the original sample). These types of problems result in instability of the estimator (because the results end up being heavily dependent on only a few individuals in the sample with large weights). 
 
-When faced with positivity violations, one should either re-define the estimand so that there is no positivity violation, choose an estimator that is less affected by positivity problems, or both [@Petersen2012].^[Keep in mind: one cannot simply "avoid" positivity. In an extreme setting, nonpositivity means that those who were exposed in the sample are very unlikely to be exposed (and vice versa). In such a situation, it may not make sense to estimate the average treatment effect, because there is a subset of the population who may never realistically be exposed (or unexposed). In this case, g estimation, cTMLE, and the parametric g formula can actually estimate parameters that differ slightly or profoundly from the ATE.] Alternative estimands include the effect of treatment on the treated or untreated, various types of stochastic effects [including incremental propensity score effects [@Kennedy2019], which do not require that positivity hold [@Naimi2021]], or "blip" effects that are encoded in structural nested models, and can be estimated with g estimation. One can also use collaborative targeted minimum loss-based estimation,^[there is mounting evidence that standard (not collaborative) TMLE is very sensitive to positivity violations.] and the parametric g formula, which tend to be less sensitive to positivity violations [@Cole2013;@Porter2011;@Ju2017]. 
+When faced with positivity violations, one should either re-define the estimand so that there is no positivity violation, choose an estimator that is less affected by positivity problems, or both [@Petersen2012].^[Keep in mind: one cannot simply "avoid" positivity. In extreme setting, nonpositivity means that those who were unexposed in the sample are very unlikely to be exposed (and vice versa). In such a situation, it may not make sense to estimate the average treatment effect, because there is a subset of the population who may never realistically be exposed (or unexposed). In this case, g estimation, cTMLE, and the parametric g formula can actually estimate parameters that differ slightly or profoundly from the ATE.] Alternative estimands include the effect of treatment on the treated or untreated, various types of stochastic effects [including incremental propensity score effects [@Kennedy2019], which do not require that positivity hold [@Naimi2021]], or "blip" effects that are encoded in structural nested models, and can be estimated with g estimation. One can also use collaborative targeted minimum loss-based estimation,^[there is mounting evidence that standard (not collaborative) TMLE is very sensitive to positivity violations.] and the parametric g formula, which tend to be less sensitive to positivity violations [@Cole2013;@Porter2011;@Ju2017]. 
 
 There are a number of different procedures one can use to evaluate whether positivity is a problem. Among these include propensity score overlap plots. Consider again our data from the last section. To get the propensity score for a binary exposure, we can fit a logistic model to the exposure data, conditional on confounders. Here, we use the Lalonde dataset, which is well known in econometric circles. This dataset was originally obtained from a study used to evaluate the effect of a training program (treat) on income:
 ```{r, echo=T, message=F, warning=F}
@@ -483,7 +489,7 @@ ggsave("../figures/2022_01_10-ps_overlap.pdf",plot=p1)
 knitr::include_graphics("../figures/2022_01_10-ps_overlap.pdf")
 ```
 
-Since the mass of the density for the exposed occurs in the same place as the density mass for the unexposed, positivity does not seem to be much of an issue here. Another way to check positivity is to create stabilized inverse probability weights^[We won't get too deep into the theory for / definition of weights here. But here is the code for creating stabilized weights and evaluating positivity.] and look at their descriptive statistics. 
+Since the mass of the density for the exposed occurs in the same place as the density mass for the unexposed, positivity does not seem to be much of an issue here. Another way to check positivity is to create stabilized inverse probability weights^[We won't get too deep into the theory for / definition of weights here. But here is some code for creating stabilized weights and evaluating positivity.] and look at their descriptive statistics. 
 
 ```{r, echo=T}
 
@@ -511,51 +517,6 @@ knitr::include_graphics("../figures/bounds.png")
 ```
 
 The bottom right panel in Figure 4 tells us something critically important that we often fail to consider when conducting an empirical study. Without assumptions, data alone rarely provide much information about a causal effect of interest. Rather, when we interpret that a point estimate from a statistical model as a causal effect estimate, we are invoking a whole set of assumptions (knowingly or unknowingly) that allow us to get a single number out of our data, rather than a range of possible values. One of these sets of assumptions we discussed here (counterfactual consistency, no interference, positivity, exchangeability, correct model specification). Nonparametric bounds such as those depicted in the study by @Cole2019 help us understand exactly how much support our data provide for an effect of interest, and how much of our results rely on unverifiable assumptions.
-
-```{r, echo=T, message=F, warning=F}
-
-cohort <- read_csv("../data/2021_12_30-section1_cohort.csv")
-
-# 1. Bound 1, the worst case for treated.
-# 2. Alter the observed record.
-# If a = 1 and Δ = 0 then: a1 = a, Δ1 = 1, t1 = t.
-# Else if a = 0 and Δ = 0 then: a1 = a, Δ1 = 0, t1 = τ.
-# Else if Δ = 1 then: a1 = a, Δ1 = Δ, t1 = t.
-# 3. Augment data with a doppelganger.
-# If a = 1 then: a1 = 1 – a, Δ1 = 0, t1 = τ.
-# Else if a = 0 then: a1 = 1 – a, Δ1 = 1, t1 = ε.
-# 4. Adapt above steps for bound 2, the worst case for
-# untreated.
-# 5. Compute standard estimators for risk to the altered and
-# augmented data
-
-
-
-head(cohort)
-
-nonparametric_bounds <- function(){
-  
-  tau <- max(stop_time)
-  
-  if(exposure==1&delta==0){
-    a1 <- exposure
-    delta1 <- 1
-    t1 <- stop_time
-  } else if(exposure==0&delta==0){
-    a1 <- exposure
-    delta1 <- 0
-    t1 <- tau
-  } else if(delta==1){
-    a1 <- exposure
-    delta1 <- delta
-    t1 <- stop_time
-  }
-  
-  
-}
-
-```
-
 
 # Takeaway
 
