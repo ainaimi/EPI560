@@ -517,6 +517,39 @@ summary(sw)
 
 The mean of the stabilized weights is $1$, and the max weight is not large at all, suggesting very well-behaved weights. Thus, in this particular case, we are not concerned with violations of the positivity assumption.
 
+# Identifiability: Instrumental Variables and Local Average Treatment Effects
+
+Average treatment effects (ATEs) are extremely common estimands in the empirical sciences. Researchers will often conduct randomized or observational studies, quantify treatment effects, and then interpret these treatment effects as ATEs. As we just encountered, the validity of this interpretation depends heavily on the above stated assumptions: counterfactual consistency, no interference, (conditional) exchangeability, correct model specification, and positivity. Each of these assumptions provides an opportunity for our causal interpretation to break down. 
+
+This has prompted a large body of research to develop on both what happens when these assumptions do not hold, and what we can do about it. For example, when counterfactual consistency is violated, we can consider re-evaluating our exposure or research question, and examine the possible "versions of treatment" [@VanderWeele2009, @Hernan2011a]. When interference is violated, we can look to evaluate direct, indirect, and spillover effects, which are defined specifically for treatments that result in interference [@Hudgens2008]. Violations of the correct model specification assumption has lead to work on using machine learning for semiparametric or nonparametric causal inference [@Naimi2022, @Kennedy2016]. When positivity is violated, there are several options one can pursue to either mitigate its impact [@Petersen2012] or avoid the need for assuming positivity altogether [@Naimi2021, @Kennedy2019].
+
+Exchangeability can be violated when there is unadjusted confounding, selection bias, or information bias. By far, violations of exchangeability that result from unadjusted (unmeasured) confounding have taken up much of the literature's focus. Fortunately, work on measurement error is increasing [@vanSmeden2020], and the impact of selection bias is arguably not as large as confounding and information bias [@Greenland2003].
+
+A natural question that one may ask is whether there is a way we can conduct an analysis with observational data without having to worry at all about the "no measured or unmeasured confounding" assumption. It turns out, we can use instrumental variables to do this. Instrumental variables are sometimes presented as an "epidemiologist's dream" [@Hernan2006]. However, while in principle they do not require that we worry about measured or unmeasured confoudning (which is great!), there are tradeoffs we make when we seek to analyse data using IVs [@Hernan2006]. 
+
+## Randomization and ITT
+
+To begin, let's revisit the randomized trial example from the section on identifying the ATE. Consider again the situation where we want to estimate the effect of aspirin on headache in a cohort of individuals aged 18-40 years. Again, we randomize 50% of the individuals in our sample to aspirin, and the other 50% to placebo. From this study, we can collect information on a number of things, beyond just the outcome of interest, and whether an individual was assigned to the treatment/placebo group. 
+
+In addition, we can measure whether or not the individual took the pill they were actually assigned too (aspirin or placebo). For instance, some may have decided to throw the pill away, others may have gotten distracted and forgot to take it, and others still may have had some GI discomfort, and opted simply not to take it. We can also measure variables that might predict whether they took the pill or not, and that predict whether they will experience a headache or not. 
+
+For example, we can again consider sleep quantity in the night previous. An individual who slept very little the night before may not feel up to taking their assigned treatment. Similarly, this same individual may be at a higher risk of experiencing headache. For this reason, we would collect information on sleep quantity in the night previous to randomization. 
+
+
+
+## The Instrumental Variable
+
+## Local Average Treatment Effects
+
+## IV Identifiability Assumptions 
+
+## Weak Instruments
+
+## Homogeneity Makes the LATE --> ATE
+
+## Monotonicity Makes the LATE --> CACE
+
+
 # Non-Identifiability and Partial Identifiability: Bounding Effects
 
 What happens when the effect we want to estimate is not identifiable? Suppose, for example, exchangeability is violated because we could not randomize our exposure and were aware of the absence of key (unmeasured) confounders? Or perhaps there was some loss to follow-up that could not be accounted for with absolute certainty? More likely there is both unmeasured confounding and loss to follow-up. When this happens, we get a point estimate for the causal effect of interest, but it could either be smaller or larger in magnitude due to the influence of the unmeasured confounder and loss to follow-up. 
