@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999993 (TeX Live 2021) (preloaded format=xelatex 2022.1.24)  24 JAN 2022 16:12
+This is XeTeX, Version 3.141592653-2.6-0.999993 (TeX Live 2021) (preloaded format=xelatex 2022.1.24)  3 FEB 2022 15:19
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1172,93 +1172,93 @@ Package xtemplate Info: Declaring object type 'xfrac' taking 3 argument(s) on
 
 )
 LaTeX Font Info:    Font shape `TU/RobotoCondensed(0)/m/n' will be
-(Font)              scaled to size 10.0pt on input line 366.
+(Font)              scaled to size 10.0pt on input line 367.
 Requested font "[RobotoCondensed-Regular.otf]/OT:script=latn;language=dflt;+pnum;+lnum;mapping=tex-text;" at 10.0pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/google/roboto/RobotoCondensed-Regular.otf
 (./CausalInference.aux)
 \openout1 = `CausalInference.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 366.
-LaTeX Font Info:    ... okay on input line 366.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 366.
-LaTeX Font Info:    ... okay on input line 366.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 366.
-LaTeX Font Info:    ... okay on input line 366.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 366.
-LaTeX Font Info:    ... okay on input line 366.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 366.
-LaTeX Font Info:    Trying to load font information for TS1+cmr on input line 366.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 367.
+LaTeX Font Info:    ... okay on input line 367.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 367.
+LaTeX Font Info:    ... okay on input line 367.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 367.
+LaTeX Font Info:    ... okay on input line 367.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 367.
+LaTeX Font Info:    ... okay on input line 367.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 367.
+LaTeX Font Info:    Trying to load font information for TS1+cmr on input line 367.
 (/Users/AIN8/Library/TinyTeX/texmf-dist/tex/latex/base/ts1cmr.fd
 File: ts1cmr.fd 2019/12/16 v2.5j Standard LaTeX font definitions
 )
-LaTeX Font Info:    ... okay on input line 366.
-LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 366.
-LaTeX Font Info:    ... okay on input line 366.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 366.
-LaTeX Font Info:    ... okay on input line 366.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 366.
-LaTeX Font Info:    ... okay on input line 366.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 366.
-LaTeX Font Info:    ... okay on input line 366.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 366.
-LaTeX Font Info:    ... okay on input line 366.
+LaTeX Font Info:    ... okay on input line 367.
+LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 367.
+LaTeX Font Info:    ... okay on input line 367.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 367.
+LaTeX Font Info:    ... okay on input line 367.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 367.
+LaTeX Font Info:    ... okay on input line 367.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 367.
+LaTeX Font Info:    ... okay on input line 367.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 367.
+LaTeX Font Info:    ... okay on input line 367.
 
 Package fontspec Info: Adjusting the maths setup (use [no-math] to avoid
 (fontspec)             this).
 
 \symlegacymaths=\mathgroup6
 LaTeX Font Info:    Overwriting symbol font `legacymaths' in version `bold'
-(Font)                  OT1/cmr/m/n --> OT1/cmr/bx/n on input line 366.
-LaTeX Font Info:    Redeclaring math accent \acute on input line 366.
-LaTeX Font Info:    Redeclaring math accent \grave on input line 366.
-LaTeX Font Info:    Redeclaring math accent \ddot on input line 366.
-LaTeX Font Info:    Redeclaring math accent \tilde on input line 366.
-LaTeX Font Info:    Redeclaring math accent \bar on input line 366.
-LaTeX Font Info:    Redeclaring math accent \breve on input line 366.
-LaTeX Font Info:    Redeclaring math accent \check on input line 366.
-LaTeX Font Info:    Redeclaring math accent \hat on input line 366.
-LaTeX Font Info:    Redeclaring math accent \dot on input line 366.
-LaTeX Font Info:    Redeclaring math accent \mathring on input line 366.
-LaTeX Font Info:    Redeclaring math symbol \Gamma on input line 366.
-LaTeX Font Info:    Redeclaring math symbol \Delta on input line 366.
-LaTeX Font Info:    Redeclaring math symbol \Theta on input line 366.
-LaTeX Font Info:    Redeclaring math symbol \Lambda on input line 366.
-LaTeX Font Info:    Redeclaring math symbol \Xi on input line 366.
-LaTeX Font Info:    Redeclaring math symbol \Pi on input line 366.
-LaTeX Font Info:    Redeclaring math symbol \Sigma on input line 366.
-LaTeX Font Info:    Redeclaring math symbol \Upsilon on input line 366.
-LaTeX Font Info:    Redeclaring math symbol \Phi on input line 366.
-LaTeX Font Info:    Redeclaring math symbol \Psi on input line 366.
-LaTeX Font Info:    Redeclaring math symbol \Omega on input line 366.
-LaTeX Font Info:    Redeclaring math symbol \mathdollar on input line 366.
-LaTeX Font Info:    Redeclaring symbol font `operators' on input line 366.
+(Font)                  OT1/cmr/m/n --> OT1/cmr/bx/n on input line 367.
+LaTeX Font Info:    Redeclaring math accent \acute on input line 367.
+LaTeX Font Info:    Redeclaring math accent \grave on input line 367.
+LaTeX Font Info:    Redeclaring math accent \ddot on input line 367.
+LaTeX Font Info:    Redeclaring math accent \tilde on input line 367.
+LaTeX Font Info:    Redeclaring math accent \bar on input line 367.
+LaTeX Font Info:    Redeclaring math accent \breve on input line 367.
+LaTeX Font Info:    Redeclaring math accent \check on input line 367.
+LaTeX Font Info:    Redeclaring math accent \hat on input line 367.
+LaTeX Font Info:    Redeclaring math accent \dot on input line 367.
+LaTeX Font Info:    Redeclaring math accent \mathring on input line 367.
+LaTeX Font Info:    Redeclaring math symbol \Gamma on input line 367.
+LaTeX Font Info:    Redeclaring math symbol \Delta on input line 367.
+LaTeX Font Info:    Redeclaring math symbol \Theta on input line 367.
+LaTeX Font Info:    Redeclaring math symbol \Lambda on input line 367.
+LaTeX Font Info:    Redeclaring math symbol \Xi on input line 367.
+LaTeX Font Info:    Redeclaring math symbol \Pi on input line 367.
+LaTeX Font Info:    Redeclaring math symbol \Sigma on input line 367.
+LaTeX Font Info:    Redeclaring math symbol \Upsilon on input line 367.
+LaTeX Font Info:    Redeclaring math symbol \Phi on input line 367.
+LaTeX Font Info:    Redeclaring math symbol \Psi on input line 367.
+LaTeX Font Info:    Redeclaring math symbol \Omega on input line 367.
+LaTeX Font Info:    Redeclaring math symbol \mathdollar on input line 367.
+LaTeX Font Info:    Redeclaring symbol font `operators' on input line 367.
 LaTeX Font Info:    Encoding `OT1' has changed to `TU' for symbol font
-(Font)              `operators' in the math version `normal' on input line 366.
+(Font)              `operators' in the math version `normal' on input line 367.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
-(Font)                  OT1/cmr/m/n --> TU/lmr/m/n on input line 366.
+(Font)                  OT1/cmr/m/n --> TU/lmr/m/n on input line 367.
 LaTeX Font Info:    Encoding `OT1' has changed to `TU' for symbol font
-(Font)              `operators' in the math version `bold' on input line 366.
+(Font)              `operators' in the math version `bold' on input line 367.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
-(Font)                  OT1/cmr/bx/n --> TU/lmr/m/n on input line 366.
+(Font)                  OT1/cmr/bx/n --> TU/lmr/m/n on input line 367.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
-(Font)                  TU/lmr/m/n --> TU/lmr/m/n on input line 366.
+(Font)                  TU/lmr/m/n --> TU/lmr/m/n on input line 367.
 LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `normal'
-(Font)                  OT1/cmr/m/it --> TU/lmr/m/it on input line 366.
+(Font)                  OT1/cmr/m/it --> TU/lmr/m/it on input line 367.
 LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `normal'
-(Font)                  OT1/cmr/bx/n --> TU/lmr/b/n on input line 366.
+(Font)                  OT1/cmr/bx/n --> TU/lmr/b/n on input line 367.
 LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `normal'
-(Font)                  OT1/cmss/m/n --> TU/RobotoCondensed(0)/m/n on input line 366.
+(Font)                  OT1/cmss/m/n --> TU/RobotoCondensed(0)/m/n on input line 367.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `normal'
-(Font)                  OT1/cmtt/m/n --> TU/lmtt/m/n on input line 366.
+(Font)                  OT1/cmtt/m/n --> TU/lmtt/m/n on input line 367.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
-(Font)                  TU/lmr/m/n --> TU/lmr/b/n on input line 366.
+(Font)                  TU/lmr/m/n --> TU/lmr/b/n on input line 367.
 LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
-(Font)                  OT1/cmr/bx/it --> TU/lmr/b/it on input line 366.
+(Font)                  OT1/cmr/bx/it --> TU/lmr/b/it on input line 367.
 LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `bold'
-(Font)                  OT1/cmss/bx/n --> TU/RobotoCondensed(0)/b/n on input line 366.
+(Font)                  OT1/cmss/bx/n --> TU/RobotoCondensed(0)/b/n on input line 367.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
-(Font)                  OT1/cmtt/m/n --> TU/lmtt/b/n on input line 366.
-Package hyperref Info: Link coloring ON on input line 366.
+(Font)                  OT1/cmtt/m/n --> TU/lmtt/b/n on input line 367.
+Package hyperref Info: Link coloring ON on input line 367.
 (/Users/AIN8/Library/TinyTeX/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2021-04-02 v2.47 Cross-referencing by name of section
 (/Users/AIN8/Library/TinyTeX/texmf-dist/tex/latex/refcount/refcount.sty
@@ -1268,9 +1268,9 @@ Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 )
 \c@section@level=\count364
 )
-LaTeX Info: Redefining \ref on input line 366.
-LaTeX Info: Redefining \pageref on input line 366.
-LaTeX Info: Redefining \nameref on input line 366.
+LaTeX Info: Redefining \ref on input line 367.
+LaTeX Info: Redefining \pageref on input line 367.
+LaTeX Info: Redefining \nameref on input line 367.
 *geometry* driver: auto-detecting
 *geometry* detected driver: xetex
 *geometry* verbose mode - [ preamble ] result:
@@ -1307,27 +1307,27 @@ LaTeX Info: Redefining \nameref on input line 366.
 
 \langwohyphens=\language3
 LaTeX Font Info:    Font shape `TU/RobotoCondensed(0)/b/n' will be
-(Font)              scaled to size 10.0pt on input line 368.
+(Font)              scaled to size 10.0pt on input line 369.
 Requested font "[RobotoCondensed-Bold.otf]/OT:script=latn;language=dflt;+pnum;+lnum;mapping=tex-text;" at 10.0pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/google/roboto/RobotoCondensed-Bold.otf
 LaTeX Font Info:    Font shape `TU/RobotoCondensed(0)/b/n' will be
-(Font)              scaled to size 14.4pt on input line 368.
+(Font)              scaled to size 14.4pt on input line 369.
 Requested font "[RobotoCondensed-Bold.otf]/OT:script=latn;language=dflt;+pnum;+lnum;mapping=tex-text;" at 14.4pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/google/roboto/RobotoCondensed-Bold.otf
 
 LaTeX Font Warning: Font shape `TU/RobotoCondensed(0)/l/n' undefined
-(Font)              using `TU/RobotoCondensed(0)/m/n' instead on input line 368.
+(Font)              using `TU/RobotoCondensed(0)/m/n' instead on input line 369.
 
 LaTeX Font Info:    Font shape `TU/RobotoCondensed(0)/m/n' will be
-(Font)              scaled to size 12.0pt on input line 368.
+(Font)              scaled to size 12.0pt on input line 369.
 Requested font "[RobotoCondensed-Regular.otf]/OT:script=latn;language=dflt;+pnum;+lnum;mapping=tex-text;" at 12.0pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/google/roboto/RobotoCondensed-Regular.otf
 
 LaTeX Font Warning: Font shape `TU/RobotoCondensed(0)/l/n' undefined
-(Font)              using `TU/RobotoCondensed(0)/m/n' instead on input line 368.
+(Font)              using `TU/RobotoCondensed(0)/m/n' instead on input line 369.
 
 LaTeX Font Info:    Font shape `TU/RobotoCondensed(0)/b/n' will be
-(Font)              scaled to size 12.0pt on input line 375.
+(Font)              scaled to size 12.0pt on input line 376.
 Requested font "[RobotoCondensed-Bold.otf]/OT:script=latn;language=dflt;+pnum;+lnum;mapping=tex-text;" at 12.0pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/google/roboto/RobotoCondensed-Bold.otf
 (./CausalInference.toc
@@ -1343,7 +1343,7 @@ Requested font "[RobotoCondensed-Regular.otf]/OT:script=latn;language=dflt;+pnum
 
 ]
 LaTeX Font Info:    Font shape `TU/RobotoCondensed(0)/m/it' will be
-(Font)              scaled to size 10.0pt on input line 392.
+(Font)              scaled to size 10.0pt on input line 393.
 Requested font "[RobotoCondensed-Italic.otf]/OT:script=latn;language=dflt;+pnum;+lnum;mapping=tex-text;" at 10.0pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/google/roboto/RobotoCondensed-Italic.otf
 Requested font "[lmroman7-regular]:mapping=tex-text;" at 7.0pt
@@ -1354,7 +1354,7 @@ Requested font "cmex7" at 7.0pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm
 Requested font "cmex7" at 5.0pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm
-LaTeX Font Info:    Trying to load font information for U+msa on input line 394.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 395.
 (/Users/AIN8/Library/TinyTeX/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
@@ -1364,7 +1364,7 @@ Requested font "msam7" at 7.0pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam7.tfm
 Requested font "msam5" at 5.0pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam5.tfm
-LaTeX Font Info:    Trying to load font information for U+msb on input line 394.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 395.
 (/Users/AIN8/Library/TinyTeX/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
@@ -1375,11 +1375,11 @@ Requested font "msbm7" at 7.0pt
 Requested font "msbm5" at 5.0pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm5.tfm
 LaTeX Font Info:    Font shape `TU/RobotoCondensed(0)/m/n' will be
-(Font)              scaled to size 7.0pt on input line 394.
+(Font)              scaled to size 7.0pt on input line 395.
 Requested font "[RobotoCondensed-Regular.otf]/OT:script=latn;language=dflt;+pnum;+lnum;mapping=tex-text;" at 7.0pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/google/roboto/RobotoCondensed-Regular.otf
 LaTeX Font Info:    Font shape `TU/RobotoCondensed(0)/m/n' will be
-(Font)              scaled to size 8.0pt on input line 394.
+(Font)              scaled to size 8.0pt on input line 395.
 Requested font "[RobotoCondensed-Regular.otf]/OT:script=latn;language=dflt;+pnum;+lnum;mapping=tex-text;" at 8.0pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/google/roboto/RobotoCondensed-Regular.otf
 Requested font "[lmroman8-regular]:mapping=tex-text;" at 8.0pt
@@ -1411,11 +1411,11 @@ Requested font "cmr8" at 8.0pt
 Requested font "cmr6" at 6.0pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/tfm/public/cm/cmr6.tfm
 LaTeX Font Info:    Font shape `TU/RobotoCondensed(0)/m/n' will be
-(Font)              scaled to size 6.0pt on input line 394.
+(Font)              scaled to size 6.0pt on input line 395.
 Requested font "[RobotoCondensed-Regular.otf]/OT:script=latn;language=dflt;+pnum;+lnum;mapping=tex-text;" at 6.0pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/google/roboto/RobotoCondensed-Regular.otf
 LaTeX Font Info:    Font shape `TU/RobotoCondensed(0)/m/n' will be
-(Font)              scaled to size 5.0pt on input line 394.
+(Font)              scaled to size 5.0pt on input line 395.
 Requested font "[RobotoCondensed-Regular.otf]/OT:script=latn;language=dflt;+pnum;+lnum;mapping=tex-text;" at 5.0pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/google/roboto/RobotoCondensed-Regular.otf
 
@@ -1423,7 +1423,7 @@ LaTeX Warning: Marginpar on page 2 moved.
 
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 397.
+This message occurred on input line 398.
 
 [2]
 
@@ -1435,12 +1435,19 @@ LaTeX Warning: Marginpar on page 3 moved.
 
 LaTeX Warning: Marginpar on page 3 moved.
 
+LaTeX Font Info:    Font shape `TU/RobotoCondensed(0)/b/n' will be
+(Font)              scaled to size 8.0pt on input line 404.
+Requested font "[RobotoCondensed-Bold.otf]/OT:script=latn;language=dflt;+pnum;+lnum;mapping=tex-text;" at 8.0pt
+ -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/google/roboto/RobotoCondensed-Bold.otf
+
+Package natbib Warning: Citation `Hernan2015' on page 3 undefined on input line 404.
+
 
 LaTeX Warning: Marginpar on page 3 moved.
 
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 410.
+This message occurred on input line 411.
 
 [3]
 
@@ -1451,7 +1458,7 @@ LaTeX Warning: Marginpar on page 4 moved.
 
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 443.
+This message occurred on input line 444.
 
 [4]
 
@@ -1459,18 +1466,18 @@ LaTeX Warning: Marginpar on page 5 moved.
 
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 461.
+This message occurred on input line 462.
 
 [5]
 File: ../figures/tip.png Graphic file (type bmp)
 <../figures/tip.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 469--470
+Underfull \hbox (badness 10000) in paragraph at lines 470--471
 []              \TU/RobotoCondensed(0)/m/n/10 Suppose you collect data from a single person and find that they are exposed. Can you interpret the
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 469--470
+Underfull \hbox (badness 10000) in paragraph at lines 470--471
 \TU/RobotoCondensed(0)/m/n/10 outcome you observe to be the potential outcome that would have been observed had they been exposed?
  []
 
@@ -1481,7 +1488,7 @@ LaTeX Warning: Marginpar on page 6 moved.
 
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 493.
+This message occurred on input line 494.
 
 [6]
 
@@ -1489,12 +1496,12 @@ LaTeX Warning: Marginpar on page 7 moved.
 
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 512.
+This message occurred on input line 513.
 
 [7]
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 520.
+This message occurred on input line 521.
 
 [8]
 Requested font "[lmmono10-regular]:" at 10.0pt
@@ -1502,136 +1509,131 @@ Requested font "[lmmono10-regular]:" at 10.0pt
 Requested font "[lmmono10-italic]:" at 10.0pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/public/lm/lmmono10-italic.otf
 LaTeX Font Info:    Font shape `TU/lmtt/bx/n' in size <10> not available
-(Font)              Font shape `TU/lmtt/b/n' tried instead on input line 539.
+(Font)              Font shape `TU/lmtt/b/n' tried instead on input line 540.
 Requested font "[lmmonolt10-bold]:" at 10.0pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/public/lm/lmmonolt10-bold.otf
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 549.
+This message occurred on input line 550.
 
 [9]
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 603.
+This message occurred on input line 604.
 
 [10]
 
 LaTeX Font Warning: Font shape `TU/lmtt/bx/it' in size <10> not available
-(Font)              Font shape `TU/lmtt/b/sl' tried instead on input line 655.
+(Font)              Font shape `TU/lmtt/b/sl' tried instead on input line 656.
 
 Requested font "[lmmonolt10-boldoblique]:" at 10.0pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/public/lm/lmmonolt10-boldoblique.otf
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 662.
+This message occurred on input line 663.
 
 [11]
-Overfull \hbox (664.5pt too wide) in paragraph at lines 686--686
+Overfull \hbox (664.5pt too wide) in paragraph at lines 687--687
 []\TU/lmtt/m/n/10 ## /usr/local/lib/python3.9/site-packages/statsmodels/genmod/generalized_linear_model.py:298: DomainWarning: The identity link function does not respect the domain of the Poisson family. 
  []
 
 
-Overfull \hbox (55.5pt too wide) in paragraph at lines 687--687
+Overfull \hbox (55.5pt too wide) in paragraph at lines 688--688
 []\TU/lmtt/m/n/10 ##   warnings.warn((f"The {type(family.link).__name__} link function "[] 
  []
 
 
-Overfull \hbox (669.75pt too wide) in paragraph at lines 702--702
+Overfull \hbox (669.75pt too wide) in paragraph at lines 703--703
 []\TU/lmtt/m/n/10 ## /usr/local/lib/python3.9/site-packages/statsmodels/genmod/generalized_linear_model.py:298: DomainWarning: The identity link function does not respect the domain of the Binomial family. 
  []
 
 
-Overfull \hbox (55.5pt too wide) in paragraph at lines 703--703
+Overfull \hbox (55.5pt too wide) in paragraph at lines 704--704
 []\TU/lmtt/m/n/10 ##   warnings.warn((f"The {type(family.link).__name__} link function "[] 
  []
 
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 706.
+This message occurred on input line 707.
 
 [12]
-Overfull \hbox (113.25pt too wide) in paragraph at lines 717--717
+Overfull \hbox (113.25pt too wide) in paragraph at lines 718--718
 []\TU/lmtt/m/n/10 ## ============================================================================== 
  []
 
 
-Overfull \hbox (18.75pt too wide) in paragraph at lines 719--719
+Overfull \hbox (18.75pt too wide) in paragraph at lines 720--720
 []\TU/lmtt/m/n/10 ##                  Generalized Linear Model Regression Results[] 
  []
 
 
-Overfull \hbox (113.25pt too wide) in paragraph at lines 720--720
-[]\TU/lmtt/m/n/10 ## ==============================================================================[] 
- []
-
-
 Overfull \hbox (113.25pt too wide) in paragraph at lines 721--721
-[]\TU/lmtt/m/n/10 ## Dep. Variable:                smoking   No. Observations:              1000000[] 
+[]\TU/lmtt/m/n/10 ## ==============================================================================[] 
  []
 
 
 Overfull \hbox (113.25pt too wide) in paragraph at lines 722--722
-[]\TU/lmtt/m/n/10 ## Model:                            GLM   Df Residuals:                   999998[] 
+[]\TU/lmtt/m/n/10 ## Dep. Variable:                smoking   No. Observations:              1000000[] 
  []
 
 
 Overfull \hbox (113.25pt too wide) in paragraph at lines 723--723
-[]\TU/lmtt/m/n/10 ## Model Family:                Binomial   Df Model:                            1[] 
+[]\TU/lmtt/m/n/10 ## Model:                            GLM   Df Residuals:                   999998[] 
  []
 
 
 Overfull \hbox (113.25pt too wide) in paragraph at lines 724--724
-[]\TU/lmtt/m/n/10 ## Link Function:                  Logit   Scale:                          1.0000[] 
+[]\TU/lmtt/m/n/10 ## Model Family:                Binomial   Df Model:                            1[] 
  []
 
 
 Overfull \hbox (113.25pt too wide) in paragraph at lines 725--725
-[]\TU/lmtt/m/n/10 ## Method:                          IRLS   Log-Likelihood:            -4.4115e+05[] 
+[]\TU/lmtt/m/n/10 ## Link Function:                  Logit   Scale:                          1.0000[] 
  []
 
 
 Overfull \hbox (113.25pt too wide) in paragraph at lines 726--726
-[]\TU/lmtt/m/n/10 ## Date:                Mon, 24 Jan 2022   Deviance:                   8.8229e+05[] 
+[]\TU/lmtt/m/n/10 ## Method:                          IRLS   Log-Likelihood:            -4.4115e+05[] 
  []
 
 
 Overfull \hbox (113.25pt too wide) in paragraph at lines 727--727
-[]\TU/lmtt/m/n/10 ## Time:                        16:12:35   Pearson chi2:                 1.00e+06[] 
+[]\TU/lmtt/m/n/10 ## Date:                Thu, 03 Feb 2022   Deviance:                   8.8229e+05[] 
  []
 
 
 Overfull \hbox (113.25pt too wide) in paragraph at lines 728--728
+[]\TU/lmtt/m/n/10 ## Time:                        15:19:32   Pearson chi2:                 1.00e+06[] 
+ []
+
+
+Overfull \hbox (113.25pt too wide) in paragraph at lines 729--729
 []\TU/lmtt/m/n/10 ## No. Iterations:                     5   Pseudo R-squ. (CS):            0.01657[] 
  []
 
 
-Overfull \hbox (113.25pt too wide) in paragraph at lines 730--730
-[]\TU/lmtt/m/n/10 ## ==============================================================================[] 
- []
-
-
 Overfull \hbox (113.25pt too wide) in paragraph at lines 731--731
-[]\TU/lmtt/m/n/10 ##                  coef    std err          z      P>|z|      [0.025      0.975][] 
+[]\TU/lmtt/m/n/10 ## ==============================================================================[] 
  []
 
 
 Overfull \hbox (113.25pt too wide) in paragraph at lines 732--732
-[]\TU/lmtt/m/n/10 ## ------------------------------------------------------------------------------[] 
+[]\TU/lmtt/m/n/10 ##                  coef    std err          z      P>|z|      [0.025      0.975][] 
  []
 
 
 Overfull \hbox (113.25pt too wide) in paragraph at lines 733--733
-[]\TU/lmtt/m/n/10 ## Intercept     -2.0089      0.004   -459.096      0.000      -2.017      -2.000[] 
+[]\TU/lmtt/m/n/10 ## ------------------------------------------------------------------------------[] 
  []
 
 
 Overfull \hbox (113.25pt too wide) in paragraph at lines 734--734
-[]\TU/lmtt/m/n/10 ## confounder     0.7073      0.006    126.906      0.000       0.696       0.718[] 
+[]\TU/lmtt/m/n/10 ## Intercept     -2.0089      0.004   -459.096      0.000      -2.017      -2.000[] 
  []
 
 
 Overfull \hbox (113.25pt too wide) in paragraph at lines 735--735
-[]\TU/lmtt/m/n/10 ## ==============================================================================[] 
+[]\TU/lmtt/m/n/10 ## confounder     0.7073      0.006    126.906      0.000       0.696       0.718[] 
  []
 
 
@@ -1640,97 +1642,97 @@ Overfull \hbox (113.25pt too wide) in paragraph at lines 736--736
  []
 
 
-Overfull \hbox (113.25pt too wide) in paragraph at lines 747--747
-[]\TU/lmtt/m/n/10 ## ============================================================================== 
- []
-
-
-Overfull \hbox (18.75pt too wide) in paragraph at lines 749--749
-[]\TU/lmtt/m/n/10 ##                  Generalized Linear Model Regression Results[] 
- []
-
-
-Overfull \hbox (113.25pt too wide) in paragraph at lines 750--750
+Overfull \hbox (113.25pt too wide) in paragraph at lines 737--737
 []\TU/lmtt/m/n/10 ## ==============================================================================[] 
  []
 
 
+Overfull \hbox (113.25pt too wide) in paragraph at lines 748--748
+[]\TU/lmtt/m/n/10 ## ============================================================================== 
+ []
+
+
+Overfull \hbox (18.75pt too wide) in paragraph at lines 750--750
+[]\TU/lmtt/m/n/10 ##                  Generalized Linear Model Regression Results[] 
+ []
+
+
 Overfull \hbox (113.25pt too wide) in paragraph at lines 751--751
+[]\TU/lmtt/m/n/10 ## ==============================================================================[] 
+ []
+
+
+Overfull \hbox (113.25pt too wide) in paragraph at lines 752--752
 []\TU/lmtt/m/n/10 ## Dep. Variable:                    CVD   No. Observations:              1000000[] 
  []
 
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 751.
+This message occurred on input line 752.
 
 [13]
-Overfull \hbox (113.25pt too wide) in paragraph at lines 752--752
+Overfull \hbox (113.25pt too wide) in paragraph at lines 753--753
 []\TU/lmtt/m/n/10 ## Model:                            GLM   Df Residuals:                   999997[] 
  []
 
 
-Overfull \hbox (113.25pt too wide) in paragraph at lines 753--753
+Overfull \hbox (113.25pt too wide) in paragraph at lines 754--754
 []\TU/lmtt/m/n/10 ## Model Family:                Binomial   Df Model:                            2[] 
  []
 
 
-Overfull \hbox (113.25pt too wide) in paragraph at lines 754--754
+Overfull \hbox (113.25pt too wide) in paragraph at lines 755--755
 []\TU/lmtt/m/n/10 ## Link Function:                  Logit   Scale:                          1.0000[] 
  []
 
 
-Overfull \hbox (113.25pt too wide) in paragraph at lines 755--755
+Overfull \hbox (113.25pt too wide) in paragraph at lines 756--756
 []\TU/lmtt/m/n/10 ## Method:                          IRLS   Log-Likelihood:            -3.8764e+05[] 
  []
 
 
-Overfull \hbox (113.25pt too wide) in paragraph at lines 756--756
-[]\TU/lmtt/m/n/10 ## Date:                Mon, 24 Jan 2022   Deviance:                   7.7529e+05[] 
- []
-
-
 Overfull \hbox (113.25pt too wide) in paragraph at lines 757--757
-[]\TU/lmtt/m/n/10 ## Time:                        16:12:36   Pearson chi2:                 9.99e+05[] 
+[]\TU/lmtt/m/n/10 ## Date:                Thu, 03 Feb 2022   Deviance:                   7.7529e+05[] 
  []
 
 
 Overfull \hbox (113.25pt too wide) in paragraph at lines 758--758
+[]\TU/lmtt/m/n/10 ## Time:                        15:19:33   Pearson chi2:                 9.99e+05[] 
+ []
+
+
+Overfull \hbox (113.25pt too wide) in paragraph at lines 759--759
 []\TU/lmtt/m/n/10 ## No. Iterations:                     5   Pseudo R-squ. (CS):           0.009028[] 
  []
 
 
-Overfull \hbox (113.25pt too wide) in paragraph at lines 760--760
-[]\TU/lmtt/m/n/10 ## ==============================================================================[] 
- []
-
-
 Overfull \hbox (113.25pt too wide) in paragraph at lines 761--761
-[]\TU/lmtt/m/n/10 ##                  coef    std err          z      P>|z|      [0.025      0.975][] 
+[]\TU/lmtt/m/n/10 ## ==============================================================================[] 
  []
 
 
 Overfull \hbox (113.25pt too wide) in paragraph at lines 762--762
-[]\TU/lmtt/m/n/10 ## ------------------------------------------------------------------------------[] 
+[]\TU/lmtt/m/n/10 ##                  coef    std err          z      P>|z|      [0.025      0.975][] 
  []
 
 
 Overfull \hbox (113.25pt too wide) in paragraph at lines 763--763
-[]\TU/lmtt/m/n/10 ## Intercept     -2.1853      0.005   -462.114      0.000      -2.195      -2.176[] 
+[]\TU/lmtt/m/n/10 ## ------------------------------------------------------------------------------[] 
  []
 
 
 Overfull \hbox (113.25pt too wide) in paragraph at lines 764--764
-[]\TU/lmtt/m/n/10 ## smoking        0.3756      0.007     51.626      0.000       0.361       0.390[] 
+[]\TU/lmtt/m/n/10 ## Intercept     -2.1853      0.005   -462.114      0.000      -2.195      -2.176[] 
  []
 
 
 Overfull \hbox (113.25pt too wide) in paragraph at lines 765--765
-[]\TU/lmtt/m/n/10 ## confounder     0.4420      0.006     72.992      0.000       0.430       0.454[] 
+[]\TU/lmtt/m/n/10 ## smoking        0.3756      0.007     51.626      0.000       0.361       0.390[] 
  []
 
 
 Overfull \hbox (113.25pt too wide) in paragraph at lines 766--766
-[]\TU/lmtt/m/n/10 ## ==============================================================================[] 
+[]\TU/lmtt/m/n/10 ## confounder     0.4420      0.006     72.992      0.000       0.430       0.454[] 
  []
 
 
@@ -1739,51 +1741,56 @@ Overfull \hbox (113.25pt too wide) in paragraph at lines 767--767
  []
 
 
+Overfull \hbox (113.25pt too wide) in paragraph at lines 768--768
+[]\TU/lmtt/m/n/10 ## ==============================================================================[] 
+ []
+
+
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 799.
+This message occurred on input line 800.
 
 [14]
-Overfull \hbox (71.25pt too wide) in paragraph at lines 819--819
+Overfull \hbox (71.25pt too wide) in paragraph at lines 820--820
 []\TU/lmtt/m/n/10 ## ====================================================================== 
  []
 
 
-Overfull \hbox (18.75pt too wide) in paragraph at lines 820--820
+Overfull \hbox (18.75pt too wide) in paragraph at lines 821--821
 []\TU/lmtt/m/n/10 ##           Augmented Inverse Probability of Treatment Weights[] 
  []
 
 
-Overfull \hbox (71.25pt too wide) in paragraph at lines 821--821
+Overfull \hbox (71.25pt too wide) in paragraph at lines 822--822
 []\TU/lmtt/m/n/10 ## ======================================================================[] 
  []
 
 
-Overfull \hbox (34.5pt too wide) in paragraph at lines 822--822
+Overfull \hbox (34.5pt too wide) in paragraph at lines 823--823
 []\TU/lmtt/m/n/10 ## Treatment:        smoking         No. Observations:     1000000[] 
  []
 
 
-Overfull \hbox (3.0pt too wide) in paragraph at lines 823--823
+Overfull \hbox (3.0pt too wide) in paragraph at lines 824--824
 []\TU/lmtt/m/n/10 ## Outcome:          CVD             No. Missing Outcome:  0[] 
  []
 
 
-Overfull \hbox (18.75pt too wide) in paragraph at lines 824--824
+Overfull \hbox (18.75pt too wide) in paragraph at lines 825--825
 []\TU/lmtt/m/n/10 ## g-Model:          Logistic        Missing Model:        None[] 
  []
 
 
-Overfull \hbox (71.25pt too wide) in paragraph at lines 826--826
+Overfull \hbox (71.25pt too wide) in paragraph at lines 827--827
 []\TU/lmtt/m/n/10 ## ======================================================================[] 
  []
 
 
-Overfull \hbox (71.25pt too wide) in paragraph at lines 829--829
+Overfull \hbox (71.25pt too wide) in paragraph at lines 830--830
 []\TU/lmtt/m/n/10 ## ----------------------------------------------------------------------[] 
  []
 
 
-Overfull \hbox (71.25pt too wide) in paragraph at lines 832--832
+Overfull \hbox (71.25pt too wide) in paragraph at lines 833--833
 []\TU/lmtt/m/n/10 ## ======================================================================[] 
  []
 
@@ -1792,7 +1799,7 @@ LaTeX Warning: Marginpar on page 15 moved.
 
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 845.
+This message occurred on input line 846.
 
 [15]
 
@@ -1803,74 +1810,73 @@ LaTeX Warning: Marginpar on page 16 moved.
 
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 860.
+This message occurred on input line 861.
 
 [16]
-LaTeX Font Info:    Font shape `TU/RobotoCondensed(0)/b/n' will be
-(Font)              scaled to size 8.0pt on input line 864.
-Requested font "[RobotoCondensed-Bold.otf]/OT:script=latn;language=dflt;+pnum;+lnum;mapping=tex-text;" at 8.0pt
- -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/google/roboto/RobotoCondensed-Bold.otf
 
 LaTeX Warning: Marginpar on page 17 moved.
 
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 871.
+This message occurred on input line 872.
 
 [17]
 
 LaTeX Warning: Marginpar on page 18 moved.
 
 
+Package natbib Warning: Citation `Hernan2015' on page 18 undefined on input line 888.
+
+
 LaTeX Warning: Marginpar on page 18 moved.
 
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 888.
+This message occurred on input line 889.
 
 [18]
 File: ../figures/tip.png Graphic file (type bmp)
 <../figures/tip.png>
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 923.
+This message occurred on input line 924.
 
 [19]
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 941.
+This message occurred on input line 942.
 
 [20]
 File: ../figures/tip.png Graphic file (type bmp)
 <../figures/tip.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 948--949
+Underfull \hbox (badness 10000) in paragraph at lines 949--950
 []              \TU/RobotoCondensed(0)/m/n/10 Consider the marginalization step in the identification equation above. This step involves transitioning
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 953--955
+Underfull \hbox (badness 10000) in paragraph at lines 954--956
 \TU/RobotoCondensed(0)/m/n/10 where the outer expectation is taken over $\OML/cmm/m/it/10 C$\TU/RobotoCondensed(0)/m/n/10 , and the inner expectation is taken over $\OML/cmm/m/it/10 Y[]$\TU/RobotoCondensed(0)/m/n/10 . This equation is
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 953--955
+Underfull \hbox (badness 10000) in paragraph at lines 954--956
 \TU/RobotoCondensed(0)/m/n/10 sometimes referred to as the law of iterated expectations, the law of total expectation, or the tower rule. It
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 953--955
+Underfull \hbox (badness 10000) in paragraph at lines 954--956
 \TU/RobotoCondensed(0)/m/n/10 plays an important role in causal inference, such as when we define (and sometimes implement) the g com-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 953--955
+Underfull \hbox (badness 10000) in paragraph at lines 954--956
 \TU/RobotoCondensed(0)/m/n/10 putation estimator. It is useful to understand, both when reading the technical literature, as well as when
  []
 
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 964.
+This message occurred on input line 965.
 
 [21]
 
@@ -1882,17 +1888,17 @@ LaTeX Warning: Marginpar on page 22 moved.
 
 Package amsmath Warning: Foreign command \atopwithdelims;
 (amsmath)                \frac or \genfrac should be used instead
-(amsmath)                 on input line 971.
+(amsmath)                 on input line 972.
 
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 978.
+This message occurred on input line 979.
 
 [22]
 File: ../figures/tip.png Graphic file (type bmp)
 <../figures/tip.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 983--984
+Underfull \hbox (badness 10000) in paragraph at lines 984--985
 []              \TU/RobotoCondensed(0)/m/n/10 Can you come up with a clearly articulated connection between correct model misspecification and
  []
 
@@ -1903,13 +1909,13 @@ LaTeX Warning: Marginpar on page 23 moved.
 LaTeX Warning: Marginpar on page 23 moved.
 
 
-Overfull \hbox (11.87964pt too wide) detected at line 996
+Overfull \hbox (11.87964pt too wide) detected at line 997
 \OML/cmm/m/it/10 E\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 Y[]\OT1/cmr/m/n/10 ) = \OML/cmm/m/it/10 E\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 Y \OMS/cmsy/m/n/10 j \OML/cmm/m/it/10 X \OT1/cmr/m/n/10 = 1\OML/cmm/m/it/10 ; C \OT1/cmr/m/n/10 = 1)\OML/cmm/m/it/10 P\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 C \OT1/cmr/m/n/10 = 1) + \OML/cmm/m/it/10 E\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 Y \OMS/cmsy/m/n/10 j \OML/cmm/m/it/10 X \OT1/cmr/m/n/10 = 1\OML/cmm/m/it/10 ; C \OT1/cmr/m/n/10 = 0)\OML/cmm/m/it/10 P\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 C \OT1/cmr/m/n/10 = 0)
  []
 
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 1001.
+This message occurred on input line 1002.
 
 [23]
 
@@ -1923,46 +1929,46 @@ LaTeX Warning: Marginpar on page 24 moved.
 
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 1009.
+This message occurred on input line 1010.
 
 [24]
-Overfull \hbox (39.75pt too wide) in paragraph at lines 1019--1019
+Overfull \hbox (39.75pt too wide) in paragraph at lines 1020--1020
 []\TU/lmtt/m/n/10 ##      treat age educ   race married nodegree re74 re75       re78 
  []
 
 
-Overfull \hbox (39.75pt too wide) in paragraph at lines 1020--1020
+Overfull \hbox (39.75pt too wide) in paragraph at lines 1021--1021
 []\TU/lmtt/m/n/10 ## NSW1     1  37   11  black       1        1    0    0  9930.0460[] 
  []
 
 
-Overfull \hbox (39.75pt too wide) in paragraph at lines 1021--1021
+Overfull \hbox (39.75pt too wide) in paragraph at lines 1022--1022
 []\TU/lmtt/m/n/10 ## NSW2     1  22    9 hispan       0        1    0    0  3595.8940[] 
  []
 
 
-Overfull \hbox (39.75pt too wide) in paragraph at lines 1022--1022
+Overfull \hbox (39.75pt too wide) in paragraph at lines 1023--1023
 []\TU/lmtt/m/n/10 ## NSW3     1  30   12  black       0        0    0    0 24909.4500[] 
  []
 
 
-Overfull \hbox (39.75pt too wide) in paragraph at lines 1023--1023
+Overfull \hbox (39.75pt too wide) in paragraph at lines 1024--1024
 []\TU/lmtt/m/n/10 ## NSW4     1  27   11  black       0        1    0    0  7506.1460[] 
  []
 
 
-Overfull \hbox (39.75pt too wide) in paragraph at lines 1024--1024
+Overfull \hbox (39.75pt too wide) in paragraph at lines 1025--1025
 []\TU/lmtt/m/n/10 ## NSW5     1  33    8  black       0        1    0    0   289.7899[] 
  []
 
 
-Overfull \hbox (39.75pt too wide) in paragraph at lines 1025--1025
+Overfull \hbox (39.75pt too wide) in paragraph at lines 1026--1026
 []\TU/lmtt/m/n/10 ## NSW6     1  22    9  black       0        1    0    0  4056.4940[] 
  []
 
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 1061.
+This message occurred on input line 1062.
 
 [25]
 File: ../figures/2022_01_10-ps_overlap.pdf Graphic file (type pdf)
@@ -1970,62 +1976,189 @@ File: ../figures/2022_01_10-ps_overlap.pdf Graphic file (type pdf)
 
 LaTeX Warning: Marginpar on page 26 moved.
 
+File: ../figures/tip.png Graphic file (type bmp)
+<../figures/tip.png>
 
-Overfull \hbox (3.39197pt too wide) in paragraph at lines 1092--1092
+Underfull \hbox (badness 10000) in paragraph at lines 1095--1096
+[]              \TU/RobotoCondensed(0)/m/n/10 In a large body of methods literature, particularly those in econometrics, you are likely to encounter
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1095--1096
+\TU/RobotoCondensed(0)/m/n/10 these causal assumptions articulated in different ways. Most commonly, researchers will often invoke \TU/RobotoCondensed(0)/b/n/10 ig-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1095--1096
+\TU/RobotoCondensed(0)/b/n/10 norability \TU/RobotoCondensed(0)/m/n/10 as a core assumption in causal inference. There are at least two versions of ignorability: strong
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1095--1096
+\TU/RobotoCondensed(0)/m/n/10 and weak ignorability. \TU/RobotoCondensed(0)/b/n/10 Strong ignorability \TU/RobotoCondensed(0)/m/n/10 is defined as the combination of the conditional independence as-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1095--1096
+\TU/RobotoCondensed(0)/m/n/10 sumption, and the positivity assumption. Technically, strong ignorability holds if, for individual $\OML/cmm/m/it/10 i$ \TU/RobotoCondensed(0)/m/n/10 with a binary
+ []
+
+Requested font "[lmromandemi10-regular]:mapping=tex-text;" at 10.0pt
+ -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/public/lm/lmromandemi10-regular.otf
+Requested font "[lmromandemi10-regular]:mapping=tex-text;" at 7.0pt
+ -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/public/lm/lmromandemi10-regular.otf
+Requested font "[lmromandemi10-regular]:mapping=tex-text;" at 5.0pt
+ -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/public/lm/lmromandemi10-regular.otf
+
+Underfull \hbox (badness 10000) in paragraph at lines 1102--1103
+[]\TU/RobotoCondensed(0)/m/n/10 where the $\OMS/cmsy/m/n/10 ?   ?$ \TU/RobotoCondensed(0)/m/n/10 symbol denotes independence (in this case, conditional independence since we include $\OMS/cmsy/m/n/10 j [][]$\TU/RobotoCondensed(0)/m/n/10 ).
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1102--1103
+\TU/RobotoCondensed(0)/m/n/10 In this case, the ignorability is “strong” because the independence is assumed to exist \TU/RobotoCondensed(0)/m/it/10 jointly \TU/RobotoCondensed(0)/m/n/10 between both
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1102--1103
+\TU/RobotoCondensed(0)/m/n/10 potential outcomes (Y_i^{x=0}, Y_i^{x=1}) for individual $\OML/cmm/m/it/10 i$\TU/RobotoCondensed(0)/m/n/10 , and the exposure $\OML/cmm/m/it/10 X[]$\TU/RobotoCondensed(0)/m/n/10 , conditional on $[][]$. Sometimes,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1109--1110
+[]\TU/RobotoCondensed(0)/m/n/10 This version of the assumption is weaker in that we need not worry about whether the potential outcomes
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1109--1110
+\TU/RobotoCondensed(0)/m/n/10 are jointly independent of the observed exposure. Rather, we only need each potential outcome $\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 Y[]\OT1/cmr/m/n/10 )$ \TU/RobotoCondensed(0)/m/n/10 to be
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1111--1112
+[]\TU/RobotoCondensed(0)/m/n/10 Even still, these assumptions are stronger than what we need to identify the causal risk difference, risk ra-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1111--1112
+\TU/RobotoCondensed(0)/m/n/10 tio, odds ratio, or other typical summary contrasts we often quantify in epidemiology. In the above proof, we
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1113--1114
+[]\TU/RobotoCondensed(0)/m/n/10 The distinctions between strong ignorabilty, weak ignorability, and mean exchangeability are of little practical
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1113--1114
+\TU/RobotoCondensed(0)/m/n/10 consequence. While it is important to recognize that ignorability typically consistes of the combination of
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1113--1114
+\TU/RobotoCondensed(0)/m/n/10 exchangeability and positivity. Additional details on and intuition behind the different versions of exchange-
+ []
+
+
+Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
+This message occurred on input line 1115.
+
+[26]
+Overfull \hbox (8.10796pt too wide) in paragraph at lines 1118--1118
+|[]\TU/RobotoCondensed(0)/b/n/12 Identifiability: Instrumental Variables and Local Average Treat-
+ []
+
+
+Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
+This message occurred on input line 1121.
+
+[27]
+
+Package natbib Warning: Citation `vanSmeden2020' on page 28 undefined on input line 1124.
+
+
+Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
+This message occurred on input line 1127.
+
+[28]
+File: ../figures/F_iv.pdf Graphic file (type pdf)
+<use ../figures/F_iv.pdf>
+Requested font "[lmromandemi10-regular]:mapping=tex-text;" at 8.0pt
+ -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/public/lm/lmromandemi10-regular.otf
+Requested font "[lmromandemi10-regular]:mapping=tex-text;" at 6.0pt
+ -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/public/lm/lmromandemi10-regular.otf
+
+Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
+This message occurred on input line 1149.
+
+[29]
+
+LaTeX Warning: Marginpar on page 30 moved.
+
+
+Overfull \hbox (3.77597pt too wide) in paragraph at lines 1180--1180
 |[]\TU/RobotoCondensed(0)/b/n/12 Non-Identifiability and Partial Identifiability: Bounding Effects| 
  []
 
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 1095.
+This message occurred on input line 1183.
 
-[26]
+[30]
 
-LaTeX Warning: Marginpar on page 27 moved.
+LaTeX Warning: Marginpar on page 31 moved.
 
 File: ../figures/bounds.png Graphic file (type bmp)
 <../figures/bounds.png>
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 1112.
+This message occurred on input line 1200.
 
-[27]
-
-Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 1112.
-
-[28] (./CausalInference.bbl
+[31]
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 48.
+This message occurred on input line 1200.
 
-[29]
+[32] (./CausalInference.bbl
+
+Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
+This message occurred on input line 55.
+
+[33]
 LaTeX Font Info:    Font shape `TU/RobotoCondensed(0)/m/sc' will be
-(Font)              scaled to size 10.0pt on input line 99.
+(Font)              scaled to size 10.0pt on input line 111.
 Requested font "[RobotoCondensed-Regular.otf]/OT:script=latn;language=dflt;+pnum;+lnum;+smcp;mapping=tex-text;" at 10.0pt
  -> /Users/AIN8/Library/TinyTeX/texmf-dist/fonts/opentype/google/roboto/RobotoCondensed-Regular.otf
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 119.
+This message occurred on input line 131.
 
-[30]
-
-Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 188.
-
-[31])
+[34]
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 1121.
+This message occurred on input line 201.
 
-[32] (./CausalInference.aux) ) 
+[35]
+
+Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
+This message occurred on input line 277.
+
+[36])
+
+Package natbib Warning: There were undefined citations.
+
+
+Class tufte-handout Warning: Proper spacing of small-caps letters has not been set up.
+This message occurred on input line 1209.
+
+[37] (./CausalInference.aux) ) 
 Here is how much of TeX's memory you used:
- 31010 strings out of 478190
- 655811 string characters out of 5854045
- 1031612 words of memory out of 5000000
- 50986 multiletter control sequences out of 15000+600000
- 474884 words of font info for 95 fonts, out of 8000000 for 9000
+ 31068 strings out of 478190
+ 657161 string characters out of 5854045
+ 1034273 words of memory out of 5000000
+ 51037 multiletter control sequences out of 15000+600000
+ 474924 words of font info for 100 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  108i,14n,112p,1472b,589s stack positions out of 5000i,500n,10000p,200000b,80000s
 
-Output written on CausalInference.pdf (32 pages).
+Output written on CausalInference.pdf (37 pages).

@@ -517,6 +517,32 @@ summary(sw)
 
 The mean of the stabilized weights is $1$, and the max weight is not large at all, suggesting very well-behaved weights. Thus, in this particular case, we are not concerned with violations of the positivity assumption.
 
+:::{.rmdnote data-latex="{tip}"}
+
+__Technical Note__:
+
+|               In a large body of methods literature, particularly those in econometrics, you are likely to encounter these causal assumptions articulated in different ways. Most commonly, researchers will often invoke **ignorability** as a core assumption in causal inference. There are at least two versions of ignorability: strong and weak ignorability. **Strong ignorability** is defined as the combination of the conditional independence assumption, and the positivity assumption. Technically, strong ignorability holds if, for individual $i$ with a binary exposure $X \in \{0,1\}$:
+
+\begin{align*}
+(Y_i^{x=0}, Y_i^{x=1}) \indep X_i \mid \mathbf{C}_i,\text{ and}\\
+0 < P(X_i = 1 \mid \mathbf{C}_i) < 1,
+\end{align*}
+
+where the $\indep$ symbol denotes independence (in this case, conditional independence since we include $\mid \mathbf{C}_i$). In this case, the ignorability is "strong" because the independence is assumed to exist *jointly* between both potential outcomes (Y_i^{x=0}, Y_i^{x=1}) for individual $i$, and the exposure $X_i$, conditional on $\mathbf{C}_i$. Sometimes, a weaker version of the assumption is made:
+
+\begin{align*}
+(Y_i^{x}) \indep X_i \mid \mathbf{C}_i,\text{ and}\\
+0 < P(X_i = 1 \mid \mathbf{C}_i) < 1,
+\end{align*}
+
+This version of the assumption is weaker in that we need not worry about whether the potential outcomes are jointly independent of the observed exposure. Rather, we only need each potential outcome $(Y_i^{x})$ to be independent of the observed exposure. 
+
+Even still, these assumptions are stronger than what we need to identify the causal risk difference, risk ratio, odds ratio, or other typical summary contrasts we often quantify in epidemiology. In the above proof, we demonstrated that identifiability is obtained under **mean exchangeability** $E(Y^x \mid X, \mathbf{C}) = E(Y^x \mid \mathbf{C})$. This assumption is even weaker than those articulated in the formalization of strong and weak ignorability. 
+
+The distinctions between strong ignorabilty, weak ignorability, and mean exchangeability are of little practical consequence. While it is important to recognize that ignorability typically consistes of the combination of exchangeability and positivity. Additional details on and intuition behind the different versions of exchangeability can be found in Technical Point 2.1 of @Hernan2020.
+
+:::
+
 # Identifiability: Instrumental Variables and Local Average Treatment Effects
 
 Average treatment effects (ATEs) are extremely common estimands in the empirical sciences. Researchers will often conduct randomized or observational studies, quantify treatment effects, and then interpret these treatment effects as ATEs. As we just encountered, the validity of this interpretation depends heavily on the above stated assumptions: counterfactual consistency, no interference, (conditional) exchangeability, correct model specification, and positivity. Each of these assumptions provides an opportunity for our causal interpretation to break down. 
@@ -525,7 +551,7 @@ This has prompted a large body of research to develop on both what happens when 
 
 Exchangeability can be violated when there is unadjusted confounding, selection bias, or information bias. By far, violations of exchangeability that result from unadjusted (unmeasured) confounding have taken up much of the literature's focus. Fortunately, work on measurement error is increasing [@vanSmeden2020], and the impact of selection bias is arguably not as large as confounding and information bias [@Greenland2003].
 
-A natural question that one may ask is whether there is a way we can conduct an analysis with observational data without having to worry at all about the "no measured or unmeasured confounding" assumption. It turns out, we can use instrumental variables to do this. Instrumental variables are sometimes presented as an "epidemiologist's dream" [@Hernan2006]. However, while in principle they do not require that we worry about measured or unmeasured confoudning (which is great!), there are tradeoffs we make when we seek to analyse data using IVs [@Hernan2006]. 
+A natural question that one may ask is whether there is a way we can conduct an analysis with observational data without having to worry at all about the "no measured or unmeasured confounding" assumption. It turns out, we can use instrumental variables to do this. Instrumental variables are sometimes presented as an "epidemiologist's dream" [@Hernan2006]. However, while in principle they do not require that we worry about measured or unmeasured confounding (which is great!), there are tradeoffs we make when we seek to analyse data using IVs [@Hernan2006]. 
 
 ## Randomization and ITT
 
@@ -535,13 +561,38 @@ In addition, we can measure whether or not the individual took the pill they wer
 
 For example, we can again consider sleep quantity in the night previous. An individual who slept very little the night before may not feel up to taking their assigned treatment. Similarly, this same individual may be at a higher risk of experiencing headache. For this reason, we would collect information on sleep quantity in the night previous to randomization. 
 
+The example given in this scenario allows us to draw a DAG summarizing the relations between the treatment assignment indicator, taking the treatment/placebo, confounder of taking and the outcome, and the outcome of interest. This DAG is shown in Figure \ref{fig:ivdag}:
+
+```{r ivdag, out.width="10cm", fig.align='center', fig.cap="Directed Acyclic Graph for the relation between being assigned to treatment (X), adhering to treatment (A), a confounder (C) of the adherence-outcome relation, and the outcome (Y).", echo=F}
+knitr::include_graphics("../figures/F_iv.pdf")
+```
+
+This Figure shows some important elements that result from the design of a randomized trial. First, and most important, is the fact that $X$ is an *exogenous*^["Exogenous" is meant to connote a variable that is "outside of the system." In other words, the variable's influence does not depend on the distribution of other variables in the system. Exogenous variables can be used as a sort of "lever" against the complexity of a particular system. Randomization, in particular, leads the the presence of an exogenous variable because (in expectation) random allocation "breaks" any potential pre-existing relation between the randomized variable and other variables.] variable. Under such exogeneity, we can perform a simple regression analysis to quantify the effect of $X$ on $Y$. 
+
+Unfortunately, as can be seen in Figure \ref{fig:ivdag} the benefits of this exogeneity only directly extend to the treatment assignment variable $X$, and not to the indicator of whether they actually took the drug (in this example, aspirin $A$). That is, we can obtain unconfounded estimates of the effect of $X$ on $Y$ without issue. We cannot do the same for $A$ with standard (i.e., simple regression) methods. Instrumental variable estimation is a technique developed to leverage the exogeneity characterizing $X$ to answer questions about the effect of $A$ on $Y$. 
+
+## The Instrumental Variable Estimator
+
+The IV estimator is based on a realization that information on the effect of $A$ on $Y$ defined as $E(Y^{a=1} - Y^{a=0})$ is contained in the following two effects:
+
+\begin{align*}
+E(Y^{x=1} - Y^{x=0}) \\
+E(A^{x=1} - A^{x=0}) \\
+\end{align*}
+
+One can visualize this referring to Figure \ref{fig:ivdag} by noting that the path $X \rightarrow Y$ is composed of paths $X \rightarrow A$ and $A \rightarrow Y$. Instrumental variables use information in $X \rightarrow Y$ and $X \rightarrow A$, both of which are identified without resorting to "no unmeasured confounding" assumptions, to estimate the effect of $A \rightarrow Y$.
+
+To do this, we use the IV estimator, defined as:
+
+$$ \psi = \frac{E(Y \mid X = 1) - E(Y \mid X = 0)}{E(A \mid X = 1) - E(A \mid X = 0)} $$
 
 
-## The Instrumental Variable
 
 ## Local Average Treatment Effects
 
 ## IV Identifiability Assumptions 
+
+By definition, a variable is referred to as an "instrumental variable" if it is characterized by the following 
 
 ## Weak Instruments
 
