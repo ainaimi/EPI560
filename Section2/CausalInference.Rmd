@@ -253,7 +253,7 @@ install.packages("reticulate",repos='http://lib.stat.cmu.edu/R/CRAN',dependencie
 library(reticulate)
 
 ## need to tell R where python is
-use_python("/usr/local/bin/python3")
+use_python("/opt/homebrew/Caskroom/miniforge/base/envs/test_env/bin/python3")
 ```
 
 Now we can run python directly from within RMarkdown:
@@ -481,6 +481,8 @@ We can now plot the density of this propensity score for each exposure group to 
 
 ```{r, echo=T, message=F, warning=F}
 
+set.seed(123)
+
 exposure <- lalonde$treat
 
 plot_data <- data.frame(propensity_score,Exposure=as.factor(lalonde$treat))
@@ -521,7 +523,7 @@ The mean of the stabilized weights is $1$, and the max weight is not large at al
 
 __Technical Note__:
 
-|               In a large body of methods literature, particularly those in econometrics, you are likely to encounter these causal assumptions articulated in different ways. Most commonly, researchers will often invoke **ignorability** as a core assumption in causal inference. There are at least two versions of ignorability: strong and weak ignorability. **Strong ignorability** is defined as the combination of the conditional independence assumption, and the positivity assumption. Technically, strong ignorability holds if, for individual $i$ with a binary exposure $X \in \{0,1\}$:
+|               In a large body of methods literature, particularly econometrics, you are likely to encounter these causal assumptions articulated in different ways. Most commonly, researchers will often invoke **ignorability** as a core assumption in causal inference. There are at least two versions of ignorability: strong and weak. **Strong ignorability** is defined as the combination of the conditional independence assumption, and the positivity assumption. Technically, strong ignorability holds if, for individual $i$ with a binary exposure $X \in \{0,1\}$:
 
 \begin{align*}
 (Y_i^{x=0}, Y_i^{x=1}) \indep X_i \mid \mathbf{C}_i,\text{ and}\\
@@ -539,7 +541,7 @@ This version of the assumption is weaker in that we need not worry about whether
 
 Even still, these assumptions are stronger than what we need to identify the causal risk difference, risk ratio, odds ratio, or other typical summary contrasts we often quantify in epidemiology. In the above proof, we demonstrated that identifiability is obtained under **mean exchangeability** $E(Y^x \mid X, \mathbf{C}) = E(Y^x \mid \mathbf{C})$. This assumption is even weaker than those articulated in the formalization of strong and weak ignorability. 
 
-The distinctions between strong ignorabilty, weak ignorability, and mean exchangeability are of little practical consequence. While it is important to recognize that ignorability typically consistes of the combination of exchangeability and positivity. Additional details on and intuition behind the different versions of exchangeability can be found in Technical Point 2.1 of @Hernan2020.
+The distinctions between strong ignorabilty, weak ignorability, and mean exchangeability are of little practical consequence. While it is important to recognize that ignorability typically consists of the combination of exchangeability and positivity. Additional details on and intuition behind the different versions of exchangeability can be found in Technical Point 2.1 of @Hernan2020.
 
 :::
 
@@ -551,25 +553,25 @@ This has prompted a large body of research to develop on both what happens when 
 
 Exchangeability can be violated when there is unadjusted confounding, selection bias, or information bias. By far, violations of exchangeability that result from unadjusted (unmeasured) confounding have taken up much of the literature's focus. Fortunately, work on measurement error is increasing [@vanSmeden2020], and the impact of selection bias is arguably not as large as confounding and information bias [@Greenland2003].
 
-A natural question that one may ask is whether there is a way we can conduct an analysis with observational data without having to worry at all about the "no measured or unmeasured confounding" assumption. It turns out, we can use instrumental variables to do this. Instrumental variables are sometimes presented as an "epidemiologist's dream" [@Hernan2006]. However, while in principle they do not require that we worry about measured or unmeasured confounding (which is great!), there are tradeoffs we make when we seek to analyse data using IVs [@Hernan2006]. 
+A natural question that one may ask is whether there is a way we can conduct an analysis with observational data without having to worry at all about the "no measured or unmeasured confounding" assumption. It turns out, we can use instrumental variables to do this. Because of this, instrumental variable estimators might be considered an "epidemiologist's dream" [@Hernan2006]. However, as with (in my experience, at least) pretty much everything, this strong benefit of the IV approach comes with important tradeoffs to consider we make when we seek to analyse data using IVs [@Hernan2006]. 
 
 ## Randomization and ITT
 
-To begin, let's revisit the randomized trial example from the section on identifying the ATE. Consider again the situation where we want to estimate the effect of aspirin on headache in a cohort of individuals aged 18-40 years. Again, we randomize 50% of the individuals in our sample to aspirin, and the other 50% to placebo. From this study, we can collect information on a number of things, beyond just the outcome of interest, and whether an individual was assigned to the treatment/placebo group. 
+To begin our explanation of IV methods, let's revisit the randomized trial example from the section on identifying the ATE. Consider again the situation where we want to estimate the effect of aspirin on headache in a cohort of individuals aged 18-40 years. Again, we randomize 50% of the individuals in our sample to aspirin, and the other 50% to placebo. From this study, we can collect information on a number of things, beyond just the outcome of interest, and whether an individual was assigned to the treatment/placebo group. 
 
 In addition, we can measure whether or not the individual took the pill they were actually assigned too (aspirin or placebo). For instance, some may have decided to throw the pill away, others may have gotten distracted and forgot to take it, and others still may have had some GI discomfort, and opted simply not to take it. We can also measure variables that might predict whether they took the pill or not, and that predict whether they will experience a headache or not. 
 
-For example, we can again consider sleep quantity in the night previous. An individual who slept very little the night before may not feel up to taking their assigned treatment. Similarly, this same individual may be at a higher risk of experiencing headache. For this reason, we would collect information on sleep quantity in the night previous to randomization. 
+For example, we can again consider sleep quantity in the night previous. An individual who slept very little the night before may not feel up to taking their assigned treatment, or may have simply forgotten. Similarly, this same individual may be at a higher risk of experiencing headache. For this reason, we would collect information on sleep quantity in the night previous to randomization.
 
-The example given in this scenario allows us to draw a DAG summarizing the relations between the treatment assignment indicator, taking the treatment/placebo, confounder of taking and the outcome, and the outcome of interest. This DAG is shown in Figure \ref{fig:ivdag}:
+The example given in this scenario allows us to draw a DAG summarizing the relations between the treatment assignment indicator, taking the treatment/placebo, the sleep quantity confounder, and the outcome of interest. This DAG is shown in Figure \ref{fig:ivdag}:
 
 ```{r ivdag, out.width="10cm", fig.align='center', fig.cap="Directed Acyclic Graph for the relation between being assigned to treatment (X), adhering to treatment (A), a confounder (C) of the adherence-outcome relation, and the outcome (Y).", echo=F}
 knitr::include_graphics("../figures/F_iv.pdf")
 ```
 
-This Figure shows some important elements that result from the design of a randomized trial. First, and most important, is the fact that $X$ is an *exogenous*^["Exogenous" is meant to connote a variable that is "outside of the system." In other words, the variable's influence does not depend on the distribution of other variables in the system. Exogenous variables can be used as a sort of "lever" against the complexity of a particular system. Randomization, in particular, leads the the presence of an exogenous variable because (in expectation) random allocation "breaks" any potential pre-existing relation between the randomized variable and other variables.] variable. Under such exogeneity, we can perform a simple regression analysis to quantify the effect of $X$ on $Y$. 
+This Figure shows some important elements that result from the design of a randomized trial. First, and most important, is the fact that $X$ is an *exogenous*^["Exogenous" is meant to connote a variable that is "outside of the system." In other words, the variable's influence does not depend on the distribution of other variables in the system. Exogenous variables can be used as a sort of "lever" against the complexity of a particular system. Randomization, in particular, leads the the presence of an exogenous variable because (in expectation) random allocation "breaks" any potential pre-existing relation between the randomized variable and other variables.] variable. Under such exogeneity, we can perform a simple regression analysis to quantify the effect of $X$ on $Y$. This is the primary reason why randomized trials and the intention-to-treat principle are often considered the "gold standard" for estimating causal effects.
 
-Unfortunately, as can be seen in Figure \ref{fig:ivdag} the benefits of this exogeneity only directly extend to the treatment assignment variable $X$, and not to the indicator of whether they actually took the drug (in this example, aspirin $A$). That is, we can obtain unconfounded estimates of the effect of $X$ on $Y$ without issue. We cannot do the same for $A$ with standard (i.e., simple regression) methods. Instrumental variable estimation is a technique developed to leverage the exogeneity characterizing $X$ to answer questions about the effect of $A$ on $Y$. 
+Unfortunately, as can be seen in Figure \ref{fig:ivdag} the benefits of this exogeneity only directly extend to the *treatment assignment* variable $X$, and not to the indicator of whether they actually took the drug (in this example, aspirin $A$).^[Recall, under intention-to-treat, we quantify the effect of being *assigned* to treatment, not the effect of treatment itself.] That is, we can obtain unconfounded estimates of the effect of $X$ on $Y$ without issue. We cannot do the same for $A$. Instrumental variable estimation is a technique developed to leverage the exogeneity of $X$ to answer questions about the effect of $A$ on $Y$.
 
 ## The Instrumental Variable Estimator
 
@@ -584,22 +586,85 @@ One can visualize this referring to Figure \ref{fig:ivdag} by noting that the pa
 
 To do this, we use the IV estimator, defined as:
 
-$$ \psi = \frac{E(Y \mid X = 1) - E(Y \mid X = 0)}{E(A \mid X = 1) - E(A \mid X = 0)} $$
+$$ \frac{E(Y \mid X = 1) - E(Y \mid X = 0)}{E(A \mid X = 1) - E(A \mid X = 0)} $$
 
-
+Conceptually, this equation estimates the effect of $X$ on $A$, and then removes this component from the estimated effect of $X$ on $Y$. What remains is the effect of $A$ on $Y$.
 
 ## Local Average Treatment Effects
 
+Instrumental variable estimators were introduced early in the 20th century, and were used extensively in economics. In 1996, Angrist, Imbens, and Rubin [@Angrist1996] used potential outcomes notation to clearly define what we estimate when we implement IVs. They showed that, under a set of assumptions that differ from those for the ATE, the IV estimator quantifies [@Angrist1996,@Angrist2009]:
+
+$$E(Y^{a=1}-Y^{a=0} \mid A^{x=1} > A^{x=0})$$
+This effect is referred to as the *local average treatment effect*. It is "local" because it estimates the average treatment effect of $A$ on $Y$ in a subset of the population defined by $A^{x=1} > A^{x=0}$. This conditioning statement can be best understood by referring to the Table in Figure \ref{fig:responsetype}.
+
+```{r responsetype, out.width="15cm", fig.align='center', fig.fullwidth=T, fig.cap="Table of response types showing never-takers, always-takers, compliers, and defiers, as well as the effects (defined via potential outcomes) that result for each scenario. Table reproduced from Angrist et al 1996 JASA.", echo=F}
+knitr::include_graphics("../figures/response_table.pdf")
+```
+
+Referring back to our RCT example of taking aspirin and headache risk, the subset of the population defined by $A^{x=1} > A^{x=0}$ refers to individuals who would have taken aspirin if they were assigned to it, and who would have not taken aspirin if not assigned. These individuals are referred to as "compliers". To see why, note that for compliers, $A^{x=1}=1$ and $A^{x=0}=0$, which, for a binary treatment $A$, is the only way in which the condition $A^{x=1} > A^{x=0}$ can be satisfied.^[We can also define the conditioning statement as: $A^{x=1}=1,A^{x=0}=0$. Note also that, though we've not said it yet, we really to require binary treatments $X$ and $A$ for this to work. While IV estimation has been generalized to the continuous setting (see Kennedy et al 2019 JRSS-B), these required slightly different assumptions and result in different interpretations.] Thus, the LATE quantifies the average treatment effect among a subset of the sample who would have taken aspirin had they been assigned to it, AND who would have taken placebo had they been assigned to it. 
+
+Here we encounter one of the first problems with IV methods: the local average treatment effect. The problem here is that the conditioning statement is defined as a function of potential outcomes. Thus, the question that always arises is: who are these individuals? There is no way to empirically identify which individuals in the sample are "compliers." As a result, it is often hard to generalize the LATE, because we don't know who it applies to beyond the vague abstraction that we refer to as "compliers."
+
+The Table in Figure \ref{fig:responsetype} shows the compliers individuals in the bottom left cell. That is, under the most common formulation of the IV estimator,^[We will see precisely what I mean by this "formulation" next.] the local average treatment effect is identical with the *complier average causal effect.*
+
 ## IV Identifiability Assumptions 
 
-By definition, a variable is referred to as an "instrumental variable" if it is characterized by the following 
+Before we discuss how the IV estimators quantifies the LATE, and precisely why the LATE is the effect of treatment among compliers (CACE). We need to discuss precisely what constitutes an instrumental variable, and what assumptions are needed to identify the LATE using IVs. By definition, a variable $X$ is referred to as an "instrumental variable" if:
 
-## Weak Instruments
+Assumption 1) $X$ has a causal effect on $A$.^[Note that Hernán and Robins (2006) generalized this condition to be that $X$ is associated with $A$.] Formally, this assumption can be represented as: $A^{x=1} - A^{x=0} \neq 0$
 
-## Homogeneity Makes the LATE --> ATE
+Assumption 2) $X$ affects $Y$ only through $A$. Formally, this assumption can be represented as: $Y^{a,x=1} = Y^{a,x=0} = Y^a$, and is often referred to as the *exclusion restriction* assumption.
 
-## Monotonicity Makes the LATE --> CACE
+Assumption 3) $X$ does not share common causes with the outcome (i.e., no confounding of the effect of $X$ on $Y$). Formally, this is often represented as $Y^{A^{x=1},x=1},Y^{A^{x=0},x=0},A^{x=1}, A^{x=0} \indep X$, which implies mean exchangeability [i.e., $E(Y^{A^{x=1},x=1} \mid X) = E(Y^{A^{x=1},x=1})$ and $E(A^{x=1} \mid X) = E(A^{x=1})$]^[See technical note on strong and weak ignorability.]
 
+With these assumptions, we can begin the process of re-writing the IV estimator above so that we obtain the LATE (CACE). In effect, we want to prove that^[The material in this section comes from @Angrist1996, @Hernan2006, and @Angrist2009]:
+
+$$ \frac{E(Y \mid X = 1) - E(Y \mid X = 0)}{E(A \mid X = 1) - E(A \mid X = 0)} =  E(Y^{a=1} - Y^{a=1} \mid A^{x=1}>A^{x=0})$$
+If we assume counterfactual consistency and no interference, we can re-write the terms in the numerator of the IV estimator as:
+
+$$E(Y \mid X=1) = E(Y^{a=A,x=1} \mid X=1)$$
+Recall that Assumption 2, the exclusion restriction, states that $Y^{a,x=1} = Y^{a,x=0} = Y^a$. Thus, under exclusion restriction, the right hand side of the above equation can be simplified as:
+
+$$E(Y^{a=A,x=1} \mid X=1)=E(Y^{a=A} \mid X=1)$$
+If we make Assumption 3, we can assume mean exchangeability, which allows us to write:
+
+$$E(Y^{a=A} \mid X=1) = E(Y^{a=A})$$
+At this point, it's important to understand what $Y^{a=A}$ refers to (as opposed to $Y^a$). This is the potential outcome that would be observed if the exposure was set to their observed value. But in the actual dataset, this consists of two possible potential outcomes: $Y^{a=1}$ for those with $A=1$, and $Y^{a=0}$ for those with $A=0$. With this in mind, we can now slightly re-formulate the right hand side of the above equation as:
+
+$$E(Y^{a=A}) = E[Y^{a=0} + (Y^{a=1}-Y^{a=0})A^{x=1}]$$
+Note that if $A^{x=1} = 1$, then the expectation on the right hand side resolves to $Y^{a=1}$, whereas if $A^{x=1} = 0$ it resolves to $Y^{a=0}$. Thus, the equality holds.
+
+What we've done so far is to show that, under counterfactual consistency and no interference, exclusion restriction (Assumption 2), and exchangeability (Assumption 3), we can re-write the first term in the numerator of the IV estimator as:
+
+$$E(Y \mid X=1) = E[Y^{a=0} + (Y^{a=1}-Y^{a=0})A^{x=1}]$$
+The numerator of the IV estimator can thus be written as:
+$$E[Y^{a=0} + (Y^{a=1}-Y^{a=0})A^{x=1}] - E[Y^{a=0} + (Y^{a=1}-Y^{a=0})A^{x=0}]$$
+From here, we can do some basic re-arrangement of the terms so that the numerator of the IV estimator is:
+$$E[(Y^{a=1}-Y^{a=0})(A^{x=1}-A^{x=0})]$$
+which holds only under the assumptions listed (SUTVA + Assumptions 2 and 3). This latter equation states that the causal effect of $X$ on $Y$ is the product of the effect of $A$ on $Y$ and $X$ on $A$.  
+
+Consider that the difference in potential outcomes $(A^{x=1}-A^{x=0})$ can only yield three possible values: \{1,0,-1\}. Under Assumption 1, we have that $A^{x=1} - A^{x=0} \neq 0$, which means that we can make the following decomposition:
+
+\begin{equation}
+\begin{split}
+E[(Y^{a=1}-Y^{a=0})&(A^{x=1}-A^{x=0})] \\ 
+                 = & E(Y^{a=1}-Y^{a=0} \mid A^{x=1}-A^{x=0} = 1)P(A^{x=1}-A^{x=0} = 1) \\ 
+                   & \;\;\; + E(Y^{a=1}-Y^{a=0} \mid A^{x=1}-A^{x=0} = 0)P(A^{x=1}-A^{x=0} = -1)
+\end{split}
+\end{equation}
+
+In effect, this states that product of the effect of $A$ on $Y$ and $X$ on $A$ (the numerator of the IV estimator) is a weighted average of the ATE among the **compliers** and the **defiers**.
+
+To complete the proof and show that the IV estimator can be connected to the CACE, we make one additional assumption: monotonicity: $A^{x=1} > A^{x=0}$. This assumption essentially states that there are no defiers in the population. Adding this assumption allows us to complete the proof. In effect, we have:
+
+$$E[(Y^{a=1}-Y^{a=0})(A^{x=1}-A^{x=0})] = E(Y^{a=1}-Y^{a=0} \mid A^{x=1}-A^{x=0} = 1)P(A^{x=1}-A^{x=0} = 1)$$
+Noting that $P(A^{x=1}-A^{x=0} = 1) = E(A^{x=1} - A^{x=0})$, we get:
+
+$$\frac{E(Y\mid X=1) - E(Y\mid X=0)}{E(A\mid X=1) - E(A\mid X=0)} = \frac{E[(Y^{a=1}-Y^{a=0})(A^{x=1}-A^{x=0})]}{E(A^{x=1}-A^{x=0})} = E(Y^{a=1}-Y^{a=0} \mid A^{x=1}>A^{x=0})$$
+
+Let's recap what we've done.
+
+More considerations for IV estimators: weak instruments, homogeneity.
 
 # Non-Identifiability and Partial Identifiability: Bounding Effects
 
