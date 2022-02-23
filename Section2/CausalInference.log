@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999993 (TeX Live 2021) (preloaded format=xelatex 2021.12.11)  9 FEB 2022 23:14
+This is XeTeX, Version 3.141592653-2.6-0.999993 (TeX Live 2021) (preloaded format=xelatex 2021.12.11)  15 FEB 2022 23:39
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1834,8 +1834,8 @@ Requested font "[lmmono10-regular]:" at 10.0pt
 r.otf
 [9]
 Overfull \hbox (129.0pt too wide) in paragraph at lines 543--543
-[]\TU/lmtt/m/n/10 ##  /var/folders/z_/cty0tpg97wz_x1d1zgdhwllr0000gs/T//Rtmp9Fu
-IE6/downloaded_packages[] 
+[]\TU/lmtt/m/n/10 ##  /var/folders/z_/cty0tpg97wz_x1d1zgdhwllr0000gs/T//RtmpDR2
+Eoo/downloaded_packages[] 
  []
 
 Requested font "[lmmono10-italic]:" at 10.0pt
@@ -1856,8 +1856,8 @@ Requested font "[lmmonolt10-boldoblique]:" at 10.0pt
 oblique.otf
 
 Overfull \hbox (129.0pt too wide) in paragraph at lines 675--675
-[]\TU/lmtt/m/n/10 ##  /var/folders/z_/cty0tpg97wz_x1d1zgdhwllr0000gs/T//Rtmp9Fu
-IE6/downloaded_packages[] 
+[]\TU/lmtt/m/n/10 ##  /var/folders/z_/cty0tpg97wz_x1d1zgdhwllr0000gs/T//RtmpDR2
+Eoo/downloaded_packages[] 
  []
 
 
@@ -1954,13 +1954,13 @@ Overfull \hbox (113.25pt too wide) in paragraph at lines 760--760
 
 
 Overfull \hbox (113.25pt too wide) in paragraph at lines 761--761
-[]\TU/lmtt/m/n/10 ## Date:                Wed, 09 Feb 2022   Deviance:         
+[]\TU/lmtt/m/n/10 ## Date:                Tue, 15 Feb 2022   Deviance:         
           8.8229e+05[] 
  []
 
 
 Overfull \hbox (113.25pt too wide) in paragraph at lines 762--762
-[]\TU/lmtt/m/n/10 ## Time:                        23:14:25   Pearson chi2:     
+[]\TU/lmtt/m/n/10 ## Time:                        23:39:33   Pearson chi2:     
             1.00e+06[] 
  []
 
@@ -2062,13 +2062,13 @@ Overfull \hbox (113.25pt too wide) in paragraph at lines 790--790
 
 
 Overfull \hbox (113.25pt too wide) in paragraph at lines 791--791
-[]\TU/lmtt/m/n/10 ## Date:                Wed, 09 Feb 2022   Deviance:         
+[]\TU/lmtt/m/n/10 ## Date:                Tue, 15 Feb 2022   Deviance:         
           7.7529e+05[] 
  []
 
 
 Overfull \hbox (113.25pt too wide) in paragraph at lines 792--792
-[]\TU/lmtt/m/n/10 ## Time:                        23:14:25   Pearson chi2:     
+[]\TU/lmtt/m/n/10 ## Time:                        23:39:34   Pearson chi2:     
             9.99e+05[] 
  []
 
@@ -2335,6 +2335,18 @@ Overfull \hbox (39.75pt too wide) in paragraph at lines 1060--1060
 6.4940[] 
  []
 
+
+Overfull \hbox (13.5pt too wide) in paragraph at lines 1073--1073
+[]\TU/lmtt/m/n/10 ##      NSW1      NSW2      NSW3      NSW4      NSW5      NSW
+6 
+ []
+
+
+Overfull \hbox (13.5pt too wide) in paragraph at lines 1074--1074
+[]\TU/lmtt/m/n/10 ## 0.3011061 0.3607801 0.3332183 0.3437588 0.3103399 0.360780
+1[] 
+ []
+
 [25]
 File: ../figures/2022_01_10-ps_overlap.pdf Graphic file (type pdf)
 <use ../figures/2022_01_10-ps_overlap.pdf>
@@ -2345,26 +2357,26 @@ LaTeX Warning: Marginpar on page 26 moved.
 File: ../figures/tip.png Graphic file (type bmp)
 <../figures/tip.png>
 
-Underfull \hbox (badness 10000) in paragraph at lines 1129--1130
+Underfull \hbox (badness 10000) in paragraph at lines 1142--1143
 []              \TU/RobotoCondensed(0)/m/n/10 In a large body of methods litera
 ture, particularly econometrics, you are likely to encounter these
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1129--1130
+Underfull \hbox (badness 10000) in paragraph at lines 1142--1143
 \TU/RobotoCondensed(0)/m/n/10 causal assumptions articulated in different ways.
  Most commonly, researchers will often invoke \TU/RobotoCondensed(0)/b/n/10 ign
 orability
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1129--1130
+Underfull \hbox (badness 10000) in paragraph at lines 1142--1143
 \TU/RobotoCondensed(0)/m/n/10 as a core assumption in causal inference. There a
 re at least two versions of ignorability: strong and weak.
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1129--1130
+Underfull \hbox (badness 10000) in paragraph at lines 1142--1143
 \TU/RobotoCondensed(0)/b/n/10 Strong ignorability \TU/RobotoCondensed(0)/m/n/10
  is defined as the combination of the conditional independence assumption, and 
 the positiv-
@@ -2380,7 +2392,7 @@ Requested font "[lmromandemi10-regular]:mapping=tex-text;" at 5.0pt
  -> /usr/local/texlive/2021/texmf-dist/fonts/opentype/public/lm/lmromandemi10-r
 egular.otf
 
-Underfull \hbox (badness 10000) in paragraph at lines 1136--1137
+Underfull \hbox (badness 10000) in paragraph at lines 1149--1150
 []\TU/RobotoCondensed(0)/m/n/10 where the $\OMS/cmsy/m/n/10 ?   ?$ \TU/RobotoCo
 ndensed(0)/m/n/10 symbol denotes independence (in this case, conditional indepe
 ndence since we include $\OMS/cmsy/m/n/10 j [][]$\TU/RobotoCondensed(0)/m/n/10 
@@ -2388,14 +2400,14 @@ ndence since we include $\OMS/cmsy/m/n/10 j [][]$\TU/RobotoCondensed(0)/m/n/10
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1136--1137
+Underfull \hbox (badness 10000) in paragraph at lines 1149--1150
 \TU/RobotoCondensed(0)/m/n/10 In this case, the ignorability is “strong” becaus
 e the independence is assumed to exist \TU/RobotoCondensed(0)/m/it/10 jointly \
 TU/RobotoCondensed(0)/m/n/10 between both
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1136--1137
+Underfull \hbox (badness 10000) in paragraph at lines 1149--1150
 \TU/RobotoCondensed(0)/m/n/10 potential outcomes (Y_i^{x=0}, Y_i^{x=1}) for ind
 ividual $\OML/cmm/m/it/10 i$\TU/RobotoCondensed(0)/m/n/10 , and the exposure $\
 OML/cmm/m/it/10 X[]$\TU/RobotoCondensed(0)/m/n/10 , conditional on $[][]$. Some
@@ -2403,64 +2415,55 @@ times,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1143--1144
+Underfull \hbox (badness 10000) in paragraph at lines 1156--1157
 []\TU/RobotoCondensed(0)/m/n/10 This version of the assumption is weaker in tha
 t we need not worry about whether the potential outcomes
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1143--1144
+Underfull \hbox (badness 10000) in paragraph at lines 1156--1157
 \TU/RobotoCondensed(0)/m/n/10 are jointly independent of the observed exposure.
  Rather, we only need each potential outcome $\OT1/cmr/m/n/10 (\OML/cmm/m/it/10
  Y[]\OT1/cmr/m/n/10 )$ \TU/RobotoCondensed(0)/m/n/10 to be
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1145--1146
+Underfull \hbox (badness 10000) in paragraph at lines 1158--1159
 []\TU/RobotoCondensed(0)/m/n/10 Even still, these assumptions are stronger than
  what we need to identify the causal risk difference, risk ra-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1145--1146
+Underfull \hbox (badness 10000) in paragraph at lines 1158--1159
 \TU/RobotoCondensed(0)/m/n/10 tio, odds ratio, or other typical summary contras
 ts we often quantify in epidemiology. In the above proof, we
  []
 
 
-Package natbib Warning: Citation `Hernan2020' on page 27 undefined on input lin
-e 1147.
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1147--1148
+Underfull \hbox (badness 10000) in paragraph at lines 1160--1161
 []\TU/RobotoCondensed(0)/m/n/10 The distinctions between strong ignorabilty, we
 ak ignorability, and mean exchangeability are of little practi-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1147--1148
+Underfull \hbox (badness 10000) in paragraph at lines 1160--1161
 \TU/RobotoCondensed(0)/m/n/10 cal consequence. While it is important to recogni
 ze that ignorability typically consists of the combination of
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1147--1148
+Underfull \hbox (badness 10000) in paragraph at lines 1160--1161
 \TU/RobotoCondensed(0)/m/n/10 exchangeability and positivity. Additional detail
 s on and intuition behind the different versions of exchange-
  []
 
 [27]
-Overfull \hbox (8.10796pt too wide) in paragraph at lines 1152--1152
+Overfull \hbox (8.10796pt too wide) in paragraph at lines 1165--1165
 |[]\TU/RobotoCondensed(0)/b/n/12 Identifiability: Instrumental Variables and Lo
 cal Average Treat-
  []
 
-[28]
-
-Package natbib Warning: Citation `vanSmeden2020' on page 29 undefined on input 
-line 1158.
-
-[29]
+[28] [29]
 File: ../figures/F_iv.pdf Graphic file (type pdf)
 <use ../figures/F_iv.pdf>
 Requested font "[lmromandemi10-regular]:mapping=tex-text;" at 8.0pt
@@ -2473,7 +2476,7 @@ egular.otf
 LaTeX Warning: Marginpar on page 30 moved.
 
 LaTeX Font Info:    Font shape `TU/RobotoCondensed(0)/m/it' will be
-(Font)              scaled to size 8.0pt on input line 1184.
+(Font)              scaled to size 8.0pt on input line 1197.
 Requested font "[RobotoCondensed-Italic.otf]/OT:script=latn;language=dflt;+pnum
 ;+lnum;mapping=tex-text;" at 8.0pt
  -> /usr/local/texlive/2021/texmf-dist/fonts/opentype/google/roboto/RobotoConde
@@ -2502,12 +2505,12 @@ LaTeX Warning: Marginpar on page 33 moved.
 LaTeX Warning: Marginpar on page 33 moved.
 
 [33] [34]
-Overfull \hbox (42.65923pt too wide) detected at line 1272
+Overfull \hbox (42.65923pt too wide) detected at line 1288
 []
  []
 
 
-Overfull \hbox (73.535pt too wide) detected at line 1278
+Overfull \hbox (73.535pt too wide) detected at line 1297
 \OML/cmm/m/it/10 E\OT1/cmr/m/n/10 [(\OML/cmm/m/it/10 Y[] \OMS/cmsy/m/n/10 ^^@ \
 OML/cmm/m/it/10 Y[]\OT1/cmr/m/n/10 )(\OML/cmm/m/it/10 A[] \OMS/cmsy/m/n/10 ^^@ 
 \OML/cmm/m/it/10 A[]\OT1/cmr/m/n/10 )] = \OML/cmm/m/it/10 E\OT1/cmr/m/n/10 (\OM
@@ -2518,43 +2521,39 @@ L/cmm/m/it/10 Y[] \OMS/cmsy/m/n/10 ^^@ \OML/cmm/m/it/10 Y[] \OMS/cmsy/m/n/10 j
  []
 
 
-Overfull \hbox (131.98329pt too wide) detected at line 1281
+Overfull \hbox (131.98329pt too wide) detected at line 1300
 [] \OT1/cmr/m/n/10 = [] = \OML/cmm/m/it/10 E\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 Y
 [] \OMS/cmsy/m/n/10 ^^@ \OML/cmm/m/it/10 Y[] \OMS/cmsy/m/n/10 j \OML/cmm/m/it/1
 0 A[] > A[]\OT1/cmr/m/n/10 )
  []
 
-
-Overfull \hbox (3.77597pt too wide) in paragraph at lines 1290--1290
+[35]
+Overfull \hbox (3.77597pt too wide) in paragraph at lines 1311--1311
 |[]\TU/RobotoCondensed(0)/b/n/12 Non-Identifiability and Partial Identifiabilit
 y: Bounding Effects| 
  []
 
-[35]
 
 LaTeX Warning: Marginpar on page 36 moved.
 
+[36]
 File: ../figures/bounds.png Graphic file (type bmp)
 <../figures/bounds.png>
-[36] [37] (./CausalInference.bbl [38]
+(./CausalInference.bbl [37] [38] [39]
 LaTeX Font Info:    Font shape `TU/RobotoCondensed(0)/m/sc' will be
 (Font)              scaled to size 10.0pt on input line 119.
 Requested font "[RobotoCondensed-Regular.otf]/OT:script=latn;language=dflt;+pnu
 m;+lnum;+smcp;mapping=tex-text;" at 10.0pt
  -> /usr/local/texlive/2021/texmf-dist/fonts/opentype/google/roboto/RobotoConde
 nsed-Regular.otf
-[39] [40] [41])
-
-Package natbib Warning: There were undefined citations.
-
-[42] (./CausalInference.aux) ) 
+[40] [41] [42]) [43] (./CausalInference.aux) ) 
 Here is how much of TeX's memory you used:
  29960 strings out of 476919
- 613929 string characters out of 5821839
- 1031746 words of memory out of 5000000
+ 613927 string characters out of 5821839
+ 1031932 words of memory out of 5000000
  49294 multiletter control sequences out of 15000+600000
  409432 words of font info for 103 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
- 118i,15n,124p,1472b,597s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 118i,15n,124p,1472b,601s stack positions out of 5000i,500n,10000p,200000b,80000s
 
-Output written on CausalInference.pdf (42 pages).
+Output written on CausalInference.pdf (43 pages).

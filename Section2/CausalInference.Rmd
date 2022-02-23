@@ -73,7 +73,7 @@ An additional element that we won't have an opportunity to get into in this cour
 
 # Introduction to Causal Inference
 
-"Causal inference" deals primarily with the **formal mechanisms by which we can combine data, assumptions, and models to interpret a correlation (or association) causally**.^[There are a number of introductory books and articles on causal inference in the empirical sciences. Here are some excellent options: @Hernan2015, @Pearl2016, @Imbens2015, @Cunningham2021] The framework in which we define what we mean by "causal relation" or "causal effect" is the **potential outcomes framework**.
+"Causal inference" deals primarily with the **formal mechanisms by which we can combine data, assumptions, and models to interpret a correlation (or association) causally**.^[There are a number of introductory books and articles on causal inference in the empirical sciences. Here are some excellent options: @Hernan2020, @Pearl2016, @Imbens2015, @Cunningham2021] The framework in which we define what we mean by "causal relation" or "causal effect" is the **potential outcomes framework**.
 
 A central notion in the potential outcomes framework is the counterfactual. This notion stems from the intuitive and informal practice of interpreting cause-effect relations as **circumstances (e.g., health outcomes) that would have arisen had things (e.g., exposures) been different**.
 
@@ -342,7 +342,7 @@ Together, counterfactual consistency and no interference allow us to make some p
 
 ## Exchangeability
 
-A third assumption is **exchangeability**, which implies that the potential outcomes under a specific exposure ($Y^x$) are independent of the observed exposures $X$ [@Greenland1986,@Greenland1999,@Greenland2009]. To explain the intuition behind exchangeability [@Hernan2015], consider a setting in which we are estimating the effect of aspirin on headache incidence in a cohort of individuals aged 18-40 years.^[Assume that our sample size is sufficiently large so as to avoid any sampling variability problems.] To do this experiment, a researcher randomly assigns 50% of the cohort to aspirin, and the remaining 50% to placebo. However, to overcome some logistical complications, before actually giving them aspirin/placebo, this researcher hands out cards that indicate whether the participant was assigned to aspirin (red card) versus placebo (blue card). 
+A third assumption is **exchangeability**, which implies that the potential outcomes under a specific exposure ($Y^x$) are independent of the observed exposures $X$ [@Greenland1986,@Greenland1999,@Greenland2009]. To explain the intuition behind exchangeability [@Hernan2020], consider a setting in which we are estimating the effect of aspirin on headache incidence in a cohort of individuals aged 18-40 years.^[Assume that our sample size is sufficiently large so as to avoid any sampling variability problems.] To do this experiment, a researcher randomly assigns 50% of the cohort to aspirin, and the remaining 50% to placebo. However, to overcome some logistical complications, before actually giving them aspirin/placebo, this researcher hands out cards that indicate whether the participant was assigned to aspirin (red card) versus placebo (blue card). 
 
 After the cards/aspirin/placebo are distributed and the follow-up period transpires, the researcher tallies up the number of headaches in each exposure group. He finds the following results:
 \begin{align*}
@@ -468,7 +468,9 @@ data("lalonde")
 
 head(lalonde)
 
-propensity_score <- glm(treat ~ age + educ + re75 + re75, data=lalonde, family=binomial(link="logit"))$fitted.values
+propensity_score <- glm(treat ~ age + educ + re74 + re75, data=lalonde, family=binomial(link="logit"))$fitted.values
+
+head(propensity_score)
 
 ## by appending a "$fitted.values" to the end
 ## of this glm function, we are 
@@ -551,9 +553,9 @@ Average treatment effects (ATEs) are extremely common estimands in the empirical
 
 This has prompted a large body of research to develop on both what happens when these assumptions do not hold, and what we can do about it. For example, when counterfactual consistency is violated, we can consider re-evaluating our exposure or research question, and examine the possible "versions of treatment" [@VanderWeele2009, @Hernan2011a]. When interference is violated, we can look to evaluate direct, indirect, and spillover effects, which are defined specifically for treatments that result in interference [@Hudgens2008]. Violations of the correct model specification assumption has lead to work on using machine learning for semiparametric or nonparametric causal inference [@Naimi2022, @Kennedy2016]. When positivity is violated, there are several options one can pursue to either mitigate its impact [@Petersen2012] or avoid the need for assuming positivity altogether [@Naimi2021, @Kennedy2019].
 
-Exchangeability can be violated when there is unadjusted confounding, selection bias, or information bias. By far, violations of exchangeability that result from unadjusted (unmeasured) confounding have taken up much of the literature's focus. Fortunately, work on measurement error is increasing [@vanSmeden2020], and the impact of selection bias is arguably not as large as confounding and information bias [@Greenland2003].
+Exchangeability can be violated when there is unadjusted confounding, selection bias, or information bias. By far, violations of exchangeability that result from unadjusted (unmeasured) confounding have taken up much of the literature's focus. Fortunately, work on measurement error is increasing [@vanSmeden2021], and the impact of selection bias is arguably not as large as confounding and information bias [@Greenland2003].
 
-A natural question that one may ask is whether there is a way we can conduct an analysis with observational data without having to worry at all about the "no measured or unmeasured confounding" assumption. It turns out, we can use instrumental variables to do this. Because of this, instrumental variable estimators might be considered an "epidemiologist's dream" [@Hernan2006]. However, as with (in my experience, at least) pretty much everything, this strong benefit of the IV approach comes with important tradeoffs to consider we make when we seek to analyse data using IVs [@Hernan2006]. 
+A natural question that one may ask is whether there is a way we can conduct an analysis with observational data without having to worry at all about the "no measured or unmeasured confounding" assumption. It turns out, we can use instrumental variables to do this. Because of this, instrumental variable estimators might be considered an "epidemiologist's dream" [@Hernan2006]. However, as with (in my experience, at least) pretty much everything, this strong benefit of the IV approach comes with important trade-offs to consider we make when we seek to analyse data using IVs [@Hernan2006]. 
 
 ## Randomization and ITT
 
@@ -607,8 +609,6 @@ Here we encounter one of the first problems with IV methods: the local average t
 
 The Table in Figure \ref{fig:responsetype} shows the compliers individuals in the bottom left cell. That is, under the most common formulation of the IV estimator,^[We will see precisely what I mean by this "formulation" next.] the local average treatment effect is identical with the *complier average causal effect.*
 
-## IV Identifiability Assumptions 
-
 Before we discuss how the IV estimators quantifies the LATE, and precisely why the LATE is the effect of treatment among compliers (CACE). We need to discuss precisely what constitutes an instrumental variable, and what assumptions are needed to identify the LATE using IVs. By definition, a variable $X$ is referred to as an "instrumental variable" if:
 
 Assumption 1) $X$ has a causal effect on $A$.^[Note that Hernán and Robins (2006) generalized this condition to be that $X$ is associated with $A$.] Formally, this assumption can be represented as: $A^{x=1} - A^{x=0} \neq 0$
@@ -620,12 +620,18 @@ Assumption 3) $X$ does not share common causes with the outcome (i.e., no confou
 With these assumptions, we can begin the process of re-writing the IV estimator above so that we obtain the LATE (CACE). In effect, we want to prove that^[The material in this section comes from @Angrist1996, @Hernan2006, and @Angrist2009]:
 
 $$ \frac{E(Y \mid X = 1) - E(Y \mid X = 0)}{E(A \mid X = 1) - E(A \mid X = 0)} =  E(Y^{a=1} - Y^{a=1} \mid A^{x=1}>A^{x=0})$$
+## Stable Unit Treatment Value Assumption (Consistency and No Interference)
+
 If we assume counterfactual consistency and no interference, we can re-write the terms in the numerator of the IV estimator as:
 
 $$E(Y \mid X=1) = E(Y^{a=A,x=1} \mid X=1)$$
+## Exlusion Restriction
+
 Recall that Assumption 2, the exclusion restriction, states that $Y^{a,x=1} = Y^{a,x=0} = Y^a$. Thus, under exclusion restriction, the right hand side of the above equation can be simplified as:
 
 $$E(Y^{a=A,x=1} \mid X=1)=E(Y^{a=A} \mid X=1)$$
+## Exchangeability
+
 If we make Assumption 3, we can assume mean exchangeability, which allows us to write:
 
 $$E(Y^{a=A} \mid X=1) = E(Y^{a=A})$$
@@ -655,6 +661,8 @@ E[(Y^{a=1}-Y^{a=0})&(A^{x=1}-A^{x=0})] \\
 
 In effect, this states that product of the effect of $A$ on $Y$ and $X$ on $A$ (the numerator of the IV estimator) is a weighted average of the ATE among the **compliers** and the **defiers**.
 
+## Monotonicity
+
 To complete the proof and show that the IV estimator can be connected to the CACE, we make one additional assumption: monotonicity: $A^{x=1} > A^{x=0}$. This assumption essentially states that there are no defiers in the population. Adding this assumption allows us to complete the proof. In effect, we have:
 
 $$E[(Y^{a=1}-Y^{a=0})(A^{x=1}-A^{x=0})] = E(Y^{a=1}-Y^{a=0} \mid A^{x=1}-A^{x=0} = 1)P(A^{x=1}-A^{x=0} = 1)$$
@@ -662,9 +670,13 @@ Noting that $P(A^{x=1}-A^{x=0} = 1) = E(A^{x=1} - A^{x=0})$, we get:
 
 $$\frac{E(Y\mid X=1) - E(Y\mid X=0)}{E(A\mid X=1) - E(A\mid X=0)} = \frac{E[(Y^{a=1}-Y^{a=0})(A^{x=1}-A^{x=0})]}{E(A^{x=1}-A^{x=0})} = E(Y^{a=1}-Y^{a=0} \mid A^{x=1}>A^{x=0})$$
 
-Let's recap what we've done.
+Let's recap what we've done. We worked on the numerator of the IV estimator [$E(Y\mid X=1) - E(Y\mid X=0)$] to show that it was equivalent to the product of the effect of $A$ on $Y$ and $X$ on $A$: $E[(Y^{a=1}-Y^{a=0})(A^{x=1}-A^{x=0})]$. We were able to do this by assuming SUTVA, exclusion restriction (Assumption 2), and exchangeability (Assumption 3). From here, we did a little math to show that the product of the effect of $A$ on $Y$ and $X$ on $A$ could be decomposed into a weighted average of two average treatment effects: the ATE among the compliers, and the ATE among the defiers. Finally, if we assume monotonicity, we can assume there are no defiers, and thus the LATE becomes the CACE. 
 
-More considerations for IV estimators: weak instruments, homogeneity.
+What we just covered really only scratches the surface of what the IV estimator can quantify and how we can motivate causal effect estimation with the IV estimator. For example, Hernán and Robins @Hernan2006 have provided an excellent assessment of IV methods for estimating LATEs, including some important issues that arise when some assumptions are violated, how the IV estimator can be re-formulated to estimate the effect of treatment on the treated, and how different causal frameworks (NPSEMs, SMMs, and other) can be used to derive the LATE.
+
+For example, it should be noted here that IV methods are particularly prone to bias amplification with a "weak" instrument. Weak instruments are variables that can be classified as IVs, but that have only a weak association with the exposure of interest.
+
+More importantly, for our purposes at least, this section on identifiability was meant to show the similar process of establishing how we can connect observed data (randomized or observational) to causal effects defined using potential outcomes. Precisely understanding what these steps are, and how the logic works enables researchers to be in a better position to interpret and understand empirical results when causal effects are of primary interest.
 
 # Non-Identifiability and Partial Identifiability: Bounding Effects
 
@@ -681,9 +693,5 @@ knitr::include_graphics("../figures/bounds.png")
 ```
 
 The bottom right panel in Figure 4 tells us something critically important that we often fail to consider when conducting an empirical study. Without assumptions, data alone rarely provide much information about a causal effect of interest. Rather, when we interpret that a point estimate from a statistical model as a causal effect estimate, we are invoking a whole set of assumptions (knowingly or unknowingly) that allow us to get a single number out of our data, rather than a range of possible values. One of these sets of assumptions we discussed here (counterfactual consistency, no interference, positivity, exchangeability, correct model specification). Nonparametric bounds such as those depicted in the study by @Cole2019 help us understand exactly how much support our data provide for an effect of interest, and how much of our results rely on unverifiable assumptions.
-
-# Takeaway
-
-
 
 # References
