@@ -70,10 +70,17 @@ Because of the flexibility of this model, we may be interested in fitting it to 
 file_loc <- url("https://cdn1.sph.harvard.edu/wp-content/uploads/sites/1268/1268/20/nhefs.csv")
 
 nhefs <- read_csv(file_loc) %>% 
-  #select(qsmk,wt82_71,exercise,sex,age,race,income,marital,school,asthma,bronch) %>% 
+  select(qsmk,wt82_71,wt82, wt71, exercise,sex,age,
+         race,income, marital,school,
+         asthma,bronch, 
+         starts_with("alcohol"),
+         starts_with("price"),
+         starts_with("tax"), 
+         starts_with("smoke"),
+         smkintensity82_71) %>% 
   mutate(income=as.numeric(income>15),
-         marital=as.numeric(marital>2)) #%>% 
-  #na.omit()
+         marital=as.numeric(marital>2)) %>% 
+  na.omit(.)
 
 mod <- lm(wt82~wt71,data=nhefs)
 
@@ -214,12 +221,21 @@ file_loc <- url("https://cdn1.sph.harvard.edu/wp-content/uploads/sites/1268/1268
 
 #' This begins the process of cleaning and formatting the data
 nhefs <- read_csv(file_loc) %>% 
-  select(qsmk,wt82_71,exercise,sex,age,race,income,marital,school,asthma,bronch) %>% 
+  select(qsmk,wt82_71,wt82, wt71, exercise,sex,age,
+         race,income, marital,school,
+         asthma,bronch, 
+         starts_with("alcohol"),-alcoholpy,
+         starts_with("price"),
+         starts_with("tax"), 
+         starts_with("smoke"),
+         smkintensity82_71) %>% 
   mutate(income=as.numeric(income>15),
-         marital=as.numeric(marital>2)) %>% 
-  na.omit()
+         marital=as.numeric(marital>2),
+         alcoholfreq=as.numeric(alcoholfreq>1)) %>% 
+  na.omit(.)
 
-factor_names <- c("exercise","income","marital","sex","race","asthma","bronch")
+factor_names <- c("exercise","income","marital",
+                  "sex","race","asthma","bronch")
 nhefs[,factor_names] <- lapply(nhefs[,factor_names] , factor)
 
 #' Define outcome
@@ -241,7 +257,7 @@ For our analyses of the data described above using GLM with a binomial distribut
 #' modelForm is a regression argument that one can use to regress the 
 #' outcome (wt_delta) against the exposure (qsmk) and selected confounders.
 
-formulaVars <- paste(names(nhefs)[-c(1,2,4)],collapse = "+")
+formulaVars <- paste(names(nhefs)[c(3,7:16)],collapse = "+")
 modelForm <- as.formula(paste0("wt_delta ~", formulaVars))
 modelForm
 
@@ -279,6 +295,8 @@ We can use the `augment` function in the `broom` package to evaluate the distrib
 ```{r, message=F, warning=F}
 fitted_dat <- augment(modelRR, type.predict="response")
 
+fitted_dat
+
 plot_hist <- ggplot(fitted_dat) +
   geom_histogram(aes(.fitted)) +
   scale_y_continuous(expand=c(0,0)) +
@@ -287,7 +305,7 @@ plot_hist <- ggplot(fitted_dat) +
 ggsave(here("figures","2022_02_21-rr_hist_plot.pdf"), plot=plot_hist)
 ```
 
-This distribution is shown in margin Figure \ref{fig:fittedhist}. We can also see that there is only one observation in the sample with predicted risks greater than 1.
+This distribution is shown in margin Figure \ref{fig:fittedhist}. We can also see that there are only two observations in the sample with predicted risks greater than 1.
 
 ```{r fittedhist, out.width="5cm", fig.align='center', fig.margin=TRUE, echo=F, fig.cap="Distribution of fitted values from the Poisson GLM with log link function to obtain an estimate of the adjusted risk ratio for the association between quitting smoking and greater than median weight gain in the NHEFS."}
 knitr::include_graphics(here("figures","2022_02_21-rr_hist_plot.pdf"))
@@ -332,35 +350,113 @@ table1_data <- tibble(Method = c("GLM","Marginal Standardization"),
 ```
 
 ```{r}
-footnote(knitr::kable(table1_data))
+knitr::kable(table1_data)
 ```
 
 Results in this table obtained using a conditionally adjusted regression model without interactions. Gaussian distribution and identity link was used to obtain the risk difference. A Poisson distribution and log link was used to obtain the risk ratio. 95% CIs obtained via the sandwich variance estimator. 95% CIs obtained using the bias-corrected and accelerated bootstrap CI estimator.
 
 Unfortunately, use of a Poisson or Gaussian distribution for GLMs for a binomial outcome can introduce different problems. For one, while not entirely worrysome in our setting, a model that predicts probabilities greater than one should not instill confidence in the user. Second, performance of the robust variance estimator is notoriously poor with small sample sizes. Finally, the interpretation of the risk differences and ratios becomes more complex when the exposure interacts with other variables in the model. 
 
-For instance, in the NHEFS data, the association between quitting smoking and weight gain seems to interact with baseline exercise status:
+```{r, echo = F}
+table2_data <- tibble(`Odds Ratio` = c("GLM Family = Binomial", "GLM Link = Logistic", "Standard Errors = Model Based", " ", " ", " ", " ", " "), 
+                      `Risk Ratio` = c("GLM Family = Binomial", "GLM Link = Log", "Standard Errors = Model Based", "GLM Family = Poisson", "GLM Link = Log", "Standard Errors = Sandwich", " ", " "),
+                      `Risk Difference` = c("GLM Family = Binomial", "GLM Link = Identity", "Standard Errors = Model Based", "GLM Family = Gaussian", "GLM Link = Identity", "Standard Errors = Sandwich", "Least Squares Regression", "Standard Errors = Sandwich"))
+```
+
+```{r, echo=F}
+knitr::kable(table2_data, "simple", caption = "Methods to use for quantifying conditionally adjusted odds ratios, risk ratios, and risk differences.")
+```
+
+For instance, let's assume that in the NHEFS data, the association between quitting smoking and weight gain interacts with baseline exercise status:
 
 ```{r}
-#' This model shows some potential evidence for interaction 
-#' between smoking and exercise on the risk difference scale.
+#' Potential evidence for interaction 
+#' between smoking and exercise on the risk difference scale?
 
 table(nhefs$exercise)
 
-formulaVars <- paste(names(nhefs)[-c(1,2,4)],collapse = "+")
-modelForm <- as.formula(paste0("wt_delta ~", formulaVars,"+qsmk*exercise"))
+names(nhefs)[c(3,7:16)]
+
+formulaVars <- paste(names(nhefs)[c(3,7:16)],collapse = "+")
+
+modelForm <- as.formula(paste0("wt_delta ~", formulaVars))
 modelForm
-summary(lm(modelForm,data=nhefs))
+
+modelForm_int <- as.formula(paste0("wt_delta ~", formulaVars,"+ qsmk*exercise"))
+modelForm_int
+
+summary(glm(modelForm,data=nhefs, family=binomial(link="identity")))
+summary(glm(modelForm_int,data=nhefs, family=binomial(link="identity")))
 ```
 
 
-Thus, to properly interpret the association, exercise status should be considered. But how could we do this? One approach would be to include the interaction term and interpret the association between quitting smoking and weight change separately for each level of exercise. But this approach can be overly burdensome when there are several relevant interactions in the model, and is not worth the effort when we are interested in the marginal association. As an alternative, we can use marginal or model-based standardization.
+If this were the case, to properly interpret the association, the interaction between exercise status and qsmk should be considered. But how could we do this? One approach would be to include the interaction term and interpret the association between quitting smoking and weight change separately for each level of exercise.
+
+For example, in the model that includes the interaction term with exercise, we can no longer simply interpret the coefficient for `qsmk` as the treatment effet of interest. Instead, (under causal identifiability) we have three treatment effects: The effect of `qsmk` for those with `exercise = 0, 1,` and `2`. If we were, in fact, interested in the average treatment effect in the sample (and not a unique treatment effect for each level of exercise), we would have to take a weighted average of the coefficients for these effects, where the weights are defined as a function of the proportion of individuals in each exercise level. 
+
+Clearly, this approach can quickly become too burdensome when there are several relevant interactions in the model, and is not worth the effort when we are interested in the marginal association. As an alternative, we can use marginal or model-based standardization, which can greatly simplify the process.
 
 ## Marginal or Model-Based Standardization
 
-A final approach to obtaining risk differences and ratios from GLMs that are not subject to the limitations noted above is to use marginal standardization, which is equivalent to g computation when the exposure is measured at a single time point [@Naimi2016b]. This process can be implemented by fitting a separate logistic model in each exposure stratum (i.e., exposed and unexposed), regressing the binary outcome against all confounder variables. But instead of reading the coefficients the model, one can obtain risk differences and ratios by using these models to generate predicted risks for each individual under “exposed” and “unexposed” scenarios in the dataset. This stratified modeling approach avoids the exposure effect homogeneity assumption across levels of the confounders. To obtain predictions under the “exposed” scenario, we use the model fit to the exposed individuals to generate predicted outcomes in the entire sample. To obtain predictions under the “unexposed” scenario, we repeat the same procedure, but with the model fit among the unexposed. One can then average the risks obtained under each exposure scenario, and take their difference and ratio to obtain the risk differences and ratios of interest. To obtain standard errors, the entire procedure must be bootstrapped (see supplemental material for code). These marginal risk differences and ratios, as well as their bootstrapped CIs are presented in the table above.
+Another approach to obtaining risk differences and ratios from GLMs that are not subject to the limitations noted above is to use marginal standardization, which is equivalent to g computation when the exposure is measured at a single time point [@Naimi2016b]. This process can be implemented by fitting a single logistic model, regressing the binary outcome against all confounder variables, including all relevant interactions. But instead of reading the coefficients the model, one can obtain odds ratios, risk ratios, or risk differences by using this model to generate predicted risks for each individual under “exposed” and “unexposed” scenarios in the dataset. To obtain standard errors, the entire procedure must be bootstrapped (see supplemental material for code). These marginal risk differences and ratios, as well as their bootstrapped CIs are presented in the table above.
 
-Here is the code to implement marginal standardization in the NHEFS data:
+Here is some code to implement this marginal standardization in the NHEFS data:
+```{r}
+#' Marginal Standardization: version 1
+formulaVars <- paste(names(nhefs)[c(3,7:16)],collapse = "+")
+modelForm <- as.formula(paste0("wt_delta ~", formulaVars,"+ qsmk*exercise")) ## include the interaction!
+modelForm
+
+#' Regress the outcome against the confounders with interaction
+ms_model <- glm(modelForm,data=nhefs,family=binomial("logit"))
+##' Generate predictions for everyone in the sample to obtain 
+##' unexposed (mu0 predictions) and exposed (mu1 predictions) risks.
+mu1 <- predict(ms_model,newdata=transform(nhefs,qsmk=1),type="response")
+mu0 <- predict(ms_model,newdata=transform(nhefs,qsmk=0),type="response")
+
+#' Marginally adjusted odds ratio
+marg_stand_OR <- (mean(mu1)/mean(1-mu1))/(mean(mu0)/mean(1-mu0))
+#' Marginally adjusted risk ratio
+marg_stand_RR <- mean(mu1)/mean(mu0)
+#' Marginally adjusted risk difference
+marg_stand_RD <- mean(mu1)-mean(mu0)
+
+#' Using the bootstrap to obtain confidence intervals for the marginally adjusted 
+#' risk ratio and risk difference.
+bootfunc <- function(data,index){
+  boot_dat <- data[index,]
+  ms_model <- glm(modelForm,data=boot_dat,family=binomial("logit"))
+  mu1 <- predict(ms_model,newdata=transform(boot_dat,qsmk=1),type="response")
+  mu0 <- predict(ms_model,newdata=transform(boot_dat,qsmk=0),type="response")
+  
+  marg_stand_OR_ <- (mean(mu1)/mean(1-mu1))/(mean(mu0)/mean(1-mu0))
+  marg_stand_RR_ <- mean(mu1)/mean(mu0)
+  marg_stand_RD_ <- mean(mu1)-mean(mu0)
+  res <- c(marg_stand_RD_,marg_stand_RR_,marg_stand_OR_)
+  return(res)
+}
+
+#' Run the boot function. Set a seed to obtain reproducibility
+set.seed(123)
+boot_res <- boot(nhefs,bootfunc,R=2000)
+
+boot_RD <- boot.ci(boot_res,index=1)
+boot_RR <- boot.ci(boot_res,index=2)
+boot_OR <- boot.ci(boot_res,index=3)
+
+marg_stand_OR
+marg_stand_RR
+marg_stand_RD
+
+boot_RD
+boot_RR
+boot_OR
+
+```
+
+While this marginal standardization approach is more flexible in that it accounts for the interaction between quitting smoking and exercise, and still yields an estimate of the average treatment effect (again, under identifiability), it still assumes a constant effect of qsmk on weight change across levels of all of the other variables in the model. This constant effect assumption might be true, but if one wanted to account for potential interactions between the exposure and all of the confounders in the model, there is an easy way. We call this the "stratified modeling approach."
+
+This stratified modeling approach avoids the exposure effect homogeneity assumption across levels of all the confounders. In effect, the approach fits a separate model for each exposure stratum. To obtain predictions under the “exposed” scenario, we use the model fit to the exposed individuals to generate predicted outcomes in the entire sample. To obtain predictions under the “unexposed” scenario, we repeat the same procedure, but with the model fit among the unexposed. One can then average the risks obtained under each exposure scenario, and take their difference and ratio to obtain the risk differences and ratios of interest.
 ```{r}
 #' Marginal Standardization
 ##' To avoid assuming no interaction between 
@@ -372,7 +468,7 @@ Here is the code to implement marginal standardization in the NHEFS data:
 ##' the unexposed searately. Doing so will allow us 
 ##' to account for any potential exposure-covariate interactions
 ##' that may be present. 
-formulaVars <- paste(names(nhefs)[-c(1,2,3,4)],collapse = "+")
+formulaVars <- paste(names(nhefs)[c(7:16)],collapse = "+")
 modelForm <- as.formula(paste0("wt_delta ~", formulaVars))
 modelForm
 
@@ -385,6 +481,8 @@ model1 <- glm(modelForm,data=subset(nhefs,qsmk==1),family=binomial("logit"))
 mu1 <- predict(model1,newdata=nhefs,type="response")
 mu0 <- predict(model0,newdata=nhefs,type="response")
 
+#' Marginally adjusted odds ratio
+marg_stand_OR <- (mean(mu1)/mean(1-mu1))/(mean(mu0)/mean(1-mu0))
 #' Marginally adjusted risk ratio
 marg_stand_RR <- mean(mu1)/mean(mu0)
 #' Marginally adjusted risk difference
@@ -399,9 +497,10 @@ bootfunc <- function(data,index){
   mu1 <- predict(model1,newdata=boot_dat,type="response")
   mu0 <- predict(model0,newdata=boot_dat,type="response")
   
-  marg_stand_RR <- mean(mu1)/mean(mu0)
-  marg_stand_RD <- mean(mu1)-mean(mu0)
-  res <- c(marg_stand_RD,marg_stand_RR)
+  marg_stand_OR_ <- (mean(mu1)/mean(1-mu1))/(mean(mu0)/mean(1-mu0))
+  marg_stand_RR_ <- mean(mu1)/mean(mu0)
+  marg_stand_RD_ <- mean(mu1)-mean(mu0)
+  res <- c(marg_stand_RD_,marg_stand_RR_,marg_stand_OR_)
   return(res)
 }
 
@@ -411,9 +510,15 @@ boot_res <- boot(nhefs,bootfunc,R=2000)
 
 boot_RD <- boot.ci(boot_res,index=1)
 boot_RR <- boot.ci(boot_res,index=2)
+boot_OR <- boot.ci(boot_res,index=2)
+
+marg_stand_OR
+marg_stand_RR
+marg_stand_RD
 
 boot_RD
 boot_RR
+boot_OR
 
 ```
 
