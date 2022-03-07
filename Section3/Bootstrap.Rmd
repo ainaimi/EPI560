@@ -1,0 +1,313 @@
+---
+title: "The Bootstrap"
+author: "Ashley I Naimi"
+date: "Spring 2022"
+urlcolor: blue
+bibliography: ref.bib
+link-citations: yes
+output: 
+    bookdown::pdf_book:
+      base_format: tint::tintPdf
+      toc: true
+      number_sections: true
+      includes:
+        in_header: "../misc/preamble.tex"
+      latex_engine: xelatex
+    html_document:
+      theme: readable
+      toc: true
+      toc_float: true
+      number_sections: true
+      css: "../misc/style.css"
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+opts_chunk$set(tidy.opts=list(width.cutoff=40),tidy=TRUE)
+
+packages <- c( "data.table","tidyverse","ggplot2","ggExtra","formatR",
+               "gridExtra","skimr","here","Hmisc","RColorBrewer")
+
+for (package in packages) {
+  if (!require(package, character.only=T, quietly=T)) {
+    install.packages(package, repos='http://lib.stat.cmu.edu/R/CRAN',dependencies=T)
+  }
+}
+
+for (package in packages) {
+  library(package, character.only=T)
+}
+
+remotes::install_github("rstudio/fontawesome")
+
+library(fontawesome)
+
+thm <- theme_classic() +
+  theme(
+    legend.position = "top",
+    legend.background = element_rect(fill = "transparent", colour = NA),
+    legend.key = element_rect(fill = "transparent", colour = NA)
+  )
+theme_set(thm)
+```
+
+\newpage
+\onehalfspacing
+
+\newpage
+\onehalfspacing
+
+# Introduction
+
+After obtaining a point estimate, standard practice is to quantify its statistical uncertainty. This quantification is usually accomplished via a confidence interval estimate, which is meant to provide information on a plausible range of point estimate values compatible with the unknown parameter of interest [@Naimi2020a]. There are several ways to estimate confidence intervals of an estimate. The most common technique is to use maximum likelihood theory, which provides an estimate of the standard error of the parameter of interest directly from the likelihood function (known as the observed Fisher information) [@Cole2013a,@Pawitan2001,@Therneau2000], which can be used to obtain confidence intervals. Ninety-five percent confidence intervals are computed by assuming the estimate follows a normal distribution and invoking the empirical rule, which states that 95\% of the mass of the estimate's distribution falls within $1.96\times SE(\hat{\beta})$ units of the point estimate [@Wackerly2002]. This approach is based on asymptotic approximations that assume the sample size is sufficiently large.
+
+There are generally three situations in which an alternative is preferred: when an analytic expression for the standard error or confidence interval of an estimator is unknown, or when such an expression exists, but is too complex to implement manually with standard software. For example, marginal standardization (i.e., g computation or the parametric g formula) is increasingly being used in applied research, yet analytic expressions for the standard error of an estimate from marginal standardization are typically intractable [@Muller2014,@Naimi2020]. A well-known alternative to variance estimation in such situations is the bootstrap [@Efron1979].
+
+Several bootstrap estimators exist [@Efron1993], however epidemiologists often rely on a few simple versions, namely the normal interval (Wald) bootstrap, and the percentile bootstrap. Furthermore, with the advent of programs for fitting advanced machine learning techniques, researchers are increasingly using the bootstrap to obtain measures of uncertainty for effect estimates obtain from machine learning algorithms [@Lee2010,@Oulhote2019]. Unfortunately, important questions remain as to whether the bootstrap can generally provide "honest" standard errors or confidence intervals^[Note that "honest" confidence intervals are technically defined as those with a "minimum coverage probability over a rich class of (nonparametric) regression functions with no less than nominal coverage" @Li1989.] when machine learning methods are used [@Wasserman2006].
+
+Here, we'll illustrate how to use bootstrap confidence interval estimators. We first provide a brief conceptual overview of the procedure, focusing on three particular bootstrap estimators. We then show how the bootstrap can be used to obtain measures of uncertainty when modeling data from the NHEFS data.
+
+# The Bootstrap
+
+Standard errors and confidence intervals are meant to capture the variation that would be observed in a point estimate in the exact same conditions (same population, sampling scheme, and statistical model) under repeated random sampling. In addition to the approach using the observed Fisher Information, several semi- and non-parametric techniques can be used to obtain standard errors or confidence intervals, including influence function-based methods [@Huber2009], balanced repeated replications [@Kish1970], the delta method [@vanderVaart2000], the jackknife [@Tukey1958], and the bootstrap [@Efron1979]. The bootstrap is by far the most common alternative. Both parametric and non-parametric bootstrap variance estimators exist [@Carpenter2000]. We briefly touch on the logic behind the parametric bootstrap, but focus our attention primarily on the non-parametric bootstrap. We clarify the distinction between the nonparametric bootstrap, and bootstrapping a nonparametric (e.g., machine learning) estimator in a subsequent section.
+
+The bootstrap is a technique that employs the Monte Carlo method and the substitution (or plug-in) principle to obtain standard error or confidence interval estimates [@Efron2003]. The Monte Carlo method is a general approach for solving a broad class of problems using computation to generate random numbers. The Monte Carlo method was introduced in the early 20th century [@Metropolis1949]. The basic idea behind this method is to use chance to solve problems that would either be intractable, or just too difficult to solve analytically. Because of it's use of chance, it is named after the famed Monte Carlo casino in Las Vegas, NV.
+
+:::{.rmdnote data-latex="{tip}"}
+
+__Technical Note__:
+
+|               To give a simple example of the Monte Carlo method at work, suppose you didn't know, but had to estimate $\pi = 3.1415926 \ldots$ Suppose further that all you knew was the following:
+$$A_S = L \times W$$
+and 
+$$A_{C}/4 = (\pi \times r^2)/4$$
+If you chose $L = W = r = 1$, you could take the ratio of the area of the quarter circle to the area of the unit square to give: 
+$$\pi = 4\times \frac{A_C/4}{A_S}$$
+
+You could then randomly spread points over the entire unit square. Taking four times the proportion of points that fall in the quarter circle relative to the unit square will give you an estimate of $\pi$, as with the following code:
+
+```{r, warning=F, message=F}
+
+remotes::install_github('exaexa/scattermore')
+library(scattermore)
+
+n <- 100000
+x <- runif(n,0,1)
+y <- runif(n,0,1)
+circle <- (x^2+y^2<1)
+
+plot_dat <- tibble(x,y,circle)
+
+plot_dat %>% print(n=5)
+
+```
+
+:::
+
+:::{.rmdnote data-latex="{tip}"}
+
+__Technical Note (cont.)__:
+
+|               
+```{r}
+mc_plot <- ggplot(plot_dat) + 
+  geom_scattermore(aes(x,y,color=circle)) +
+  scale_x_continuous(expand=c(0,0), limits=c(0,1.05)) +
+  scale_y_continuous(expand=c(0,0), limits=c(0,1.05)) +
+  scale_color_manual(values=c("#000000","#D55E00")) +
+  theme(legend.position="none")
+
+ggsave(here("figures","2022_03_02-mc_plot.pdf"), 
+       plot = mc_plot,
+       width = 5,
+       height = 5,
+       units="cm")
+
+```
+
+```{r mcplot, echo=F, out.width="5cm"}
+knitr::include_graphics(here("figures","2022_03_02-mc_plot.pdf"))
+```
+
+We can begin to compute $\pi$ by computing the ratio of points in the quarter circle to the ratio of points in the square:
+
+```{r}
+
+mean(circle)*4
+
+```
+
+Not $\pi$, but not far. To get a more accurate number, we can increase the number of points used to implement the Monte Carlo method:
+
+```{r}
+
+mc_num <- c(1e2,1e3,1e4,1e5,1e6,1e7)
+
+```
+
+:::
+
+:::{.rmdnote data-latex="{tip}"}
+
+__Technical Note (cont.)__:
+
+|               
+```{r}
+
+pi_estimate <- NULL
+for(i in mc_num){
+  n <- i
+  x <- runif(n,0,1)
+  y <- runif(n,0,1)
+  circle <- (x^2+y^2<1)
+  pi_estimate <- rbind(pi_estimate,mean(circle)*4)
+}
+
+cbind(mc_num,pi_estimate)
+
+```
+
+:::
+
+This Monte Carlo method is used for both parametric and non-parametric bootstrap estimators. For the parametric bootstrap, the Monte Carlo method is used to generate residuals from a statistical model defining the relation between the exposure, confounders, and outcome of interest. The estimated parameters from this model are used, along with the exposure and confounder data, and the residuals generated from the Monte Carlo process, to generate a bootstrapped outcome. This process is repeated $B$ times, giving $B$ datasets with a bootstrapped outcome, and the original exposure and confounder data. One then fits a separate model to each of these $B$ datasets to obtain a distribution of bootstrapped parameter estimates that can be use to quantify the uncertainty around the original estimates. In this setting, the bootstrapping process is ``parametric'' in that a parametric (e.g., logistic regression) model is used to generate the bootstrapped outcome data. Violations of the model's assumptions can lead to biased estimates of statistical uncertainty for the original parameter estimates [@Carpenter2000].^[While true, the same is true for the nonparametric bootstrap: using a misspecified model can lead to biased variance estimators.] Generally, the parametric bootstrap is much less commonly used compared to its counterpart.
+
+The non-parametric bootstrap uses the random numbers generated from the Monte Carlo process to select random samples with replacement from the original data. The number of bootstrap samples chosen by the researcher is limited only by the available computing power. For each bootstrap sample, one can obtain a ``bootstrap replicate'' of the point estimate for the parameter of interest. With a large enough number of bootstrap replicates, one can use the distribution of bootstrap estimates to obtain information on the degree of uncertainty associated with the point estimate of interest. In effect, one can substitute (or plug-in) the empirical distribution of the estimates from each bootstrap resample for the unknown distribution of the point estimate. For a number of estimators, this empirical distribution can be used to estimate features (such as the standard error or percentiles) of the unknown distribution of the parameter estimate.
+
+This version of the bootstrap is referred to as non-parametric because the data are not assumed to follow a specified parametric model. Rather, they are resampled based on their (nonparametric) empirical distribution [@Carpenter2000]. However, this does not imply that the nonparametric bootstrap will work equally well when the model used to generate the parameter estimate of interest is itself nonparametric (e.g., a machine learning based estimator). Indeed, this is the result of the fact that both the parametric and nonparametric bootstrap estimators require that the underlying estimation model meets certain conditions (e.g., regularity, smoothness of the underlying regression function) [@Longford2008], which are not guaranteed to hold when nonparametric methods are used [@Wasserman2006].
+
+# Example Demonstration
+
+Let's use the NHEFS to implement the bootstrap. We'll start by importing the data and, focusing on a few select covariates, we'll estimate the covariate adjusted association between quitting smoking and weight change between 1972 and 1981 (note, the continuous outcome):
+
+```{r, warning = F, message = F}
+#' Load relevant packages
+packages <- c("broom","here","tidyverse","skimr","rlang","sandwich","boot", "kableExtra")
+
+for (package in packages) {
+  if (!require(package, character.only=T, quietly=T)) {
+    install.packages(package, repos='http://lib.stat.cmu.edu/R/CRAN')
+  }
+}
+
+for (package in packages) {
+  library(package, character.only=T)
+}
+
+#' Define where the data are
+file_loc <- url("https://cdn1.sph.harvard.edu/wp-content/uploads/sites/1268/1268/20/nhefs.csv")
+
+#' This begins the process of cleaning and formatting the data
+nhefs <- read_csv(file_loc) %>% 
+  select(qsmk,wt82_71,sex,age,race) %>% 
+  na.omit(.)
+
+factor_names <- c("sex","race")
+nhefs[,factor_names] <- lapply(nhefs[,factor_names] , factor)
+
+#' Define outcome
+nhefs <- nhefs %>% mutate(id = row_number(), 
+                          .before = qsmk)
+```
+
+Here are the first 15 rows of these data. 
+
+```{r}
+#' Quick summary of data
+nhefs %>% print(n=15)
+```
+
+We can use these data to estimate the adjusted mean difference for the association between `qsmk` and `wt82_71`:
+
+```{r}
+
+mod_obj <- lm(wt82_71 ~ qsmk + race + sex + age, data=nhefs)
+
+summary(mod_obj)
+
+```
+
+Our goal now is to quanfity a standard error for the association between `qsmk` and `wt82_71`. We can use the simple bootstrap to do this. The bootstrap relies on a random resample of these data, with replacement. One simple way to do this is with the `sample` function in R:
+
+```{r}
+
+# create an index for the nhefs data
+index <- sample(1:nrow(nhefs), nrow(nhefs), replace = T)
+
+# first 10 indices 
+index[1:10]
+
+# use index to resample nhefs with replacement
+nhefs_resample <- nhefs[index,]
+
+# look at the resample data
+nhefs_resample %>% arrange(id) %>% print(n=15)
+
+```
+
+Note that, in the above output, there are several IDs that are repeated. Continually resampling these data with replacement yields a large number of datasets, each of which provides a variation of the original point estimate. This variation depends on the underlying variation in the data, and can thus be used to quantify the sampling variation of the point estimate of interest. In the simplest procedure, we can use a `for` loop to construct the bootstrap:
+
+```{r}
+
+replicates <- 2000
+bootstrap_estimates <- NULL
+for(i in 1:replicates){
+  
+  #set the seed, so we get a different sample each time
+  set.seed(i)
+  
+  # create an index for the nhefs data
+  index <- sample(1:nrow(nhefs), nrow(nhefs), replace = T)
+
+  # first 10 indices 
+  index[1:10]
+
+  # use index to resample nhefs with replacement
+  nhefs_resample <- nhefs[index,]
+  
+  # estimate the association in the resample
+  mod_obj_boot <- lm(wt82_71 ~ qsmk + race + sex + age, data=nhefs_resample)
+
+  bootstrap_estimates <- rbind(bootstrap_estimates,coef(mod_obj_boot)[2])
+  
+}
+
+```
+
+We can look at the distribution of the estimates to get a sense of variability:
+
+```{r, warnign = F, message = F}
+
+bootstrap_estimates <- data.frame(bootstrap_estimates) 
+
+ggplot(bootstrap_estimates) +
+  geom_histogram(aes(qsmk)) +
+  scale_x_continuous(expand=c(0,0)) +
+  scale_y_continuous(expand=c(0,0))
+
+```
+
+
+The simplest way to use the bootstrap would be to obtain the standard deviation of this distribution, and use it as the standard error of the point estimate for the association between `qsmk` and `wt82_71`:
+
+```{r, warning = F, message = F}
+
+se_estimate <- sd(bootstrap_estimates$qsmk)
+
+lcl_qsmk <- coef(mod_obj)[2] - 1.96*se_estimate
+ucl_qsmk <- coef(mod_obj)[2] + 1.96*se_estimate
+
+coef(mod_obj)[2]
+lcl_qsmk
+ucl_qsmk
+
+```
+
+While many different types of nonparametric bootstrap confidence interval estimators exist, the above features comprise the central characteristics of the approach. Different bootstrap estimators are distinguished by what information is extracted (and how) from the sample of bootstrap replicates $\big \{\hat{\psi}_1^*, \hat{\psi}_2^*, \ldots, \hat{\psi}_B^* \big \}$. Three bootstrap confidence interval estimators are arguably best suited to epidemiologic research due to their relative ease of implementation, established theoretical properties, and robustness to violations of a varying range of assumptions [@Greenland2004]. These are the Wald (or normal-interval estimator), percentile, and Bias-Corrected and Accelerated (BC$_a$) bootstrap estimators.
+
+The Wald, or normal interval, bootstrap estimator is one of the simplest of bootstrap confidence interval estimators. The approach requires the assumption that the parameter estimator $\hat{\psi}$ is normally distributed. After obtaining a sample of bootstrap estimates as outlined above, one can implement the method by simply estimating the standard deviation of this sample. For the example data with marginal standardization, 95\% Wald-type bootstrap confidence intervals for the estimated odds ratio $\exp(\hat{\psi})$ can be obtained as $\exp\big\{\hat{\psi} \pm 1.96 \times SD(\hat{\psi}^*)\big \}$, where $SD(\hat{\psi}^*)$ is the standard deviation of the bootstrap replicates (values other than 1.96 can be used for different $\alpha$-level confidence intervals). The standard deviation of the distribution of bootstrap replicates $SD(\hat{\psi}^*)$ can be used to quantify the standard error of the point estimate $SE(\hat{\psi})$ [@Altman2005] The use of $\pm 1.96 \times SE(\hat{\psi})$ assumes that $\hat{\psi}$ follows a normal distribution, and is only valid in reasonably large samples. As a consequence, Wald-type bootstrap confidence intervals will usually have a less than nominal coverage probability in small samples [@Efron1993,@DiCiccio1996]. Finally, Efron suggests that between 50 and 200 replicates is sufficient to obtain a good estimate of $SE(\hat{\psi})$ [@Efron1993}, however with modern computing implementing more resamples becomes a trivial exercise. 
+
+The percentile bootstrap estimator is as simple to implement as the Wald estimator, but does not require the assumption that $\hat{\beta}$ follows a normal distribution. To obtain two-sided percentile bootstrap confidence intervals, one simply selects the bootstrap replicate (i.e., the estimate based on bootstrap resample) corresponding to the $100\times \sfrac{\alpha}{2}$ and $100\times (1-\sfrac{\alpha}{2})$ percentile of the distribution of bootstrap replicates. For example, with 2,000 bootstrap replicates $\big \{\hat{\beta}_1^*, \hat{\beta}_2^*, \ldots, \hat{\beta}_{2,000}^* \big \}$ and a nominal coverage of $95\%$, the 2.5th and 97.5th percentile points representing the lower and upper confidence limits would correspond to $\hat{\beta}_{50}^*$ and $\hat{\beta}_{1,950}^*$, respectively. The percentile method is both \textit{transformation} and \textit{range respecting}: for example, percentile confidence interval estimates can be obtained on either the log-scale and transformed to the exponential scale or vice versa [@Efron1993]. Moreover, they respect the boundedness of the estimator in that they will not provide confidence interval estimates that fall outside of the allowable range of the parameter estimate. Percentile intervals (when obtained using the non-parametric bootstrap) are completely non-parametric. As a consequence, this method is subject to anti-conservative properties in that its coverage probability is usually less than nominal [@DiCiccio1996,@Greenland2004,@Efron1993,@Carpenter2000]. Finally, because percentile-based methods require estimates of the tails of the distribution of bootstrap replicates, more bootstrap resamples are required than what is technically required for the normal-interval bootstrap. Although the specific number may depend on the scenario, 1,000 to 2,000 re-samples is often seen in practice. 
+
+Early recognition of the poor coverage probabilities of the Wald-type and percentile bootstrap confidence intervals led to two modifications of the percentile method [@DiCiccio1996]. The resulting ``bias-corrected and accelerated'' confidence intervals are meant to improve the performance of the percentile confidence interval estimator. The BC$_a$ confidence interval estimator is a percentile-based estimator in that the confidence interval end-points selected are percentiles of distribution of bootstrap replicates. This interval estimator is also transformation and range respecting. It differs from the standard percentile method in that the percentiles corresponding to the upper and lower interval estimates are chosen as a function of a bias correction factor and an acceleration factor that are determined by the data. The bias-correction factor is meant to account for the discrepancy between the median of the sample of bootstrap replicates and the point estimate. This factor can be calculated as a function of the total number of bootstrap replicates less than the point estimate obtained from the original data [@Efron1993]. The acceleration factor is meant to compensate for possible heterogeneity in the standard error of the estimator as a function of the true parameter value, and can be calculated using the jackknife procedure [@Tukey1958]. One important feature to note is that the BC$_a$ estimator requires that the number of resamples is no smaller than the sample size, due to the need to estimate the acceleration factor.
+
+# References
