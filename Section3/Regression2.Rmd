@@ -213,7 +213,7 @@ Let's look at how we can transform the section 1 data into the single row per ti
 
 # first, we create a "stop_rounded" variable, which generates
 # an integer count for the time on study. 
-a <- a %>% mutate(stop_rounded = round(stop,digits=0))
+a <- a %>% mutate(stop_rounded = ceiling(stop)) # why ceiling?
 
 # this shows how the unrounded time-to-event variable relates
 # to the rounded variable
@@ -241,7 +241,7 @@ b <- a %>%
                                                 # variable to 1 if last 
                                                 # AND old outcome is 1
   ungroup(ID) %>%
-  select(ID,time_var,stop,exposure,confounder,outcome_one)
+  select(ID,time_var,stop,exposure,confounder,outcome,outcome_one)
 
 b %>% filter(ID %in% c(1,3,5,6))
 
@@ -267,7 +267,9 @@ round(summary(plr_model)$coefficients["exposure",], 2)
 
 ```
 
-Let's compare the estimated coefficient from this model to the hazard ratio above. Recall that the Cox model yielded a HR of `r round(exp(coef(cox_model))[1],2)` with 95% CIs of `r round(summary(cox_model)$conf.int[1,3:4], 2)`. The pooled logistic model yields an approximated HR of `r round(exp(summary(plr_model)$coefficients["exposure", "Estimate"]),2)` with 95% confidence intervals of `r round(exp(summary(plr_model)$coefficients["exposure", "Estimate"] - 1.96 * summary(plr_model)$coefficients["exposure", "Std. Error"]),2)` and `r round(exp(summary(plr_model)$coefficients["exposure", "Estimate"] + 1.96 * summary(plr_model)$coefficients["exposure", "Std. Error"]),2)`. 
+Let's compare the estimated coefficient from this model to the hazard ratio above. Recall that the Cox model yielded a HR of `r round(exp(coef(cox_model))[1],2)` with 95% CIs of `r round(summary(cox_model)$conf.int[1,3:4], 2)`. The pooled logistic model yields an approximated HR of `r round(exp(summary(plr_model)$coefficients["exposure", "Estimate"]),2)` with 95% confidence intervals of `r round(exp(summary(plr_model)$coefficients["exposure", "Estimate"] - 1.96 * summary(plr_model)$coefficients["exposure", "Std. Error"]),2)` and `r round(exp(summary(plr_model)$coefficients["exposure", "Estimate"] + 1.96 * summary(plr_model)$coefficients["exposure", "Std. Error"]),2)`.
+
+Note that while these confidence intervals are close to those from the Cox model, they are not technically valid.^[In the lab you will learn how to bootstrap the pooled logistic regression model.] In typical settings, it's customary to use the clustered sandwich variance estimator, or the clustered bootstrap.
 
 Sometimes, the number of time-intervals created is too large to include in the model as a conditioning statement. For example, in a study with 60 weeks of follow-up, including weekly time-intervals with the factor function in the model would result in a model with at least 60 parameters. To deal with this, researchers will often smooth the time-intervals using polynomials or splines.
 
@@ -325,9 +327,116 @@ mu0
 
 ```
 
-In effect, this procedure is marginal standardization. Except, rather than only estimating the risk at the end of follow-up under exposed and unexposed states, we are quantifying the cumulative risk function over follow-up time. Note also, this cumulative risk function is marginally adjusted for the confounder. Thus, here we have a way to compute the marginally standardized risk function using a pooled logistic model. This approach, however, will only work with a single outcome of interest. 
+In effect, this procedure is marginal standardization. Except, rather than only estimating the risk at the end of follow-up under exposed and unexposed states, we are quantifying the cumulative risk function over follow-up time. Note also, this cumulative risk function is marginally adjusted for the confounder. Thus, here we have a way to compute marginally standardized risk functions using a pooled logistic model. This approach, however, will only work with a single outcome of interest. 
 
 # Multinomial Logistic Regression: Competing Risks
+
+In the situation where competing events are present, the pooled logistic regression approach can be extended by replacing the binomial distribution with the multinomial distribution. The multinomial distribution is a generalization of the binomial distribution to scenarios where the event of interest can take on more than one value. One can define a simple multinomial logistic regression model as:
+
+$$\logit[P(Y=k \mid X, C)] = \beta_{0k} + \beta_{1k} X + \beta_{2k} C$$
+for $k = 1, \ldots, K$. In this simple model for a binary $X$ variable, $\exp(\beta_1)$ can be interpreted as the following odds ratio:
+
+$$\sfrac{\frac{P(Y = k \mid X = 1, C)}{P(Y = k^{\prime} \mid X = 1, C)}}{\frac{P(Y = k \mid X = 0, C)}{P(Y = k^{\prime} \mid X = 0, C)}}$$
+
+where $Y = k^{\prime}$ refers to some referent outcome level. 
+
+For example, in our example data, the outcome takes on three levels: $Y \in [0, 1, 2]$. Thus, if we take $Y = 0$ as our referent level, we obtain two odds ratios from this model:
+
+$$\sfrac{\frac{P(Y = 2 \mid X = 1, C)}{P(Y = 0 \mid X = 1, C)}}{\frac{P(Y = 2 \mid X = 0, C)}{P(Y = 0 \mid X = 0, C)}}$$
+
+and
+
+$$\sfrac{\frac{P(Y = 1 \mid X = 1, C)}{P(Y = 0 \mid X = 1, C)}}{\frac{P(Y = 1 \mid X = 0, C)}{P(Y = 0 \mid X = 0, C)}}$$
+This multinomial model can also be adapted to the time-to-event setting in the same way we adapted the logistic regression model. In effect, we can fit a pooled multinomial model as:
+
+$$\logit[P(Y=k \mid X, C)] = \beta_{0tk} + \beta_{1k} X + \beta_{2k} C$$
+which effectively makes each outcome-specific intercept a function of time.
+
+In R, their are several packages that can be used to fit a multinomial model, including the `multinom` function in the `nnet`, and the `vglm` function in the `VGAM` package. We'll use the latter here. 
+
+Let's first look at the data we'll be fitting:
+
+```{r}
+
+b %>% filter(ID %in% c(1,3,5,6))
+
+```
+
+Note that the `outcome` variable is indeed a three-level variable:
+
+```{r}
+
+b %>% count(outcome)
+
+```
+
+To implement the pooled multinomial model for competing risks, we can use the `vglm` function. To allow for flexibility along the time dimension, we'll use splines:
+
+```{r}
+
+library(VGAM)
+
+pmr1 <- vglm(outcome ~ time_var + exposure + confounder, 
+             data=b, family=multinomial(refLevel = 1)) ## note the need for refLevel
+
+summary(pmr1)@coef3[c("exposure:1","exposure:2"),]
+
+```
+
+However, once again, the coefficients in this model will be challenging to interpret. We can implement the same procedure with the binomial model to obtain adjusted sub-distribution risk curves. To do this, it's useful to see what we obtain when we apply the predict function to an object resulting from the fit of the `vglm` function:
+
+```{r}
+head(predict(pmr1, newdata=b, type="response"))
+```
+
+The output from the predict function with a multinomial model (fitted with `vglm`) is a $K$ column dataset, where $K$ is the number of outcome levels. We thus have to adjust our code to ensure we select the correct probabilites when creating standardized risk curves:
+
+```{r}
+
+pmr1 <- vglm(outcome ~ scale(time_var) + exposure + confounder, 
+             data=b, family=multinomial(refLevel = 1))
+
+# create three datasets, one that predicts under natural conditions
+# and two that predict under exposure = [0, 1]
+## FOR OUTCOME = 1
+mu_1 <- tibble(b,mu_1=predict(pmr1,newdata=b,type="response")[,2])
+mu_11 <- tibble(b,mu_11=predict(pmr1,newdata=transform(b,exposure=1),type="response")[,2])
+mu_10 <- tibble(b,mu_10=predict(pmr1,newdata=transform(b,exposure=0),type="response")[,2])
+## FOR OUTCOME = 2
+mu_2 <- tibble(b,mu_2=predict(pmr1,newdata=b,type="response")[,3])
+mu_21 <- tibble(b,mu_21=predict(pmr1,newdata=transform(b,exposure=1),type="response")[,3])
+mu_20 <- tibble(b,mu_20=predict(pmr1,newdata=transform(b,exposure=0),type="response")[,3])
+
+# average the predictions for each individual stratified by time
+## FOR OUTCOME = 1
+mu_1 <- mu_1 %>% group_by(time_var) %>% summarize(mean_mu_1=mean(mu_1))
+mu_11 <- mu_11 %>% group_by(time_var) %>% summarize(mean_mu_11=mean(mu_11))
+mu_10 <- mu_10 %>% group_by(time_var) %>% summarize(mean_mu_10=mean(mu_10))
+## FOR OUTCOME = 2
+mu_2 <- mu_2 %>% group_by(time_var) %>% summarize(mean_mu_2=mean(mu_2))
+mu_21 <- mu_21 %>% group_by(time_var) %>% summarize(mean_mu_21=mean(mu_21))
+mu_20 <- mu_20 %>% group_by(time_var) %>% summarize(mean_mu_20=mean(mu_20))
+
+# cumulatively sum the predictions over time to estimate cumulative risk
+## FOR OUTCOME = 1
+mu_1 <- mu_1 %>% mutate(cum_risk = cumsum(mean_mu_1))
+mu_11 <- mu_11 %>% mutate(cum_risk = cumsum(mean_mu_11))
+mu_10 <- mu_10 %>% mutate(cum_risk = cumsum(mean_mu_10))
+## FOR OUTCOME = 2
+mu_2 <- mu_2 %>% mutate(cum_risk = cumsum(mean_mu_2))
+mu_21 <- mu_21 %>% mutate(cum_risk = cumsum(mean_mu_21))
+mu_20 <- mu_20 %>% mutate(cum_risk = cumsum(mean_mu_20))
+
+mu_1
+mu_11
+mu_10
+
+mu_2
+mu_21
+mu_20
+
+```
+
 
 
 
