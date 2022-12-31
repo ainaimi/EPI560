@@ -237,13 +237,14 @@ b <- a %>%
          time_var = cumsum(counter), # sum the counter by ID: 
                                      # this becomes the new "time" variable
          last_id = !duplicated(ID, fromLast = T), # flag the last row for each person
-         outcome_one = outcome_one*last_id) %>% # set the new outcome 
+         outcome_one = outcome_one*last_id, # set the new outcome 
                                                 # variable to 1 if last 
                                                 # AND old outcome is 1
+         outcome_two = outcome*last_id) %>% # for competing risks
   ungroup(ID) %>%
-  select(ID,time_var,stop,exposure,confounder,outcome,outcome_one)
+  select(ID,time_var,stop,exposure,confounder,outcome,outcome_one,outcome_two)
 
-b %>% filter(ID %in% c(1,3,5,6))
+b %>% filter(ID %in% c(1,3,7))
 
 ```
 
@@ -268,8 +269,6 @@ round(summary(plr_model)$coefficients["exposure",], 2)
 ```
 
 Let's compare the estimated coefficient from this model to the hazard ratio above. Recall that the Cox model yielded a HR of `r round(exp(coef(cox_model))[1],2)` with 95% CIs of `r round(summary(cox_model)$conf.int[1,3:4], 2)`. The pooled logistic model yields an approximated HR of `r round(exp(summary(plr_model)$coefficients["exposure", "Estimate"]),2)` with 95% confidence intervals of `r round(exp(summary(plr_model)$coefficients["exposure", "Estimate"] - 1.96 * summary(plr_model)$coefficients["exposure", "Std. Error"]),2)` and `r round(exp(summary(plr_model)$coefficients["exposure", "Estimate"] + 1.96 * summary(plr_model)$coefficients["exposure", "Std. Error"]),2)`.
-
-Note that while these confidence intervals are close to those from the Cox model, they are not technically valid.^[In the lab you will learn how to bootstrap the pooled logistic regression model.] In typical settings, it's customary to use the clustered sandwich variance estimator, or the clustered bootstrap.
 
 Sometimes, the number of time-intervals created is too large to include in the model as a conditioning statement. For example, in a study with 60 weeks of follow-up, including weekly time-intervals with the factor function in the model would result in a model with at least 60 parameters. To deal with this, researchers will often smooth the time-intervals using polynomials or splines.
 
@@ -358,15 +357,15 @@ Let's first look at the data we'll be fitting:
 
 ```{r}
 
-b %>% filter(ID %in% c(1,3,5,6))
+b %>% filter(ID %in% c(1,3,7))
 
 ```
 
-Note that the `outcome` variable is indeed a three-level variable:
+Note that the `outcome_two` variable is indeed a three-level variable:
 
 ```{r}
 
-b %>% count(outcome)
+b %>% count(outcome_two)
 
 ```
 
@@ -376,7 +375,7 @@ To implement the pooled multinomial model for competing risks, we can use the `v
 
 library(VGAM)
 
-pmr1 <- vglm(outcome ~ time_var + exposure + confounder, 
+pmr1 <- vglm(outcome_two ~ time_var + exposure + confounder, 
              data=b, family=multinomial(refLevel = 1)) ## note the need for refLevel
 
 summary(pmr1)@coef3[c("exposure:1","exposure:2"),]
@@ -393,7 +392,7 @@ The output from the predict function with a multinomial model (fitted with `vglm
 
 ```{r}
 
-pmr1 <- vglm(outcome ~ scale(time_var) + exposure + confounder, 
+pmr1 <- vglm(outcome_two ~ scale(time_var) + exposure + confounder, 
              data=b, family=multinomial(refLevel = 1))
 
 # create three datasets, one that predicts under natural conditions

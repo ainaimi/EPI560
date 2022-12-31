@@ -1,12 +1,91 @@
 %% This BibTeX bibliography file was created using BibDesk.
 %% https://bibdesk.sourceforge.io/
 
-%% Created for Ashley Isaac Naimi at 2022-03-08 20:18:40 -0500 
+%% Created for Ashley Isaac Naimi at 2022-03-24 14:32:38 -0400 
 
 
 %% Saved with string encoding Unicode (UTF-8) 
 
 
+
+@article{Yoshida2017,
+	abstract = {BACKGROUND: Propensity score matching is a commonly used tool. However, its use in settings with more than two treatment groups has been less frequent. We examined the performance of a recently developed propensity score weighting method in the three-treatment group setting. METHODS: The matching weight method is an extension of inverse probability of treatment weighting (IPTW) that reweights both exposed and unexposed groups to emulate a propensity score matched population. Matching weights can generalize to multiple treatment groups. The performance of matching weights in the three-group setting was compared via simulation to three-way 1:1:1 propensity score matching and IPTW. We also applied these methods to an empirical example that compared the safety of three analgesics. RESULTS: Matching weights had similar bias, but better mean squared error (MSE) compared with three-way matching in all scenarios. The benefits were more pronounced in scenarios with a rare outcome, unequally sized treatment groups, or poor covariate overlap. IPTW's performance was highly dependent on covariate overlap. In the empirical example, matching weights achieved the best balance for 24 out of 35 covariates. Hazard ratios were numerically similar to matching. However, the confidence intervals were narrower for matching weights. CONCLUSIONS: Matching weights demonstrated improved performance over three-way matching in terms of MSE, particularly in simulation scenarios where finding matched subjects was difficult. Given its natural extension to settings with even more than three groups, we recommend matching weights for comparing outcomes across multiple treatment groups, particularly in settings with rare outcomes or unequal exposure distributions. See video abstract at, http://links.lww.com/EDE/B188.},
+	author = {Yoshida, Kazuki and Hern{\'a}ndez-D{\'\i}az, Sonia and Solomon, Daniel H and Jackson, John W and Gagne, Joshua J and Glynn, Robert J and Franklin, Jessica M},
+	date-added = {2022-03-24 14:32:13 -0400},
+	date-modified = {2022-03-24 14:32:37 -0400},
+	journal = {Epidemiology (Cambridge, Mass.)},
+	number = {3},
+	pages = {387--395},
+	title = {Matching Weights to Simultaneously Compare Three Treatment Groups: Comparison to Three-way Matching},
+	volume = {28},
+	year = {2017},
+	bdsk-url-1 = {https://pubmed.ncbi.nlm.nih.gov/28151746},
+	bdsk-url-2 = {https://doi.org/10.1097/EDE.0000000000000627}}
+
+@article{Austin2011,
+	annote = {https://doi.org/10.1002/pst.433},
+	author = {Austin, Peter C. },
+	date = {2011/03/01},
+	date-added = {2022-03-22 09:18:56 -0400},
+	date-modified = {2022-03-22 09:19:02 -0400},
+	doi = {https://doi.org/10.1002/pst.433},
+	isbn = {1539-1604},
+	journal = {Pharmaceutical Statistics},
+	journal1 = {Pharmaceutical Statistics},
+	journal2 = {Pharmaceutical Statistics},
+	journal3 = {Pharmaceut. Statist.},
+	keywords = {propensity score; observational study; binary data; risk difference; propensity-score matching; Monte Carlo simulations; bias; matching},
+	month = {2022/03/22},
+	n2 = {Abstract In a study comparing the effects of two treatments, the propensity score is the probability of assignment to one treatment conditional on a subject's measured baseline covariates. Propensity-score matching is increasingly being used to estimate the effects of exposures using observational data. In the most common implementation of propensity-score matching, pairs of treated and untreated subjects are formed whose propensity scores differ by at most a pre-specified amount (the caliper width). There has been a little research into the optimal caliper width. We conducted an extensive series of Monte Carlo simulations to determine the optimal caliper width for estimating differences in means (for continuous outcomes) and risk differences (for binary outcomes). When estimating differences in means or risk differences, we recommend that researchers match on the logit of the propensity score using calipers of width equal to 0.2 of the standard deviation of the logit of the propensity score. When at least some of the covariates were continuous, then either this value, or one close to it, minimized the mean square error of the resultant estimated treatment effect. It also eliminated at least 98{\%} of the bias in the crude estimator, and it resulted in confidence intervals with approximately the correct coverage rates. Furthermore, the empirical type I error rate was approximately correct. When all of the covariates were binary, then the choice of caliper width had a much smaller impact on the performance of estimation of risk differences and differences in means. Copyright ? 2010 John Wiley \& Sons, Ltd.},
+	number = {2},
+	pages = {150--161},
+	publisher = {John Wiley \& Sons, Ltd},
+	title = {Optimal caliper widths for propensity-score matching when estimating differences in means and differences in proportions in observational studies},
+	type = {https://doi.org/10.1002/pst.433},
+	url = {https://doi.org/10.1002/pst.433},
+	volume = {10},
+	year = {2011},
+	year1 = {2011},
+	bdsk-url-1 = {https://doi.org/10.1002/pst.433}}
+
+@article{Lunceford2004,
+	annote = {https://doi.org/10.1002/sim.1903},
+	author = {Lunceford, Jared K. and Davidian, Marie},
+	date = {2004/10/15},
+	date-added = {2022-03-22 09:18:02 -0400},
+	date-modified = {2022-03-22 09:18:08 -0400},
+	doi = {https://doi.org/10.1002/sim.1903},
+	isbn = {0277-6715},
+	journal = {Statistics in Medicine},
+	journal1 = {Statistics in Medicine},
+	journal2 = {Statistics in Medicine},
+	journal3 = {Statist. Med.},
+	keywords = {covariate balance; double robustness; inverse-probability-of-treatment-weighted-estimator; observational data},
+	month = {2022/03/22},
+	n2 = {Abstract Estimation of treatment effects with causal interpretation from observational data is complicated because exposure to treatment may be confounded with subject characteristics. The propensity score, the probability of treatment exposure conditional on covariates, is the basis for two approaches to adjusting for confounding: methods based on stratification of observations by quantiles of estimated propensity scores and methods based on weighting observations by the inverse of estimated propensity scores. We review popular versions of these approaches and related methods offering improved precision, describe theoretical properties and highlight their implications for practice, and present extensive comparisons of performance that provide guidance for practical use. Copyright ? 2004 John Wiley \& Sons, Ltd.},
+	number = {19},
+	pages = {2937--2960},
+	publisher = {John Wiley \& Sons, Ltd},
+	title = {Stratification and weighting via the propensity score in estimation of causal treatment effects: a comparative study},
+	type = {https://doi.org/10.1002/sim.1903},
+	url = {https://doi.org/10.1002/sim.1903},
+	volume = {23},
+	year = {2004},
+	year1 = {2004},
+	bdsk-url-1 = {https://doi.org/10.1002/sim.1903}}
+
+@article{Hirano2003,
+	annote = {https://doi.org/10.1111/1468-0262.00442},
+	author = {Hirano, Keisuke and Imbens, Guido W. and Ridder, Geert},
+	date-added = {2022-03-22 08:33:14 -0400},
+	date-modified = {2022-03-22 08:33:46 -0400},
+	journal = {Econometrica},
+	number = {4},
+	pages = {1161--1189},
+	title = {Efficient Estimation of Average Treatment Effects Using the Estimated Propensity Score},
+	volume = {71},
+	year = {2003},
+	bdsk-url-1 = {https://doi.org/10.1111/1468-0262.00442}}
 
 @article{HertzPicciotto1997,
 	abstract = {{$[$}Survival-time studies sometimes do not yield distinct failure times. Several methods have been proposed to handle the resulting ties. The goal of this paper is to compare these methods. Simulations were conducted, in which failure times were generated for a two-sample problem with an exponential hazard, a constant hazard ratio, and no censoring. Failure times were grouped to produce heavy, moderate, and light ties, corresponding to a mean of 10.0, 5.0, and 2.5 failures per interval. Cox proportional hazards models were fit using each of three approximations for handling ties with each interval size for sample sizes of n = 25, 50, 250, and 500 in each group. The Breslow (1974, Biometrics 30, 89-99) approximation tends to underestimate the true β, while the Kalbfleisch-Prentice (1973, Biometrika 60, 267-279) approximation tends to overestimate β. As the ties become heavier, the bias of these approximations increases. The Efron (1977, Journal of the American Statistical Association 72, 557-565) approximation performs far better than the other two, particularly with moderate or heavy ties; even with n = 25 in each group, the bias is under 2{\%}, and for sample sizes larger than 50 per group, it is less than 1{\%}. Except for the heaviest ties in the smallest sample size, confidence interval coverage for all three estimators fell in the range of 94-96{\%}. However, the tail probabilities were asymmetric with the Breslow and Kalbfleisch-Prentice formulas; using the Efron approximation, they were closer to the nominal 2.5{\%}. Although the Breslow approximation is the default in many standard software packages, the Efron method for handling ties is to be preferred, particularly when the sample size is small either from the outset or due to heavy censoring.{$]$}},
