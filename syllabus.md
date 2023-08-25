@@ -56,8 +56,6 @@ Prerequesite skills and concept include: basic epidemiological measures, confoun
 * 	Understand and articulate the differences between truncation and censoring.
 * 	Understand and recognize when and how to use regression models in various epidemiologic settings.
 * 	Recognize the presence, impact, and ways to analyse competing risk data.
-* 	Recognize and address the complications that arise from complex longitudinal (i.e., time-dependent exposures and confounders) data.
-* 	Analyze time-fixed and longitudinal data using different analytical strategies.
 * 	Understand bootstrap and its potential applications to the analysis of epidemiologic data.
 * 	Correctly interpret p values and confidence intervals.
 

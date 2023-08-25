@@ -1,33 +1,28 @@
 # Site settings
-title: IMCS
-subtitle: Introduction to Monte Carlo Simulation
+title: EPI560
+subtitle: Epidemiologic Methods IV
 description: |
-    <p>This course covers will serve as an introduction to Monte Carlo simulations in the quantitative sciences.</p>
+    <p>This course is an intermediate PhD/MSPH course in the sequence of core courses in Epidemiology at Emory Unviersity.</p>
 
-    <p>By the end of this course you should have a solid understanding of:</p>
+    <p>By the end of this course students should be able to:</p>
     <ul>
-        <li>the role, scope, and purpose of Monte Carlo simulation</li>
-        <li>when/why one should use Monte Carlo simulations</li>
-        <li>the challenges and limitations of using Monte Carlo simulations</li>
-        <li>how to design, deploy, and analyze Monte Carlo simulations in R</li>
+        <li>Integrate fundamental epidemiologic concepts related to disease occurrence and associations.</li>
+        <li>Articulate fundamental concepts in the potential outcomes frameworks.</li>
+        <li>Understand the relation between exchangeability and bias.</li>
+        <li>Understand and articulate the differences between truncation and censoring.</li>
+        <li>Understand and recognize when and how to use regression models in various epidemiologic settings.</li>
+        <li>Recognize the presence, impact, and ways to analyse competing risk data.</li>
+        <li>Understand bootstrap and its potential applications to the analysis of epidemiologic data.</li>
+        <li>Correctly interpret p values and confidence intervals.</li>
     </ul>
-    <br>
-    <p>
-    Their are several resources on how to design and analyze Monte Carlo simulation studies in the 
-    quantitative sciences. This course consolidates and adds to these resources by instructing through a 
-    specific example question. Simulation methods are extremely flexible, and can be used to understand 
-    and evaluate methodology in a number of different ways. This is an applied course. By the end of the course, 
-    students will be able to implement their own Monte Carlo simulation to estimate bias, mean squared error, 
-    confidence interval coverage, and other statistics for an estimator of their choice.
-    </p>
 
-baseurl: "/IMCS" # the github directory
+baseurl: "/EPI560" # the github directory
 url: "https://ainaimi.github.io/" # the base hostname & protocol for your site
 
 # host the syllabus on google docs
 # File: Publish to Web
 syllabus_url: #
-githubdir: "ainaimi/IMCS"
+githubdir: "ainaimi/EPI560"
 
 # Author/user information
 email: ashley.naimi@emory.edu
