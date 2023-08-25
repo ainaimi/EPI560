@@ -14,8 +14,14 @@ lissajous_art <- canvas_lissajous(colors = colorPalette("jfa"),
 saveCanvas(lissajous_art, filename = "/Users/ain/Library/CloudStorage/Dropbox/Teaching/MCS/_images/lissajous.png")
 
 
-set.seed(4)
-mandelbrot_art <- canvas_mandelbrot(colors = colorPalette("viridis"))
+mandelbrot_art <- canvas_mandelbrot(colors = c("#111111","#fafafa","#0011ff"),
+                                    set = "mandelbrot",
+                                    zoom = 3.25, 
+                                    resolution = 500, 
+                                    top = 2, 
+                                    bottom = -2,
+                                    left = -3.16,
+                                    right = 0.16)
 mandelbrot_art
 
-saveCanvas(lissajous_art, filename = "/Users/ain/Library/CloudStorage/Dropbox/Teaching/MCS/_images/mandelbrot.png")
+saveCanvas(mandelbrot_art, filename = "/Users/ain/Library/CloudStorage/Dropbox/Teaching/EPI560/_images/mandelbrot.png")

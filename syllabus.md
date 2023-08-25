@@ -40,13 +40,23 @@ __TEACHING ASSISTANT INFORMATION__:
 
 ## COURSE DESCRIPTION
 
-This course covers epidemiologic concepts in further depth than previous methods courses and provides an overview of advanced topic in the analysis of epidemiologic data. The course builds on the concepts and tools introduced in other Epi methods courses early in the series. This is a required course for students in the MSPH Epidemiology program, usually taken during the second year. 
+This course covers epidemiologic concepts in further depth than previous methods courses in the program, and provides an overview of advanced topic in the analysis of epidemiologic data. The course builds on the concepts and tools introduced in other Epi methods courses early in the series. This is a required course for students in the PhD and MSPH Epidemiology program. 
+
+### Concepts Covered
+
+The course includes two weekly lectures and one lab, and will be divided into five sections: Frequentist versus Bayesian Statistics and related concepts (p values, s values, Bayes factors, confidence intervals, credible intervals, NHST) (section 1), basic study design and trial emulation topics (section 2), regression modeling strategies for continuous, binary and categorical outcomes (section 3), missing data and multiple imputation (section 4), and variance estimation and interpretation (section 5). 
+
+The lecture material will be reinforced by lab sessions in which students will be able to implement lecture concepts and observe them in practice. The labs will focus on actual analyses using the R programming language. 
 
 ## PRE-REQUISITES
 
 This course will build on basic and intermediate analytic methods covered in [EPI 538](https://sph.emory.edu/academics/courses/epi-courses/index.html), [EPI 545](https://sph.emory.edu/academics/courses/epi-courses/index.html), and [EPI 550](https://sph.emory.edu/academics/courses/epi-courses/index.html).
 
-Prerequesite skills and concept include: basic epidemiological measures, confounding, misclassification, selection bias, types of case-control studies, estimation of epidemiological parameters, issues related to causality, bias, study design, interaction, effect modification and mediation, as well as concepts, methods, and application of key mathematical modeling approaches used to evaluate multivariable data from epidemiologic studies: logistic regression, and Cox regression.
+Prerequesite skills and concept include: basic epidemiological measures, confounding, misclassification, selection bias, types of study designs, estimation of epidemiological parameters, issues related to causality, interaction, effect modification and mediation, as well as concepts, methods, and application of key mathematical modeling approaches used to evaluate multivariable data from epidemiologic studies such as logistic and Cox regression.
+
+## DIVERSITY, EQUITY, AND INCLUSION
+
+
 
 ## COURSE LEARNING OBJECTIVES
 
@@ -80,6 +90,7 @@ The basis for the final grade will be determined as follows:
 | Section Assignments | 60% |
 | Final Analysis Project | 40% |
 
+<br/><br/>
 
 Final grade point cutoffs (rounded to the nearest whole number) will be:
 
@@ -92,15 +103,25 @@ Final grade point cutoffs (rounded to the nearest whole number) will be:
 | C | 70-74 |
 | F | <70 |
 
+## COURSE LOGISTICS
 
- 
-## COURSE STRUCTURE
+### Course Website
 
-The course includes two weekly lectures and one lab. The course will be divided into five sections, in which we will cover Frequentist versus Bayesian Statistics and related concepts (p values, s values, Bayes factors, confidence intervals, credible intervals, NHST) (section 1), basic study design and trial emulation topics (section 2), regression modeling strategies for continuous, binary and categorical outcomes (section 3), missing data and multiple imputation (section 4), and variance estimation and interpretation (section 5). 
+All materials for the class will be hosted on the course website: [https://ainaimi.github.io/EPI560/](https://ainaimi.github.io/EPI560/). This includes the syllabus, lecture notes, lab notes/slides,  datasets, homework assignments, and readings. 
 
-The lecture material will be reinforced by lab sessions in which students will be able to implement lecture concepts and observe them in practice. The labs will focus on actual analyses using the R programming language. 
+### Slack
 
-Students will be expected to have R and RStudio installed and working on their computers. In addition, the following packages should be installed and in working order:
+We will use Slack as a primary means of communication in this course. This is the best way to reach out to classmates, teaching assistants, and the instructor. To join the Slack team for EPI 560, please use this link: [https://epi560.slack.com/signup#/domain-signup](https://epi560.slack.com/signup#/domain-signup)
+
+We will use the `#general` channel for most class discussions. We will also create a channel for each assignment, which can be used to answer questions specific to the homeworks. Each lab section will also have its own channel. If you would like to ask a question anonymously in any of these channels, please use the `/anonymous` argument before typing your question.
+
+### CANVAS
+
+You will be asked to use CANVAS to submit homework assignments by the assigned due date.
+
+### R and Posit
+
+Students will be expected to have [R](https://cran.r-project.org/) and [Posit](https://posit.co/) [(formerly RStudio)](https://posit.co/blog/rstudio-is-becoming-posit/) installed and working on their computers. In addition, the following packages should be installed and in working order:
 
 ```
 "tidyverse", "here", "sandwich", "lmtest", "boot", "ggplot2", "broom", "rio"
@@ -135,7 +156,8 @@ Students who registered with OAS and have a letter outlining their academic acco
 Contact Accessibility Services for more information at (404) 727-9877 or accessibility@emory.edu. Additional information is available at the OAS website at http://equityandinclusion.emory.edu/access/students/index.html
 
 ## Honor Code
-You are bound by Emory University’s Student Honor and Conduct Code. RSPH requires that all material submitted by a student fulfilling his or her academic course of study must be the original work of the student.  Violations of academic honor include any action by a student indicating dishonesty or a lack of integrity in academic ethics. Academic dishonesty refers to cheating, plagiarizing, assisting other students without authorization, lying, tampering, or stealing in performing any academic work, and will not be tolerated under any circumstances.
+
+You are bound by Emory University’s Student Honor and Conduct Code. RSPH requires that all material submitted by a student fulfilling his or her academic course of study **must be the original work of the student.**  Violations of academic honor include any action by a student indicating dishonesty or a lack of integrity in academic ethics. Academic dishonesty refers to cheating, plagiarizing, assisting other students without authorization, lying, tampering, or stealing in performing any academic work, and will not be tolerated under any circumstances.
 
 The [RSPH Honor Code](http://www.sph.emory.edu/cms/current_students/enrollment_services/honor_code.html) states: "*Plagiarism is the act of presenting as one's own work the expression, words, or ideas of another person whether published or unpublished (including the work of another student). A writer’s work should be regarded as his/her own property.*" 
 
