@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Coding in style</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="David Benkeser, PhD MPH   Emory University  Department of Biostatistics and Bioinformatics " />
+    <script src="codestyle_files/header-attrs-2.15/header-attrs.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: left, middle, inverse, title-slide
+
+.title[
+# Coding in style
+]
+.author[
+### David Benkeser, PhD MPH<br> <span style="font-size: 50%;"> Emory University<br> Department of Biostatistics and Bioinformatics </span>
+]
+.date[
+### INFO550<br><br><svg viewBox="0 0 512 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#ffffff;" xmlns="http://www.w3.org/2000/svg"> <path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"></path></svg> <a href="https://bit.ly/info550">.white[bit.ly/info550]</a> <br> <svg viewBox="0 0 448 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#ffffff;" xmlns="http://www.w3.org/2000/svg"> <path d="M448 360V24c0-13.3-10.7-24-24-24H96C43 0 0 43 0 96v320c0 53 43 96 96 96h328c13.3 0 24-10.7 24-24v-16c0-7.5-3.5-14.3-8.9-18.7-4.2-15.4-4.2-59.3 0-74.7 5.4-4.3 8.9-11.1 8.9-18.6zM128 134c0-3.3 2.7-6 6-6h212c3.3 0 6 2.7 6 6v20c0 3.3-2.7 6-6 6H134c-3.3 0-6-2.7-6-6v-20zm0 64c0-3.3 2.7-6 6-6h212c3.3 0 6 2.7 6 6v20c0 3.3-2.7 6-6 6H134c-3.3 0-6-2.7-6-6v-20zm253.4 250H96c-17.7 0-32-14.3-32-32 0-17.6 14.4-32 32-32h285.4c-1.9 17.1-1.9 46.9 0 64z"></path></svg> <a href="https://benkeser.github.io/info550/readings#coding-style">.white[Additional reading]</a>
+]
+
+---
+
+
+background-color: #84754e
+class: title-slide, center, inverse, middle
+
+.small[*Saying [researchers] should spend more time thinking about the way they write code would be like telling a novelist that she should spend more time thinking about how best to use Microsoft Word. Sure, there are people who take whole courses in how to change fonts or do mail merge, but anyone moderately clever just opens the thing up and figures out how it works along the way.* &lt;/br&gt; *This manual began with a growing sense that our own version of this self-taught seat-of-the-pants approach to computing was hitting its limits.*]
+&lt;/br&gt; &lt;/br&gt; .small[Gentzkow and Shapiro &lt;/br&gt; [__Code and Data for the Social Sciences: A Practitioner’s Guide__](https://web.stanford.edu/~gentzkow/research/CodeAndData.pdf)]
+
+???
+
+Why spend a lecture on coding style if everyone here already knows how to code?
+* Clear code is more likely to be correct.
+* Clear code is easier to use.
+* Clear code is easier to revisit six months from now.
+* Software based on clear code is easier to maintain.
+* Clear code is easier to extend.
+
+
+
+&lt;style type="text/css"&gt;
+.remark-slide-content {
+    font-size: 22px
+}
+&lt;/style&gt;
+
+---
+
+## Principles for scientific coding
+
+In this order: 
+
+1. Code that works.
+2. Code that is reproducible.
+3. Code that is readable.
+4. Code that is generalizable.
+5. Code that is efficient.
+
+A __minimal standard__ for scientific computing is 1-3. 
+
+???
+
+"Works" means code that gives the right answer. 
+
+As we've discussed, reproducible means that someone else could run the code and get the same answer. 
+
+The focus of this chapter will mostly be on point 3, which will enable an easier time achieving point 4. 
+
+Efficiency is far down the line of desirables. 
+
+---
+
+## Advice for beginner coders
+
+.red[Test code before relying on it.]
+
+It's OK to __copy/paste code__ from Stack Overflow, but make sure you __understand how it works__.
+* Run line by line and see what each does. 
+* Change the code and see if it behaves as expected.
+
+Stakes for copy/paste can be high!
+* Incorrect analyses.
+* Expensive (inadvertent) cloud computing.
+
+???
+
+Reading other's solution to problems is how we learn a language. Just like a spoken language -- seeing how native speakers construct phrases is important! But we need to understand those phrases before we incorporate them into our dialect, lest we be misunderstood (or worse).
+
+If the code is implementing some statistical method, make sure you understand that method well enough to at least be able to accurately describe it in the methods section of a manuscript.
+* E.g., do you really know what `confint` does to a `glm` in `R`? 
+
+There are many horror stories of students running code from the internet to spin up premium AWS instances to do simple tasks, running costs into the thousands of dollars. 
+
+---
+
+## Advice for intermediate coders
+
+.red[Premature optimization is the root of all evil.]
+
+Getting code .green[correct] AND .green[readable] is __most important__.
+* Make your code more efficient later.
+* After a paper is submitted for review?
+
+Remember: you don't get bonus points for code that "looks impressive".
+
+???
+
+Early in my coding career, I heard from someone, somewhere that `for` loops should be avoided if at all possible. It struck fear in my heart -- I don't want people to think I'm a bad coder! I'm only starting to recover.
+
+No matter how many times I repeat this mantra, I still find myself trying to make my code way too smart way too soon. It's an ongoing process of learning the needed amount of generalizability/efficiency to hit on a first pass through code. 
+
+Get the code working and readable first, optimize and generalize later. 
+
+---
+
+### Think before you code
+
+
+```r
+# Averaging over drtmle option:
+#   Instantiate empty lists 
+#   Note: length = 1 if n_SL = 1 or "drtmle" not in avg_over):
+#     nuisance_drtmle 
+#     nuisance_aiptw_c
+#     ic_drtmle 
+#     QnMod, gnMod, QrnMod, grnMod
+#     drtmle -- eventually avg over to get final point estimates
+#     aiptw_c -- eventually avg over 
+#     tmle -- eventually avg over
+#     aiptw -- eventually avg over
+#     gcomp -- eventually avg over
+#     validRows -- should this be added to the output?
+#   Wrap everything into a big for loop and add indexes to the
+#   objects above
+#   Add code below for loop to do aggregation
+
+# For introducing cross-validated standard errors: 
+#   if se_cv = "full", but cvFolds = 1
+#   need to modify make_validRows recognize this situation?
+#   Or could modify estimateQ/g directly and have the functions
+#   call themselves if se_cv = "full" and cvFolds == 1
+#   or probably better to add an if statement that would call the 
+#   estimateQ again outside. Yes, that's probably the way to go
+```
+
+???
+
+This is literally copied from a local branch of my `drtmle` R package where I'm working on feature additions. 
+
+Before you start writing code, think about what you want the code to do. 
+* For large coding projects, a white board may be helpful when you start.
+
+Just this careful thought process can lead to solutions for challenging problems. Like in the above you see that I started just typing one possible solution and by the end had convinced myself that it was a good way to go. 
+
+---
+
+## Don't repeat yourself
+
+Don't repeat yourself (DRY) is a fundamental concept in programming. 
+* *Ruthlessly eliminate duplication*, [Wilson et al](https://swcarpentry.github.io/good-enough-practices-in-scientific-computing/)
+
+For example, variables `score1=1`, `score2=2`, `score3=3` &amp;#8594; `score=list(1,2,3)`. 
+
+If you write the same code more than once, it should be a function. 
+* Break large tasks into smaller calls to functions. 
+* Give functions (everything, really) meaningful names.
+	* self-documenting code
+	* use tab-completion
+
+???
+
+It is highly inefficient and dangerous to copy and paste multiple chunks of code. 
+* What if you need to change 1 thing? Needs to be changed in multiple places. Risk getting a wrong answer because we forgot to change one small thing.
+
+Also, don't repeat others. Search around to see if someone already has come up with a packaged solution to your problem. Don't reinvent the wheel!
+* But remember to try out the code to make sure you know what it's doing!
+
+Meaningful names make reading code much easier. It's OK to make names long and informative. Most (good) text editors will have tab completion so that it won't slow you down typing (once you're used to using it). 
+
+---
+
+## Functions in `R`
+
+If you don't know how functions work in `R`, .red[learn about them now]. 
+* [Software carpentry: Creating R Functions](https://swcarpentry.github.io/r-novice-inflammation/02-func-R/)
+* [R for Data Science: Functions](https://r4ds.had.co.nz/functions.html)
+* [DataCamp: A Tutorial on Using Functions in R!](https://www.datacamp.com/community/tutorials/functions-in-r-a-tutorial)
+
+---
+
+
+## Generalize... some
+
+Write code __a bit more general__ than your data or specific task.
+* Don't assume particular dimensions.
+* Don't forget about missing values (even if *your* data have none).
+
+But .red[don't try to handle every case.] 
+* Try to anticipate what you might be asked for, but don't prepare for every possibility.
+* If you think of __extreme cases__ where code will break, __document them__.
+
+Use __function arguments__ to handle different cases. 
+* Don't assume particular file names.
+* Don't assume particular tuning parameters. 
+* Don't assume particular regression formulas.
+
+???
+
+Do you hear your collaborators making an arbitrary decision in the analysis plan? Prepare for that decision to change. 
+
+An example: in [a recent paper](https://www.sciencedirect.com/science/article/pii/S1047279720301769), we looked at county-level characteristics by proportion of county that was African-American. The analysis started looking at &lt;/&gt; 13% (the national average). This was an arbitrary choice made at the outset of the analysis. So when I wrote the code to produce summary statistics stratifying on this characteristic, I wrote it so one could provide any arbitrary number/s and obtain characteristics. Eventually, they wanted to see it broken down by 13/25% and by 13/25/50%. They ended up not liking the look of the tables, so we went back to &lt;/&gt;13 (trivial). For me, all I needed to do was change __a single function input__. This was a (rare) success story for me in generalizing code. The code to make this table is [here](https://github.com/benkeser/covid-and-race/blob/master/Code/01_tablefunctions.R).
+
+---
+
+## No magic numbers
+
+There are __many decision points__ in an analysis. Give them a name!
+* How many __bootstrap samples__?
+  * `nboot = 1e3`
+* What __tolerance for convergence__ of an algorithm?
+  * `tol_covergence = 1e-3`
+* What __threshold__ for excluding missing data?
+  * `tol_missingness = 3`
+
+Even better, include them as an __argument to a function__ (with default values and documentation, as needed)!
+* `get_bootstrap_ci &lt;- function(..., nboot = 1e3)`
+* `my_algorithm &lt;- function(..., tol_convergence = 1e-3)`
+* `rm_missing_data &lt;- function(..., tol_missingness = 3)`
+
+---
+
+## Other guidelines
+
+* __Indent__!
+  * 2 or 4 spaces (join the debate)
+  * Tabs can get nasty across systems. In my experience, Windows is pretty dumb about this.
+
+* Use __white space__!
+  * After commas, operators
+
+* Use `{}` and `()` to __avoid ambiguity__.
+
+* Keep __lines short__!
+  * Rule of thumb is 72 or 80 characters. 
+  * Most text editors have settings to help with this.
+
+???
+
+If you're ever porting code from Windows to Unix and you get weird errors about unknown characters, it is often because of handling of special characters like tabs and returns.
+
+---
+
+.large[__Other guidelines__]
+
+.large[🤮]
+
+
+```r
+# move values above/below quantiles to those quantiles
+winsorize&lt;-function(vec,q=0.006){
+lohi&lt;-quantile(vec,c(q,1-q),na.rm=TRUE)
+if(diff(lohi)&lt;0)lohi&lt;-rev(lohi)
+vec[!is.na(vec)&amp;vec&lt;lohi[1]]&lt;-lohi[1]
+vec[!is.na(vec)&amp;vec&gt;lohi[2]]&lt;-lohi[2]
+vec}
+```
+
+.large[😍]
+
+
+```r
+# move values above/below quantiles to those quantiles
+winsorize &lt;- function(vec, q = 0.006){
+  lohi &lt;- quantile(vec, c(q, 1 - q), na.rm = TRUE)
+  if(diff(lohi) &lt; 0){
+    lohi &lt;- rev(lohi)
+  }
+  vec[ !is.na(vec) &amp; (vec &lt; lohi[1]) ] &lt;- lohi[1]
+  vec[ !is.na(vec) &amp; (vec &gt; lohi[2]) ] &lt;- lohi[2]
+  return(vec)
+}
+```
+
+???
+
+The parenthesis around `vec &lt; lohi[1]` are probably unnecessary, but want to illustrate the point. 
+
+---
+
+## Naming objects
+
+Give objects informative names:
+* Names should be: 
+  1. most importantly, descriptive
+  2. as concise as possible while still being descriptive
+* Avoid `tmp1`, `tmp2`, ...
+  * ...as `tmp`ting as it may be.
+* Functions as verbs, objects as nouns
+
+???
+
+Please don't look too closely at my `R` packages. You may learn what a hypocrite I am.
+
+---
+
+## Naming objects
+
+Have __consistency__ in your naming systems:
+* E.g., `markers` vs. `mnames`; `nft` vs. `n_ft`
+
+Commit to a case:
+* `camelCase` vs. `pothole_case`
+
+Don't confuse yourself:
+* `total` vs. `totals`
+* `result` vs. `rslt`
+* `X` vs. `x` 
+* `z` vs. `zz`
+
+__Underscores__ should be preferred as separator when coding in `R`.
+
+???
+
+I decided a few years ago to move to `pothole_case`, editing old packages is now a harrowing experience. You can see it on the previous slide about `drtmle`. Maybe one day I will go through and make case consistent... after I get tenure?
+
+The reason for the underscore thing is a bit subtle. But there are [functions in `R` called `methods`](http://adv-r.had.co.nz/S3.html) that work a little bit different. This is what allows you to type `summary(a_vector)` and `summary(a_data_frame)` and get results. `R` is actually calling two different functions, `summary.numeric` and `summary.data.frame` to get these results. So when you write a function called `get.results`, it's a little ambiguous as to whether there is an object with class `results` that you are calling the method `get` on, or if you are literally just trying to call a function named `get.results`. 
+
+---
+
+## Self-documenting code
+
+Many of these recommendations are to .green[make code self-documenting]. 
+
+Comments should be used mostly for __why__, not __what__.
+* The __what__ should be inherent from the code itself.
+
+This is really __hard to do__.
+* Sometimes its harder than its worth, but it is worth trying!
+
+---
+
+## Self-documenting code
+
+Here's an example of .red[bad code]:
+
+
+```r
+tmp1 &lt;- 9.81
+tmp2 &lt;- 5
+tmp3 &lt;- 0.5 * tmp1 * tmp2^2
+```
+
+Here's an example of .green[documented] .red[bad code]:
+
+
+```r
+# gravitational constant
+tmp1 &lt;- 9.81
+# time object is falling
+tmp2 &lt;- 5
+# displacement of the object
+tmp3 &lt;- 0.5 * tmp1 * tmp2^2
+```
+
+???
+
+The first chunk is bad because the variables have non-informative names and nothing is documented. We have to think really hard to understand what this code is doing.
+
+The second chunk is better; at least it is documented! But it's redundant and not self-documenting. 
+
+---
+
+## Self-documenting code
+
+Here's .green[self-documenting code]:
+
+
+```r
+gravitational_force &lt;- 9.81
+time_in_seconds &lt;- 5
+displacement &lt;- 1/2 * gravitational_force * time_in_seconds^2
+```
+
+Now let's add a .green[comment] explaining the __why__:
+
+
+```r
+# compute displacement of falling object with Newton's equation
+gravitational_force &lt;- 9.81
+time_in_seconds &lt;- 5
+displacement &lt;- 1/2 * gravitational_force * time_in_seconds^2
+```
+
+---
+
+## Self-documenting code
+
+Even better, .green[make it a function]!
+
+
+```r
+# for falling objects based on Newton's equation
+compute_displacement &lt;- function(time_in_seconds){
+  gravitational_force &lt;- 9.81
+  time_in_seconds &lt;- 5
+  displacement &lt;- 1/2 * gravitational_force * time_in_seconds^2
+  return(displacement)
+}
+```
+
+---
+
+background-color: #487f84
+class: title-slide, inverse, middle
+
+.large[*Rules for writing comments:*
+1. *Only comment code that's hard to understand.*
+2. *Try not to write code that's hard to understand.*
+]
+???
+
+There is a natural tendency to overwrite comments in code. I do it all the time. Why does it matter?
+* Comments need to be "maintained". If the code changes, the comments may need to as well.
+* Don't end up with conflicting comments and code. 
+
+---
+
+## Recap
+
+Why spend a lecture on coding style if everyone knows how to code?
+* Clear code is more likely to be __correct__.
+* Clear code is __easier to use__.
+* Clear code is __easier to revisit__ six months from now.
+* Software based on clear code is __easier to maintain__.
+* Clear code is __easier to extend__.
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "tomorrow-night-blue",
+"highlightLanguage": "rmarkdown",
+"highlightLines": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

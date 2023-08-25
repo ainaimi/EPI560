@@ -1,8 +1,0 @@
-ID,start,time,outcome,type
-1,0,3.59675,Right Censored,Seen
-1,3.59675,4.322543,Event,Unseen
-2,0,5,Left Censored,Unseen
-2,5,5,Event,Unseen
-3,0,2.793465,Right Censored,Seen
-3,2.793465,4.7335584,Left Censored,Unseen
-3,3.2346365,3.2346365,Event,Unseen

@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Cloud computing using AWS</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="David Benkeser, PhD MPH   Emory University  Department of Biostatistics and Bioinformatics " />
+    <script src="aws_files/header-attrs-2.15/header-attrs.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: left, middle, inverse, title-slide
+
+.title[
+# Cloud computing using AWS
+]
+.author[
+### David Benkeser, PhD MPH<br> <span style="font-size: 50%;"> Emory University<br> Department of Biostatistics and Bioinformatics </span>
+]
+.date[
+### INFO550<br><br><svg viewBox="0 0 512 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#ffffff;" xmlns="http://www.w3.org/2000/svg"> <path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"></path></svg> <a href="https://bit.ly/info550">.white[bit.ly/info550]</a> <br> <svg viewBox="0 0 448 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#ffffff;" xmlns="http://www.w3.org/2000/svg"> <path d="M448 360V24c0-13.3-10.7-24-24-24H96C43 0 0 43 0 96v320c0 53 43 96 96 96h328c13.3 0 24-10.7 24-24v-16c0-7.5-3.5-14.3-8.9-18.7-4.2-15.4-4.2-59.3 0-74.7 5.4-4.3 8.9-11.1 8.9-18.6zM128 134c0-3.3 2.7-6 6-6h212c3.3 0 6 2.7 6 6v20c0 3.3-2.7 6-6 6H134c-3.3 0-6-2.7-6-6v-20zm0 64c0-3.3 2.7-6 6-6h212c3.3 0 6 2.7 6 6v20c0 3.3-2.7 6-6 6H134c-3.3 0-6-2.7-6-6v-20zm253.4 250H96c-17.7 0-32-14.3-32-32 0-17.6 14.4-32 32-32h285.4c-1.9 17.1-1.9 46.9 0 64z"></path></svg> <a href="https://benkeser.github.io/info550/readings#aws">.white[Additional reading]</a>
+]
+
+---
+
+
+
+
+&lt;style type="text/css"&gt;
+.remark-slide-content {
+    font-size: 22px
+}
+&lt;/style&gt;
+
+## Why cloud computing?
+
+__Computing/storing at scale__
+* Your laptop/desktop/local HPC cluster may not have enough memory to handle a big data set. 
+
+__Customizable resources__
+* Different analyses may have different computational needs.
+* Your analysis might require specific resources (e.g., GPU) that are not available locally.
+
+__Compute from anywhere__
+* Just need the internet!
+
+Web-based services, industry applications, ...
+
+---
+
+## Why not cloud computing?
+
+.huge[💰💰💰]
+* easy to rack up quite a bill
+
+__Infinitely customizable resources__
+* overwhelming number of options; hard to know which matter
+* documentation is difficult to parse
+
+__Fine-tuning resources to your needs is hard__
+* profiling memory/compute resources
+
+???
+
+Academia is now filled with tales of grad students inadvertently racking up thousands of dollars of charges. In reality, there are safeguards that you can put in place. But with everything so highly customizable, hard to know what's important.
+
+---
+
+## Disclaimers
+
+.red[I am not a cloud computing expert]. I am barely even a novice.
+
+The goals of this lecture are to give you __basics__ of:
+* AWS command line interface `awscli`;
+* using EC2 (compute) and S3 (storage) services.
+
+Everything can also be done from a __browser GUI__ (i.e., the __AWS Console__), but... 
+
+You should have downloaded and configured `awscli` for use with your AWS Educate account using these [instructions](breakoutsoln/awseducate_setup.html).
+
+???
+
+I want to give you enough insight that reading further documentation is not too daunting. But keep in mind, most of the use-cases for AWS are still industrial, web-based applications as opposed to research-focused ones. So, for now at least, much of the online help/tutorials are geared towards that crowd. It's a tough nut to crack, but this is the first step in that journey. 
+
+---
+
+## Configuring `awscli`
+
+We need to first configure `awscli`, so that it knows your AWS credentials.
+
+1. [Login](https://www.awseducate.com/signin/SiteLogin) to your AWS Educate.
+
+2. Click __AWS Account__ and sign into your starter account.
+
+3. __DO NOT REFRESH/LEAVE THIS PAGE FOR THE REST OF THE LECTURE.__
+
+&lt;br&gt; 
+
+Each session is three hours, at which point your credentials reset.
+* Once your credentials expire, you'll have to remake your credentials file.
+* With a regular AWS account, you just set credentials once.
+
+---
+
+## Configuring `awscli` 
+
+In the `~/.aws` directory, we need to create two files:
+
+`config`:
+
+````
+[default]
+region = us-east-1
+output = yaml 
+````
+
+`credentials`
+````
+[default]
+aws_access_key_id=XXX
+aws_secret_access_key=XXX
+aws_session_token=XXX
+````
+
+Change `XXX` in the above to what you see under __"Account Details"/"Show"__.
+* If you leave the page or refresh, these numbers will change and you will have to redo your `credentials` file.
+
+???
+
+Here `[default]` specifies that these are the default credentials. It is possible to have multiple sets of credentials and you can often override the default by including a `--profile` option to command calls. 
+
+---
+
+## Configuring `awscli`
+
+Check that everything is working properly: 
+
+````
+$ aws ec2 describe-regions | head -5
+Regions:
+- Endpoint: ec2.eu-north-1.amazonaws.com
+  OptInStatus: opt-in-not-required
+  RegionName: eu-north-1
+````
+
+&lt;br&gt; 
+
+For a standard account, you can use `aws configure`
+* Don't need `aws_session_token`
+* Only have to do it once. 
+
+---
+
+## Elastic compute (EC2) service
+
+From [the docs](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/concepts.html), EC2 provides virtual computing environments, known as __instances__, and preconfigured templates for instances, __Amazon Machine Images (AMIs)__. 
+
+Typical use case: you need to do some computing and do not have local resources to complete the job.
+
+What will the workflow look like?
+* Set up __security__ credentials
+* Tell AWS what kind of __instance__ we want
+* __Log into__ the instance using `ssh`
+* Install programs, __run code__, etc...
+* Get __results back__ to our local computer
+
+---
+
+## Security
+
+There are three basic things to know about AWS security. 
+
+1. __IAM Users__
+  * "Users" of your AWS account and what they are allowed to do
+  * Can you provision EC2 instances? Can you store files in S3? ...
+
+2. __A key pair__
+  * "Log-in info" specifying what you're allowed to do in EC2 instance
+
+3. __A security group__
+  * Controls who is able to access your instance
+  * Restrict to your current IP address or a range of IP addresses
+
+Additionally, you should [enable multi-factor authentication](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_mfa_enable_virtual.html).
+
+---
+
+## IAM Users
+
+IAM users are __not enabled in AWS Educate__ starter accounts, but let's pause to discuss what they are and why they're important. 
+
+When you sign up for an AWS account, you create a __root user__, an account that can do whatever it wants in AWS. 
+
+It is [suggested](https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html) that you set up IAM users to specifically manage permissions. 
+* Even if you are the __only one__ using the account.
+
+???
+
+If you work for an organization that uses AWS, chances are you will be given IAM credentials to access their resources. This allows them to control what services of AWS you use. 
+
+If you are using AWS for personal use, it's still a good idea to follow best practices of accessing resources via an IAM profile. It adds an extra layer of security for you to keep your credit card information separate from the way that you are logging into remote instances. 
+
+---
+
+## Key pair
+
+To login to an AWS instance, you will need a __key pair__; literally like a key. 
+* You have a __private key__ that lives on your local computer. 
+* AWS has a __public key__ (i.e., a lock) that lives on their virtual computer. 
+
+We will generate a key pair from the command line as follows:
+
+````bash
+$ aws ec2 create-key-pair --key-name aws_laptop_key \
+--query 'KeyMaterial' --output text &gt; \
+~/.ssh/aws_laptop_key.pem
+$ chmod 400 ~/.ssh/aws_laptop_key.pem
+````
+
+* You can give whatever `key-name` you like.
+* You can save the file wherever you like. Here, I'm putting it in `~/.ssh`, a common place to store keys.
+* The `chmod` command makes the key read-only for you.
+* .red[Don't show anyone your private key!]
+
+---
+
+## Security group
+
+We will __further restrict access__ by selecting what IP addresses can log in to the machine.
+* To do this, we set up a __security group__. 
+
+Run `aws ec2 describe-vpcs` and find `VpcId`. It will be something like `vpc-2d8c4750`. 
+
+````bash
+$ aws ec2 create-security-group --group-name my-sg \
+--description "ssh from current IP address" \
+--vpc-id vpc-2d8c4750
+````
+
+You should see output showing `GroupID` with your security group ID. 
+
+
+???
+
+Here we're setting up a security group for EC2 VPC (as opposed to EC2 classic). See [docs](https://docs.aws.amazon.com/cli/latest/userguide/cli-services-ec2-sg.html) for setting up on EC2 classic. 
+
+---
+
+## Security group
+
+We will __add your current IP address__ to this security group as follows.
+
+* Find your __current IP address__.
+
+````bash
+$ my_ip=$(curl https://checkip.amazonaws.com)
+$ echo $my_ip
+````
+
+* Add to __security group__; change `group-id` to output from previous slide.
+
+````bash
+$ aws ec2 authorize-security-group-ingress \
+--group-id sg-0af9981424cb188b1 \
+--protocol tcp --port 22 --cidr $my_ip/32
+````
+
+???
+
+Unfortunately, this is pretty convoluted stuff. In short, we'll eventually be using `ssh` to access our EC2 instance. `ssh` connects via `tcp` on port `22`, so we're basically telling AWS that this security group allows incoming traffic on that port from your current IP address. 
+
+If you were to try to access your instance from a different IP address, then it will not work; you'd need to modify the security group of your instance. 
+
+---
+
+## Instances and AMIs
+
+An __Amazon Machine Image__ (AMI) is a template that contains a software configuration. 
+* Like a __Docker image__
+* What OS do you want? What software do you want?
+
+An __instance__ is a copy of the AMI running as a virtual server in the cloud.
+* Like a __Docker container__, but running on a big computer somewhere in Virginia or Ohio that is running multiple containers at the same time.
+* How many __CPUs__ do you want? How much __memory__ do you want?
+
+Once an instance is launched, you can __sign in to that instance__. 
+* Like interactively entering Docker container.
+
+???
+
+There are important technical distinctions between a virtual machine and what Docker is, but some of the key ideas are the same. The AMI tells AWS what you want your environment to look like in terms of OS and software, while the image additionally includes specifications like how much memory and how many CPUs you want to use. 
+
+You can also configure instances to launch and run a script automatically, which we may get to in when we talk about `awscli`. 
+
+---
+
+## Amazon Machine Images
+
+There are an [incredible amount](https://aws.amazon.com/marketplace/) of AMIs available. 
+* Linux and Windows systems are available.
+
+What __OS__ do you want? 
+* Recommend sticking for now with Ubuntu or similar.
+
+Remember: any __software__ that you want beyond what is included in your AMI __will need to be installed__ on the instance.
+* Docker can be helpful here! 
+  * But you'll have to configure docker, at least on EC2
+  * [ECR](https://aws.amazon.com/ecr/) and [Batch](https://aws.amazon.com/batch/) are Docker-oriented services.
+
+???
+
+You can spend a lot of time chasing down compilers etc... AWS is basically handing you an (at least almost) clean, new computer. If you want to run e.g., R, you will need to install it. So you may end up going through similar painful processes as with installing R on WSL or from command line in Mac. 
+
+---
+
+## Amazon Machine Images
+
+Since we will be spinning up instances from the command line, we will need the ID for the AMI that we'd like to use. 
+
+
+Here are a few useful ones:
+* Ubuntu 20.4 
+  * `ami-0885b1f6bd170450c` (64-bit x86)
+* Amazon Linux 2
+  * `ami-0947d2ba12ee1ff75` (64-bit x86)
+* Red Hat Enterprise Linux 8
+  * `ami-098f16afa9edf40be` (64-bit x86)
+
+---
+
+## Instance type
+
+There are also an [incredible amount](https://aws.amazon.com/ec2/instance-types/) of instance types.
+
+How many __CPUs__ do you want?
+* Do you have code running in parallel? More CPUs = faster execution
+
+How much __memory__ do you want?
+* Do you need to load large Docker containers? Large data sets?
+
+Do you need __GPUs__? Do you need really fast __read/write__? ...
+
+The __T2 series__ is a good starting point.
+* `t2.micro` available with free tier, but memory is small. 
+* `t2.large` is what I have often use for moderate computations.
+
+???
+
+t2.micro is too small to be useful for most computing, but you can access it using the free tier, so that's how we'll start exploring AWS. I have found that I need to go up to about a t2.large in order to have sufficient memory to do the types of computing that I need.
+
+---
+
+## Running EC2 instance
+
+We're finally ready to run an instance!
+
+````bash
+$ aws ec2 run-instances --image-id ami-0885b1f6bd170450c \
+--count 1 --instance-type t2.large \
+--key-name aws_laptop_key \
+--security-group-ids sg-0af9981424cb188b1
+````
+
+* replace `key-name` with the key you generated
+* replace `security-group-ids` with the security group you created
+
+You will see a long list of output. If needed, hit `q` to return to command line.
+
+---
+
+## Running EC2 instance
+
+When you submit that command, AWS __provisions your virtual machine__.
+* After a minute or so, your image should be up and running. 
+
+&lt;br&gt; 
+
+You can retrieve the __public IP address__ of your virtual machine as follows.
+
+````bash
+$ public_ip=$(aws ec2 describe-instances \
+    --query Reservations[*].Instances[*].PublicIpAddress \
+    --output text)
+$ echo $public_ip
+````
+
+???
+
+Note all of these `describe-instances` commands will only work if this is your only running instance. Otherwise, multiple IP addresses will be saved. 
+
+---
+
+## Running EC2 instance
+
+You can now log in to your machine using `ssh`.
+
+````bash
+$ ssh -i ~/.ssh/aws_laptop_key.pem ubuntu@${public_ip}
+````
+
+* `ubuntu` is the default user name for Ubuntu images.
+* For other images, try `ec2-user@...` or `root@...`.
+
+You will see a __warning message__:
+
+````markdown
+The authenticity of host 'XXX' can't be established.
+ECDSA key fingerprint is XXX.
+Are you sure you want to continue connecting (yes/no/[fingerprint])?
+````
+
+* Type `yes` and hit enter.
+
+.green[You are now computing in the cloud!] 😎
+
+---
+
+## Terminating an instance
+
+You now have a __virtual computer in the cloud__. What next?
+
+* .red[Remember to turn it off when you're done!]
+  * Don't run this command yet, but do remember to when we're done!
+* .red[Instances do not stop running when you sign out.]
+  * You have to __explicitly turn it off__ or specify this behavior.
+
+````bash
+$ instance_id=$(aws ec2 describe-instances \
+    --query Reservations[*].Instances[*].InstanceId \
+    --output text)
+$ aws ec2 terminate-instances --instance-ids $instance_id
+````
+
+After some time, check to make sure `State` is `terminated`.
+
+````bash
+$ aws ec2 describe-instances
+````
+
+---
+
+## Installing software on EC2 instance
+
+Install programs, packages, etc... that you need. 
+
+E.g., install `R` and `awscli` on Ubuntu:
+
+````bash
+$ sudo apt-key adv --keyserver keyserver.ubuntu.com \
+--recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
+$ sudo add-apt-repository 'deb https://cloud.r-project.org/bin/linux/ubuntu focal-cran40/'
+$ sudo apt-get update
+$ sudo apt-get install -y r-base
+$ sudo apt-get install -y awscli
+````
+
+Anything we have __installed via command line__ can be __installed on your image__. 
+* E.g., [install Docker on Ubuntu](https://docs.docker.com/engine/install/ubuntu/)
+
+???
+
+The first two lines of the `bash` ensure that we are installing the most recent version of `R` for Ubuntu. From [here](https://linuxize.com/post/how-to-install-r-on-ubuntu-20-04/).
+
+More docs on installing `R` and R Studio server on AWS image.
+
+---
+
+## Creating your own AMI
+
+.red[Once you terminate an image, everything is deleted!]
+
+How can we "save our workspace"?
+* [Create](https://docs.aws.amazon.com/cli/latest/reference/ec2/create-image.html) our own AMI. 
+* .red[It costs money to store your image.]
+
+````bash
+$ aws ec2 create-image --instance-id $instance_id \
+--name "Ubuntu and R and awscli" --description "Base R and awscli"
+$ my_ami="ami-0b56ddda752b70ca2"
+````
+
+This will return an `ImageID` that you can reference in the `--image-id` option of `aws ec2 run-instances`. 
+* Here, we save that as a local variable name `my_ami`.
+* It will also __log out__ of your image, but __does not terminate__ it.
+
+---
+
+## Deleting an AMI
+
+There are two steps to __deleting a self-registered AMI__: 
+* .red[Don't run these commands yet.] We'll use this AMI later.
+
+* __De-register__ the image.
+
+````bash
+$ aws ec2 deregister-image --image-id $my_ami
+````
+
+* __Delete the snapshot__. 
+
+````bash 
+$ snapshot_id=$(aws ec2 describe-snapshots --owner-ids self \
+--query "Snapshots[*].{Id:SnapshotId}" \
+--output text)
+$ aws ec2 delete-snapshot --snapshot-id $snapshot_id
+````
+
+---
+
+## Moving files to and from image
+
+We can use `scp` to move files to and from image.
+
+From local computer to image (on local computer):
+
+````bash
+$ scp -i ~/.ssh/aws_laptop_key.pem \
+path/to/local/file ubuntu@$public_ip:path/to/file/on/image
+````
+
+From image to local computer (on local computer):
+
+````bash
+$ scp -i ~/.ssh/aws_laptop_key.pem \
+ubuntu@$public_ip:path/to/file/on/image path/to/local/file
+````
+
+???
+
+Here `$public_ip` is a local variable referencing the public IP address of the image. 
+
+---
+
+## Run script automatically
+
+We can run a script automatically at start up via `user-data`.
+
+Save the contents below in a file called `my_user_data.sh`.
+
+````bash
+#! /bin/bash
+echo "Hello from AWS" &gt; /home/ubuntu/hello.txt
+````
+
+Now pass in `my_user_data.sh` in your `run-instances` command.
+
+````bash
+aws ec2 run-instances --image-id ami-0885b1f6bd170450c \
+--count 1 --instance-type t2.micro \
+--key-name new_aws_laptop_key \
+--security-group-ids sg-0af9981424cb188b1 \
+--user-data file://my_user_data.sh
+````
+
+---
+
+## Run script automatically
+
+After a couple minutes, you can retrieve `hello.txt`.
+
+````bash
+scp -i ~/.ssh/aws_laptop_key.pem \
+ubuntu@$public_ip:/home/ubuntu/hello.txt .
+````
+
+* Remember to update `public_ip` to the address of the running image.
+* .red[Remember to terminate image when you've retrieved results!]
+
+If we're careful, we can achieve .green[full reproducibility]!
+* Scripted build of AMI + automatic running of code.
+* Reproducible if we pay to store __AMI__. Docker image preferable.
+
+We will soon __automate retrieval__ of results __and termination__ of image. 
+
+---
+
+## S3 storage
+
+Simple Storage Service (S3) is a storage platform for AWS.
+* Create __buckets__ that you can upload files into. 
+* Push and pull files from local computer to AWS instance.
+* Different [classes of storage](https://aws.amazon.com/s3/storage-classes/) to suit needs.
+
+__Buckets__ are like file folders, but they are accessible via web address.
+* Bucket names must be __globally unique__ and DNS compliant.
+* But __buckets__ do not really have a file structure like a folder.
+
+We can make a bucket using `s3 mb`.
+
+````bash
+aws s3 mb s3://dbenkesers-first-bucket
+````
+
+---
+
+## S3 storage
+
+Many `aws s3` commands are similar to `bash`. 
+* `ls`, `mv`, `cp`, `rm`, ...
+* `rb` removes a bucket
+
+For example, we can copy local objects into a bucket.
+
+````bash
+$ aws s3 cp path/to/local/file s3://dbenkesers-first-bucket
+````
+
+Or, we can retrieve objects from a bucket to current working directory.
+
+````bash
+$ aws s3 cp s3://dbenkesers-first-bucket/file .
+````
+
+???
+
+The same `mv` and `cp` syntax can be used to move files between buckets.
+
+The idea of moving files is the same as with `scp` that we saw earlier.
+
+---
+
+## Automated R with EC2 and S3
+
+The final demo of the lecture is an automated `R` workflow.
+* Create `R` scripts to run a job locally.
+* Copy to S3 bucket.
+* Create a user-data `bash` script locally that
+	* runs `R` script;
+	* copies result to S3;
+	* exits from instance, causing termination.
+
+---
+
+## Creating S3 access IAM role
+
+One of the complications of using __AWS services__ on __AWS instances__ is getting your __AWS credentials__ to your instance.
+* E.g., from EC2 instance, copy files to S3 bucket
+
+.red[Treat your access/secret key like credit card information.]
+* Never on GitHub. Never move unencrypted over the wires.
+
+In the next few steps, we define an [IAM role](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/iam-roles-for-amazon-ec2.html) for your instance. 
+* Makes your __AWS credentials available__ on your instance.
+* Tells your instance __what AWS services__ you are allowed to use. 
+
+Unfortunately, these steps look __more complicated than they are__...
+
+???
+
+This is one of the things in AWS that is trivial to do via the Console (GUI), but a bit of a hassle to do via the command line. 
+
+---
+
+## Creating S3 access IAM role
+
+__Step 1__: Create a __trust policy__, which specifies that AWS account members are allowed to assume a role.
+
+Copy the following text into a file called `ec2-role-trust-policy.json`.
+
+````json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": { "Service": "ec2.amazonaws.com" },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+````
+
+???
+
+[More info on the "version" line](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_version.html).
+
+If you get any "contains invalid Json" errors, check try typing the text by hand and using spaces and not tabs.
+
+---
+
+## Creating S3 access IAM role
+
+__Step 2__: Create an [IAM role](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/iam-roles-for-amazon-ec2.html) called `s3access` and link to the trust policy.
+
+````bash
+$ aws iam create-role --role-name s3access \
+--assume-role-policy-document file://ec2-role-trust-policy.json
+````
+
+---
+
+## Creating S3 access IAM role
+
+__Step 3__: Create __access policy__ to grant permission for S3 on the instance.
+
+Copy the following text into a file called `ec2-role-access-policy.json`.
+
+
+````json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": ["s3:*"],
+      "Resource": ["*"]
+    }
+  ]
+}
+````
+
+---
+
+## Creating S3 access IAM role
+
+__Step 4__: Attach the access policy to the IAM role. 
+
+````bash
+$ aws iam put-role-policy --role-name s3access \
+--policy-name S3-Permissions \
+--policy-document file://ec2-role-access-policy.json
+````
+
+---
+
+## Creating S3 access IAM role
+
+__Step 5__: Create an instance profile named `s3access-profile` and add the `s3access` role to the `s3access-profile`.
+
+````bash
+$ aws iam create-instance-profile \
+--instance-profile-name s3access-profile
+$ aws iam add-role-to-instance-profile \
+--instance-profile-name s3access-profile --role-name s3access
+````
+
+We can now launch EC2 instances that __have access to S3__! 
+* Include `--iam-instance-profile Name="s3access-profile"` in your `ec2 run-instances` command. 
+* We will see this in a couple slides.
+
+---
+
+## Automated R with EC2 and S3
+
+Save this in a file called `ec2_script.R`:
+
+````R
+#! /usr/bin/Rscript
+ten_random_normals &lt;- rnorm(10)
+write.csv(ten_random_normals, file = "/home/ubuntu/output.csv")
+````
+
+Copy to your S3 bucket:
+
+````bash
+$ aws s3 cp ec2_script.R s3://dbenkesers-first-bucket
+$ aws s3 ls dbenkesers-first-bucket
+````
+
+---
+
+## Automated R with EC2 and S3
+
+Save this in a file called `auto_r_user_data.sh`
+
+````bash
+#! /bin/bash
+# copy script from s3
+aws s3 cp s3://dbenkesers-first-bucket/ec2_script.R /home/ubuntu
+# execute script
+chmod +x /home/ubuntu/ec2_script.R
+/home/ubuntu/ec2_script.R
+# copy script output to s3
+aws s3 cp /home/ubuntu/output.csv s3://dbenkesers-first-bucket
+# turn off instance
+sudo poweroff
+````
+
+---
+
+## Automated R with EC2 and S3
+
+Now we can run an instance with our __user data__. 
+
+````bash
+$ aws ec2 run-instances --image-id $my_ami \
+--count 1 --instance-type t2.large \
+--key-name aws_laptop_key \
+--security-group-ids sg-0af9981424cb188b1 \
+--iam-instance-profile Name="s3access-profile" \
+--user-data file://auto_r_user_data.sh \
+--instance-initiated-shutdown-behavior terminate
+````
+
+* calling the __AMI__ that we created where `R` and `awscli` are installed;
+* assigning `s3access` role via `iam-instance-profile`;
+* __terminating instance__ on `shutdown` via `instance-init...-behavior`.
+
+After a few minutes, we should see `output.csv` in our S3 bucket.
+
+````bash
+$ aws s3 ls s3://dbenkesers-first-bucket
+2020-11-12 21:56:07        106 ec2_script.R
+2020-11-16 17:11:02        232 output.csv
+````
+
+---
+
+## Spot instances
+
+So far we have discussed running EC2 __on demand instances__, there is a cheaper approach known as __spot instances__.
+
+&lt;img src="spotvsondemand.png" width="75%" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Spot instances
+
+Spot instance prices vary over time/region. E.g., currently in `us-east-1`, 
+* `t2.large` is $0.0928/hour on-demand, while
+* `t2.large` is $0.0278/hour spot instance
+
+Why not __always use__ spot instances?
+* .red[Jobs can be interrupted!]
+* Set a maximum price you are willing to pay, if the market price exceeds that amount, your job will be terminated.
+
+There is a middle ground: __defined duration__ spot instances.
+* Spot instance with fixed (hourly) duration. .green[No chance your job is killed.]
+* `t2.large` = $0.046/hour for 1 hour, $0.058/hour for 6 hours.
+
+???
+
+These prices change all the time. These were the prices I saw as of 11/12/2020 at 11AM. You can check the price history of different instance types in different regions in the AWS console. 
+
+---
+
+## Request spot instances
+
+It seems that spot instances .red[are not] supported on AWS Educate starter accounts, but here is info on running them on a regular account. 
+
+We will show how to use `run-instances`, but you can also use `request-spot-instances`.
+
+Save the following contents in a file called `spot_options.json`. 
+
+````json
+{
+  "MarketType": "spot",
+  "SpotOptions": {
+    "MaxPrice": "0.05",
+    "SpotInstanceType": "one-time",
+    "BlockDurationMinutes": 60
+  }
+}
+````
+
+* This specification is for __block duration__, paying __no more than $0.05/hour__ for __1 hour__.
+
+???
+
+The `spot_options` file is in [JSON format](https://www.json.org/json-en.html). 
+
+---
+
+## Request spot instances
+
+We can __request a spot instance__ as follows. 
+
+````bash
+$ aws ec2 run-instances --image-id ami-0885b1f6bd170450c \
+--count 1 --instance-type t2.medium \
+--key-name aws_laptop_key \
+--security-group-ids sg-0af9981424cb188b1 \
+--instance-market-options file://spot_options.json
+````
+
+Use `aws describe-instances` to get __public IP address__ and login as usual. 
+* Note that the instance will .red[terminate after 60 minutes].
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "tomorrow-night-blue",
+"highlightLanguage": "rmarkdown",
+"highlightLines": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

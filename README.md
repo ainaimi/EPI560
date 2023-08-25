@@ -1,3 +1,5 @@
-# EPI 560 Course
+# IMCS
 
-This repository contains the files and content relevant to creating a survival analysis course for the Department of Epidemiology at Emory University. 
+## Introduction to Monte Carlo Simulation
+
+GitHub repository for IMCS. The structure of this repo was taken from David Benkeser's info550 class taught at Emory University [https://github.com/benkeser/info550](https://github.com/benkeser/info550)
