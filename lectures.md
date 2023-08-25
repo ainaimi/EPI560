@@ -4,11 +4,11 @@ title: Lectures
 permalink: /lectures/
 ---
 
-Clicking the title of the lecture will open the slides in your browser. The icons navigate to relevant material for each lecture: 
+Clicking the title of the section will open the notes in your browser. The icons navigate to relevant material for each lecture: 
 
-<i class="fas fa-lightbulb"></i> = solutions to breakout exercises; <i class="fab fa-github"></i> = Github directory for lecture; <i class="fab fa-r-project"></i> = source Rmarkdown document for lecture; <i class="fas fa-book"></i> = additional readings; and <i class="fas fa-video"></i> = video recording. If video is not available, the icon will show as <i class="fas fa-video-slash"></i>. 
+<i class="fas fa-lightbulb"></i> = solutions to in class exercises; <i class="fab fa-github"></i> = Github directory for lecture; <i class="fas fa-code-simple"></i> = R code for each lecture; <i class="fab fa-r-project"></i> = source Rmarkdown document for lecture; <i class="fas fa-book"></i> = additional readings; and <i class="fas fa-video"></i> = video recording. If video is not available, the icon will show as <i class="fas fa-video-slash"></i>. 
 
-The lectures are produced using [xaringan slides](https://slides.yihui.org/xaringan/#1). Presentation notes are available by pressing "p". Slides can be printed to pdf by first scrolling through all slides (to ensure all content renders) and printing to pdf from your browser. [Allegedly](https://bookdown.org/yihui/rmarkdown/ioslides-presentation.html#printing-and-pdf-output) Google Chrome has the best support for this.
+The lectures are produced using the [`tint`](https://cran.r-project.org/web/packages/tint/vignettes/tintHtmlIntro.html) package in [RMarkdown](https://rmarkdown.rstudio.com/). These notes can be fully reproduced from the Rmarkdown source files. To reproduce the R output without Rmarkdown, use the lecture links to the R code for each lecture.
 
 {% assign num = site.url | size | minus: 1 %}
 
