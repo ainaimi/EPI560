@@ -54,9 +54,13 @@ This course will build on basic and intermediate analytic methods covered in [EP
 
 Prerequesite skills and concept include: basic epidemiological measures, confounding, misclassification, selection bias, types of study designs, estimation of epidemiological parameters, issues related to causality, interaction, effect modification and mediation, as well as concepts, methods, and application of key mathematical modeling approaches used to evaluate multivariable data from epidemiologic studies such as logistic and Cox regression.
 
-## DIVERSITY, EQUITY, AND INCLUSION
+## DIVERSITY, EQUITY, AND INCLUSION CONSIDERATIONS
 
+This course will focus on the theory and application of quantitative and statistical methods to epidemiologic data. Epidemiology is a complex field of study that combines biomedical, physiological, mathematical, social, political, and economic dimensions into a single domain. As a result of this complexity, it is important to understand how epidemiologic knowledge is shaped by and is used to shape social and cultural perspectives on health, well-being, and the optimal organization of human societies.
 
+It is impossible to understand these perspectives without acknowledging the role that early 20th century views on race, ethnicity, sex, gender, and other related socio-political constructs played in shaping quantitative methods that we still use today. For example, the "founding fathers" of statistics (Francis Galton, Karl Pearson, and Ronald Fisher) were also founders of 20th century Eugenics, and they used the new math they derived to characterize many of the egregious and scientifically unjustifiable eugenic acts (forced sterilization, marriage prohibitions, or the supposed moral superiority of "Nordics" or "Aryans") with the patina of "objectivity."
+
+The literature on this topic is expansive, complex, and rapidly growing, and we will not be able to cover many of the problems with how statistical and quantitative methods were and are used inappropriately for iniquitous ends. However, the [reading list](https://ainaimi.github.io/EPI560/readings/) for the course contains references to key books and papers on this topic which are (some highly) recommended. Additionally, a deep understanding of the connection between data, statistics, and substantive theory can go a long way in both dismantling unsubstantiated claims (both eugenic, and more generally), as well as design studies that can generate a more nuanced understanding of the complexity of health. My hope is that EPI 560 course will serve this end. 
 
 ## COURSE LEARNING OBJECTIVES
 
