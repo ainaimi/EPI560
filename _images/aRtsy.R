@@ -4,11 +4,18 @@ library(aRtsy)
 library(ggplot2)
 
 set.seed(4)
-artwork <- canvas_lissajous(colors = colorPalette("jfa"),
+lissajous_art <- canvas_lissajous(colors = colorPalette("jfa"),
                  background = "white",
                  iterations = 2,
                  neighbors = 75,
                  noise = T)
 
 
-saveCanvas(artwork, filename = "/Users/ain/Library/CloudStorage/Dropbox/Teaching/MCS/_images/lissajous.png")
+saveCanvas(lissajous_art, filename = "/Users/ain/Library/CloudStorage/Dropbox/Teaching/MCS/_images/lissajous.png")
+
+
+set.seed(4)
+mandelbrot_art <- canvas_mandelbrot(colors = colorPalette("viridis"))
+mandelbrot_art
+
+saveCanvas(lissajous_art, filename = "/Users/ain/Library/CloudStorage/Dropbox/Teaching/MCS/_images/mandelbrot.png")
