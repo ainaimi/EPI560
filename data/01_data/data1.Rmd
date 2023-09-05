@@ -1,9 +1,9 @@
 ---
-title: "Dataset 1: NHANES Epidemiologic Follow-Up Survey"
+title: "Dataset 1: NHEFS"
 header-includes:
   - \usepackage{hyperref}
   - \hypersetup{colorlinks=true,urlcolor=blue}
 output: pdf_document
 ---
 
-This is a placeholder for a csv file with NHEFS data. Stay tuned...
+Placeholder for NHEFS Data.
