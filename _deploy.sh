@@ -28,11 +28,15 @@ cp -r ../website/* ./
 # move tmp_lectures and tmp_homeworks in and rename
 cp -r ../lectures ./
 cp -r ../homework ./
+cp -r ../labs ./
+cp -r ../data ./
 
 echo "All files in /EPI560 after copies"
 ls -l 
 ls -l lectures
 ls -l homework
+ls -l labs
+ls -l data
 
 COMMIT_MESSAGE="update the website."
 git add --all *
