@@ -1,0 +1,9 @@
+---
+title: "Dataset 1: NHANES Epidemiologic Follow-Up Survey"
+header-includes:
+  - \usepackage{hyperref}
+  - \hypersetup{colorlinks=true,urlcolor=blue}
+output: pdf_document
+---
+
+This is a placeholder for a csv file with NHEFS data. Stay tuned...
