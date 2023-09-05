@@ -19,7 +19,7 @@ RMD_LECTURE_FILES=$(find "lectures" -maxdepth 2 -type f -name "*.Rmd")
 # finds all .Rmd homework files
 RMD_HOMEWORK_FILES=$(find "homework" -type f -name "*.Rmd")
 # finds all .csv data files
-CSV_DATA_FILES=$(find "data" -type f -name "*.csv")
+CSV_DATA_FILES=$(find "data" -type f -name "*.Rmd") # FLAG!! NEED TO CHANGE THIS ONCE CSV FILES ARE INCLUDED...
 
 # build Rmd lecture files
 for RMD_FILE in ${RMD_LECTURE_FILES}
@@ -43,7 +43,7 @@ do
 	Rscript -e "renv::activate(); setwd('${TRAVIS_BUILD_DIR}/${FILE_PATH}/'); rmarkdown::render('${FILE_NAME}')"
 done
 
-# build csv data files
+# build Rmd (csv) data files
 for CSV_FILE in ${CSV_DATA_FILES}
 do 
 	FILE_PATH=${CSV_FILE%/*}
