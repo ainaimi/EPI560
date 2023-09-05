@@ -11,13 +11,15 @@ Rscript -e "renv::activate(); setwd('${TRAVIS_BUILD_DIR}/website/'); rmarkdown::
 rm ${TRAVIS_BUILD_DIR}/website/syllabus_mod.md
 
 #--------------------------------------------------------
-# build lectures and homeworks from Rmd 
+# build lectures and data and homeworks from Rmd 
 #--------------------------------------------------------
 
 # finds all .Rmd lecture files
 RMD_LECTURE_FILES=$(find "lectures" -maxdepth 2 -type f -name "*.Rmd")
 # finds all .Rmd homework files
 RMD_HOMEWORK_FILES=$(find "homework" -type f -name "*.Rmd")
+# finds all .csv data files
+CSV_DATA_FILES=$(find "data" -type f -name "*.csv")
 
 # build Rmd lecture files
 for RMD_FILE in ${RMD_LECTURE_FILES}
@@ -41,9 +43,17 @@ do
 	Rscript -e "renv::activate(); setwd('${TRAVIS_BUILD_DIR}/${FILE_PATH}/'); rmarkdown::render('${FILE_NAME}')"
 done
 
+# build csv data files
+for CSV_FILE in ${CSV_DATA_FILES}
+do 
+	FILE_PATH=${CSV_FILE%/*}
+	FILE_NAME=${CSV_FILE##*/}
+	Rscript -e "renv::activate(); setwd('${TRAVIS_BUILD_DIR}/${FILE_PATH}/'); rmarkdown::render('${FILE_NAME}')"
+done
+
 # make a directory for recording information
 mkdir -p ${TRAVIS_BUILD_DIR}/website/_recordings
 
-# run python script to populate lecture and homework data
+# run python script to populate lecture and data and homework data
 ${TRAVIS_BUILD_DIR}/website/make_lecture_data.py ${TRAVIS_BUILD_DIR}
 
