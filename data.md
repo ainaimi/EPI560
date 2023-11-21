@@ -6,7 +6,7 @@ permalink: /data/
 
 Clicking the title of the data link will open a placeholder pdf.
 
-<i class="fab fa-github"></i> = Github directory for lecture; <i class="fab fa-r-project"></i> = source Rmarkdown document for homework; <i class="fas fa-share-square"></i> = link to Canvas submission.
+<i class="fab fa-github"></i> = Github directory for dataset;
 
 {% assign num = site.url | size | minus: 1 %}
 
