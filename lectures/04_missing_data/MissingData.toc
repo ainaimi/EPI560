@@ -1,0 +1,12 @@
+\contentsline {section}{\numberline {1}Missing Data}{2}{section.1}%
+\contentsline {section}{\numberline {2}Independence Patterns}{2}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Missing Completely At Random}{3}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Missing At Random}{4}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Missing Not At Random}{4}{subsection.2.3}%
+\contentsline {section}{\numberline {3}Multiple Imputation}{4}{section.3}%
+\contentsline {section}{\numberline {4}g Computation and GLM}{7}{section.4}%
+\contentsline {section}{\numberline {5}IP-Weighting}{8}{section.5}%
+\contentsline {section}{\numberline {6}Multiple Imputation: Implementation}{9}{section.6}%
+\contentsline {section}{\numberline {7}MICE: IPW and GLM}{15}{section.7}%
+\contentsline {section}{\numberline {8}MICE: g Computation}{19}{section.8}%
+\contentsfinish 

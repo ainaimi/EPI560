@@ -1,0 +1,603 @@
+---
+title: "Missing Data: Some Foundational Concepts and Applied Strategies"
+author: "Ashley I Naimi"
+date: "`r paste0('Fall ', format(Sys.Date(), '%Y'))`" #format(Sys.Date(), '%Y')
+urlcolor: blue
+bibliography: ref.bib
+link-citations: yes
+output: 
+    bookdown::pdf_book:
+      base_format: tint::tintPdf
+      toc: true
+      number_sections: true
+      includes:
+        in_header: ../misc/preamble.tex
+      #latex_engine: xelatex
+    html_document:
+      theme: readable
+      toc: true
+      toc_float: true
+      number_sections: true
+      css: ../misc/style.css
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+library(formatR)
+opts_chunk$set(tidy.opts=list(width.cutoff=60),tidy=TRUE)
+
+packages <- c( "data.table","tidyverse","ggplot2","ggExtra","formatR",
+               "gridExtra","skimr","here","RColorBrewer","survival", "mice", 
+               "lattice", "mvtnorm")
+
+for (package in packages) {
+  if (!require(package, character.only=T, quietly=T)) {
+    install.packages(package, repos='http://lib.stat.cmu.edu/R/CRAN')
+  }
+}
+
+for (package in packages) {
+  library(package, character.only=T)
+}
+
+thm <- theme_classic() +
+  theme(
+    legend.position = "top",
+    legend.background = element_rect(fill = "transparent", colour = NA),
+    legend.key = element_rect(fill = "transparent", colour = NA)
+  )
+theme_set(thm)
+```
+
+\newpage
+\onehalfspacing
+
+**Learning Objectives**
+
+- Articulate the distinctions between MCAR, MAR, and NMAR missing data.
+
+- Describe the relationships between MCAR, MAR, and NMAR, and marginal versus conditional exchangeability.
+
+<!-- - Describe the difference between monotone and nonmonotone missing data. -->
+
+- Articulate the distinction between complete case analysis, single imputation, and multiple imputation. 
+
+- Be able to deploy MICE in the R package.
+
+<!-- # Introduction -->
+
+<!-- Missing data are everywhere, and range in their complexity.  -->
+
+<!-- In this lecture, we'll cover what we mean when we say "missing data," how it relates to concepts such as confounding (through exchangeability), what the missing data types are and what they mean, and solutions that have been proposed to address them. -->
+
+# Missing Data
+
+Missing data arise when some values of a particular variable or variables in a dataset are unknown. The primary concern is that, depending upon the missingness pattern, these missing data may lead to bias in our effect estimates, summary statistics, statistical tests, or other summary measures of interest (Figure \ref{fig:missfig}). 
+
+```{r tidy = F, echo = F, warning = F, message = F}
+
+set.seed(123)
+n <- 200
+sim_mean <- rep(0,2)
+sim_sd <- matrix(c(1,.8,.8,1),nrow = 2) #matrix(rep(1,4),nrow = 2)
+
+c <- cbind(1,rmvnorm(n = n, mean = sim_mean, sigma = sim_sd))
+
+beta <- c(100, 5)
+
+y <- rnorm(n, mean = c[,1:2]%*%beta, sd = 5)
+
+a <- data.frame(y,x = c[,2])
+
+mod1 <- summary(lm(y ~ x, data = a))$coefficients
+#mod1[2,]
+
+a <- a %>% mutate(x_missing = if_else(y > 105,  NA_real_, x),
+                  Missing = is.na(x_missing)) # ~ 20% missing
+
+# mean(is.na(a$x_missing))
+
+mod2 <- summary(lm(y ~ x_missing, data = a))$coefficients
+#mod2[2,]
+
+p1 <- ggplot(a) + 
+  geom_point(aes(y = y, x = x, color = Missing)) + 
+  scale_color_manual(values=c("#999999", "#56B4E9")) +
+  geom_segment(aes(x = -5, xend = 5, y = mod1[1,1] + mod1[2,1]*(-5), yend = mod1[1,1] + mod1[2,1]*5), linewidth = .75) +
+  geom_segment(aes(x = -5, xend = 5, y = mod2[1,1] + mod2[2,1]*(-5), yend = mod2[1,1] + mod2[2,1]*5), linewidth = .75, linetype = "dashed") +
+  theme_classic()
+
+ggsave(here("_images", "missing_data_simple.png"))
+
+```
+
+```{r missfig, out.width = "7cm", fig.margin = T, fig.cap="Illustration of the impact of missing data in a simple setting. Solid black line represents the association between X and Y when there are no missing data. Dashed black line represents the association between X and Y in the absence of the light blue points in the figure.",echo=F}
+knitr::include_graphics(here("_images", "missing_data_simple.png"))
+```
+
+<!-- :::{.rmdnote data-latex="{tip}"} -->
+
+<!-- __Context Note__: -->
+
+<!-- |               Different software functions code missing data in different ways. ...  -->
+
+<!-- ::: -->
+
+# Independence Patterns
+
+Generally, whether or not missing data has an impact on the results of a given analysis depends entirely on the pattern of missingness in the data. Missing data can be classified into three types:
+
+- Missing Completely at Random
+
+- Missing at Random
+
+- Not Missing at Random
+
+Suppose we have a dataset that looks like the following:
+
+```{r tidy = F, warning = F, message = F, echo = F}
+
+set.seed(234)
+
+y <- rnorm(5)
+x <- rbinom(5,1,.5)
+c1 <- rnorm(5)
+c2 <- rnorm(5)
+c3 <- rbinom(5,1,.5)
+R <- c(1,0,0,0,0)
+
+y <- if_else(R == 1, NA, y)
+
+example_data <- data.frame(y, x, c1, c2, c3, R)
+
+```
+
+```{r tidy = F, warning = F, message = F}
+
+example_data
+
+```
+
+Data are considered missing completely at random (MCAR) if the probability of missingness does not depend on any other variables, either measured or unmeasured. 
+
+Data are considered missing at random (MAR) if the probability of missingness depends on other variables, AND these other variables are measured and available in the data.
+
+Data are considered not missing at random if the probabilty of missingness depends on other variables, AND these other variables are NOT measured, and thus not available in the data. 
+
+These missing data patterns are comparable to the same concepts we encountered when introduced to exchangeability. Briefly, exchangeabilty is met when the exposure $X$ is independent of the potential outcomes $Y^x$. 
+
+$$E(Y^x \mid X) = E(Y^x)$$
+When true, this equation is defined as marginal exchangeability, because we need not condition on any other variables to make the statement hold. Marginal exchangeability holds (in expectation) in an ideal randomized trial, because randomization creates an independence between the exposure assignment mechanism and all other variables (measured or unmeasured) that may be associated with the outcome. 
+
+## Missing Completely At Random
+
+The counterpart to marginal exchangeabilty in the missing data context is **missing completely at random.** For example, consider that we have a missingness indicator $R$, where $R = 1$ if an observation is missing information for some variable. For example, we may be missing data on the outcome, as in the example data above. In this case, we can assume missing completely at random if:
+
+$$E(Y^x \mid X, R = 0) = E(Y^x \mid X)$$
+In effect, this statement is saying that we need not worry about restricting our analysis to observations without missing data. When data are missing completely at random, complete case analysis will work.
+
+## Missing At Random
+
+Alternatively, if we need to adjust for a set of variables $C$ in order for the exchangeability assumption to hold, we have conditional exchangeability. Recall that, in the context of a randomized trial, conditional exchangeability arises when we randomize the exposure with a different probability conditional on some factor $C$, and that this factor $C$ is also associated with the outcome. In this case, we need to condition on $C$ to regain an independence between the expsoure and potential outcomes:
+
+$$E(Y^x \mid X, C) = E(Y^x \mid C)$$
+The counterpart to conditional exchangeability in the missing data context is **missing at random.** In our previous example, the probability of expsoure missingness may depend on certain variables $Z$. In this case, we would have to condition on $Z$ to acheive independence between the missingness indicator $R$ and the potential outcomes $Y^x$:
+
+$$E(Y^x \mid X, Z, R = 0) = E(Y^x \mid X, Z)$$
+
+## Missing Not At Random
+
+Finally, we the case where exchangeability does not hold. This situation might be encountered, for example, in the presence of unmeasured or uncontrolled confounding. Meaning, there are variables $C$ that we require to make the independence between the potential outcome and the observed exposure hold, but we have not measured them. In this context of missing data, if we have variables $Z$ that predict both the probability of missingness and the potential outcomes, and we have not measured them, we have **not missing at random.**
+
+<!-- # Monotone versus Nonmonotone Patterns -->
+
+<!-- A second set of patterns that are important to understand in the context of missing data is the notion of monotone versus nonmonotone missingness. These patterns arise when there is a dataset with many variables, and more than one variable is missing information. In this setting, **how** the missing values are related to each other across all observations in the data matters.  -->
+
+<!-- ```{r misspatterns, out.width = "10cm", fig.align = "center", fig.margin = F, fig.cap="Example missing data patterns: univariate, monotone, and nonmonotone missingness. Figure modified from van Buuren (2018) chapter 4.",echo=F} -->
+<!-- knitr::include_graphics(here("_images", "md_patterns.png")) -->
+<!-- ``` -->
+
+<!-- In the monotone missingness case, the key is that we can nest the variables with missingness such that we can impute any missing data with complete data. Consider a different example dataset, very similar to the previous: -->
+
+<!-- ```{r tidy = F, warning = F, message = F, echo = F} -->
+
+<!-- set.seed(234) -->
+
+<!-- y <- rnorm(5) -->
+<!-- x <- rbinom(5,1,.5) -->
+<!-- c1 <- rnorm(5) -->
+<!-- c2 <- rnorm(5) -->
+<!-- c3 <- rbinom(5,1,.5) -->
+<!-- R1 <- c(1,0,0,0,0) -->
+<!-- R2 <- c(1,1,0,0,0) -->
+
+<!-- y <- if_else(R1 == 1, NA, y) -->
+<!-- c1 <- if_else(R2 == 1, NA, c1) -->
+
+<!-- example_data <- data.frame(y, x, c1, c2, c3) -->
+
+<!-- ``` -->
+
+<!-- ```{r tidy = F, warning = F, message = F} -->
+
+<!-- example_data -->
+
+<!-- ``` -->
+
+<!-- These patterns matter when it comes to dealing with missing data. For example, in the monotone case, one can employ a computationally simpler approach compared to when the missing data are distributed nonmonotone. However, when missing data are present, methods to impute nonmonotone data will work just as well when data are actually monotone (though the converse is not true). For this reason, we focus here on methods for nonmonotone data, specifically, multiple imputation via chained equations (MICE). -->
+
+<!-- # Methods for Dealing with Missing Data -->
+
+<!-- Before proceeding with an explanation and illustration of MICE, let's briefly discuss complete case, and single imputation.  -->
+
+<!-- ## Complete Case -->
+
+<!-- Complete case analyses proceed by basically removing all observations with any missing data. This approach will only work if missing data are MCAR. However, in the early stages of an analysis, it can be useful to beginning the process fo writing code by focusing first on a complete case analysis. We've been using complete case exclusively thus far in the course: -->
+
+<!-- ```{r tidy = F, warning = F, message = F, eval = T} -->
+
+<!-- file_loc <- url("https://cdn1.sph.harvard.edu/wp-content/uploads/sites/1268/1268/20/nhefs.csv") -->
+<!-- nhefs <- read_csv(file_loc) %>%  -->
+<!--   select(qsmk, wt82_71, sex, age, race, income, marital, school, asthma, bronch) #%>%  -->
+<!--   # na.omit(.)  -->
+<!--   # this "na.omit" function removes any observations with missing data,  -->
+<!--   # thus conducting a complete case analysis. -->
+
+<!-- nhefs -->
+
+<!-- ``` -->
+
+<!-- One thing to consider is that, if a complete case analysis is to be used, you should select the relevant variables needed for an analysis **before** removing observations with missing data. Otherwise, you may end up removing observations that only have missing data in variables that are not relevant to your analysis, thus reducing the sample size unnecessarily. -->
+
+<!-- ## Single Imputation -->
+
+<!-- A second approach that is not as involved as MICE is single imputation. There are generally two versions of this: marginal single imputation and conditional single imputation. The latter proceeds by imputing missing data using a single regression model. -->
+
+<!-- A simpler version of single imputation is marginal imputation. This often proceeds by setting any missing values in a given variable to be the mean, median, or mode of that variable. For example: -->
+
+<!-- ```{r tidy = F, eval = T} -->
+
+<!-- # number of missing observations in wt82_71 -->
+<!-- sum(is.na(nhefs$wt82_71)) -->
+
+<!-- # mean imputation of missing data -->
+<!-- # one could just as easily use the median, important if variable is skewed -->
+<!-- nhefs$wt82_71[is.na(nhefs$wt82_71)] <- mean(nhefs$wt82_71, na.rm = TRUE) -->
+
+<!-- # function for the mode -->
+<!-- # NB: this function will not work if NA is the mode! -->
+<!-- getmode <- function(v) { -->
+<!--    uniqv <- unique(v) -->
+<!--    uniqv[which.max(tabulate(match(v, uniqv)))] -->
+<!-- } -->
+
+<!-- sum(is.na(nhefs$income)) -->
+
+<!-- nhefs$income[is.na(nhefs$income)] <- getmode(nhefs$income) -->
+
+<!-- ``` -->
+
+# Multiple Imputation
+
+Let's start with a concrete (simulated) example, let's first load relevant packages we'll need to address missing data:
+
+```{r tidy = F, eval = F}
+
+packages <- c("here","tidyverse","ggExtra","VIM","mice")
+
+for (package in packages) {
+  if (!require(package, character.only=T, quietly=T)) {
+    install.packages(package, repos='http://lib.stat.cmu.edu/R/CRAN')
+  }
+}
+
+for (package in packages) {
+  library(package, character.only=T)
+}
+```
+
+And use data from the NHEFS:
+
+```{r tidy = F, eval = T, warning = F, message = F}
+file_loc <- url("https://cdn1.sph.harvard.edu/wp-content/uploads/sites/1268/1268/20/nhefs.csv")
+nhefs <- read_csv(file_loc) %>% 
+  select(qsmk,wt82_71,exercise,sex,age,race,income,marital,school,asthma,bronch) 
+```
+
+The first thing we should do is evaluate the extent and distribution of missing data. We can do this in a number of ways, and the VIM package has some helpful tools:
+
+```{r tidy = F, eval = T}
+VIM::aggr(nhefs)
+```
+
+We can also write a function that allows us to tally missing data:
+
+```{r tidy = F, eval = F}
+
+miss_func <- function(x){
+  mean_miss <- mean(is.na(x), na.rm = T)
+  count_miss <- sum(is.na(x), na.rm = T)
+  
+  return(c(mean_miss, count_miss))
+}
+
+apply(nhefs, 2, miss_func)
+
+```
+
+Handling missing outcome data can be confusing in certain research settings. For example, applied researchers are sometimes under the assumption that the outcome should never be imputed. This confusion can be traced back to a quote in a paper by Roderick @Little1992:
+
+\begin{quote}
+If the $X$’s are complete and the missing values of $Y$ are missing at random, then the incomplete cases contribute no information to the regression of $Y$ on $X_1, \ldots , X_p$.
+\end{quote}
+
+In effect, this quote states that if the missing $Y$ values are MAR, then it will make no difference whether we include or exclude the missing $Y$'s, and thus a complete case analysis would work fine. Based in part Little's article, Stef van Buuren states in a post on Cross Validated that^[However, please read the full post for the important exceptions which van Buuren highlights: https://stats.stackexchange.com/questions/46226/multiple-imputation-for-outcome-variables]: 
+
+\begin{quote}
+Under MAR, there are generally no benefits to impute the outcome, and for a low number of imputations the results may even be somewhat more variable because of simulation error.
+\end{quote}
+
+Quotes such as these can and have lead to considerable confusion. This confusion often manifests as "one should never impute the outcome," which is definitely not the case.^[If, for instance, there is a variable that is highly predictive of the outcome, has no missing observations, and is not part of the covariates one is adjusting for, one might be better off imputing the outcome, even with a low number of imputations.] 
+
+To explain why these statements are true (and clarify when they are not), let's introduce some notation. We'll let $Y$ denote the outcome we are studying, $X$ denote our exposure of interest, and we'll let $C$ denote the minimally sufficient adjustment set we obtained from the analysis of our DAG. Recall that the minimally sufficient adjustment set is the set of variables that renders the potential outcomes independent of the observed exposure. We'll come back to this shortly. 
+
+Similarly, we'll need a set of variables that render the potential outcome independent of the indicator of missingness for the outcome. So, if we let $R$ denote a variable that is set to 1 if $Y$ is missing and zero otherwise. If there the missing at random assumption will hold if there exists a set of variables $Z$ such that
+
+$$E(Y^x \mid X, Z, R = 0) = E(Y^x \mid X, Z)$$
+
+This above equation reads that the missingness indicator is independent of the outcome conditional on some set of variables $Z$.
+
+We are now able to explain the context in which Little's statement applies, and where it doesn't. When we're interested in estimating causal effects, we do our best to adjust for the variables in $C$. Let's assume that these are the same type of variables that Little was referring to as $X_1, \ldots, X_p$.^[Thus, henceforth, we assume $C = X_1 \ldots X_p$.]
+
+The first point that should be noted is that *the above statement assumes $C \equiv Z$.* That is, the variables in $Z$ that render the missingness indicator independent of the potential outcomes are the same variables in $C$ that render the exposure independent of the potential outcomes. The above statement also assumes that the estimation approach is, in fact, a conditional regression model. Importantly, Little's statement would not apply if one adjusted for the $C$ variables (i.e., $X_1, \ldots, X_p$) using IP-weighting. 
+
+# g Computation and GLM
+
+For an outcome with missing data that are MAR, if we obtain a conditional effect estimate by conditioning for the variables upon which the missing data mechanism depends using a regression model (e.g., GLM), no additional adjustment is required. In fact, this is the exact situation in which Little's statement directly applies. If we obtain a marginal estimate by taking predictions from this model, and average those predictions (i.e., g computation), the same reasoning still applies.
+
+However, there are several exceptions to the statement above. For example, what if we need a separate set of variables $Z$ to account for missing data? That is, we have a set of variables to adjust for confounding $C$, and a different set of variables that predict missingness $Z$. In this case, if the variables in $Z$ do not create problems if we adjust for them in our regression model (i.e., mediators, colliders, variables that lead to positivity violations), then we can simply adjust for them.
+
+If the variables in $Z$ do create these problems, then we need to model the missing data mechanisms separately from the confounding mechanisms, which can be done via multiple imputation, discussed below.
+
+# IP-Weighting
+
+However, if we obtain marginal effect estimates by IP-weighting, Little's statement no longer applies. In fact, to account for missing outcome data when we are not *conditioning* on the set of variables we need an additional step to adjust for the potential selection bias due to missing outcome data. This can be done via inverse probability of censoring weights. Again, assuming $C \equiv Z$, these weights are defined as:
+\[
+    w_i= 
+\begin{cases}
+    \frac{P(M = 0)}{P(M = 0 \mid X, C)},& \text{if } M_i=0\\
+    0,              & \text{if } M_i = 1
+\end{cases}
+\]
+These weights can be obtained in the same way we obtain exposure weights, via logistic regression. One can then multiply the exposure weights by these censoring weights to obtain weights that adjust for both confounding and selection bias (due to missing outcome data).
+
+Because the missing at random assumption corresponds to the exchangeability assumption that we need to identify causal effect, it is possible to demonstrate the problems that result from missing data using directed acyclic graphs [@Daniel2011]. 
+
+```{r tidy = F, eval = T, out.width = "8cm", fig.cap="Causal diagrams demonstrating the impact of restricting on observed data when the missingness mechanism depends on the exposure and covariates.",echo=F}
+knitr::include_graphics(here("_images", "F1_missing.pdf"))
+```
+
+Figure 1 displays four diagrams demonstrating the impact of conducting a complete case analysis under missing outcome data when the missingness mechanism depends on the exposure $X$ and the covariates $C$. Figure 1A shows a simple DAG with a confounding structure, but where the missingness mechanism is fully explained by the exposure and the outcome. Figure 1B demonstrates the modified DAG when inverse probability weights are applied. However, this figure is incomplete: because we do not observe $R=1$ any analysis of the data generated from this mechanism would lead to Figure 1C, in which we are forced to restrict to the stratum $R=0$. In doing so, we again create an association between $X$ and $C$, thus re-opening a backdoor path that was removed via IP-weighting. Figure 1D shows how this problem does not arise when we use an outcome regression model to adjust for $C$. That is, even if we restrict to $R=0$, all non-causal information from $X$ to $Y$ is blocked by conditioning on $C$. 
+
+# Multiple Imputation: Implementation
+
+It is entirely plausible that in some settings, one would need to model the missing data mechanisms separately from the confounding mechanisms. In addition, in most scenarios, data will be missing not only for the outcome, but for several of the variables needed to conduct the analysis (non monotone). In these cases, multiple imputation is a commonly used tool to address missing data.
+
+Let's use mice to impute the missing NHEFS data. MICE stands for multiple imputation via chained equations. It is sometimes referred to as "multivariate imputation via chained equation", "fully conditional specification" or "sequential regression multiple imputation". This differs from the multiple imputation based on multivariate normal imputation (as implemented in SAS proc mi; Stata does both). The "chained equations" procedure is meant to connote that each variable with missing data is imputed from a model that takes the variable form into account (e.g., binomial, polytomous, ordinal, continuous), instead of just assuming everything is MVN. Furthermore, these regression equations are "chained" together into an algorithm that allows us to predict values of non-monotone (or monotone) missing data iteratively.
+
+To proceed with `mice` in R, we first install and load the package:
+
+```{r tidy = F, eval = T, warning = F, message = F}
+install.packages("mice",repos="http://lib.stat.cmu.edu/R/CRAN/")
+library(mice)
+```
+
+The first step in running an analysis via mice is to look at our data and ensure that all variables are properly coded. Specifically, to work properly within the `mice` algorithm, categorical variables should be coded as factors (even if initially coded as numeric dummy variables). In our dataset, we have to recode the following variables:
+
+```{r tidy = F, eval = T}
+
+factor_names <- c("exercise","income","marital","sex","race","asthma","bronch")
+nhefs[,factor_names] <- lapply(nhefs[,factor_names] , factor)
+
+nhefs <- nhefs %>% 
+  mutate(u1 = runif(nrow(nhefs)),
+         school = if_else(u1<.15, NA_real_, school)) %>% 
+  select(-u1)
+
+nhefs
+
+```
+
+Next, we implement an **initialization run** with the mice package. This basically requires that we run the mice function, but with no iterations. For a particularly large dataset, we can also set the number of imputations to 1 via the `m=1` command in the mice function. 
+
+The initialization run enables us to populate many of the mice objects with values, so we can explore and modify accordingly:
+
+```{r tidy = F, eval = T}
+ini <- mice(nhefs,seed=123,maxit=0)
+```
+
+This initialization run enables us to obtain a number of basic tools we will need to properly run mice. The first step is to check that the correct variables are being imputed, and that the method of imputation is appropriate.
+
+```{r tidy = F, eval = T}
+ini$method
+```
+
+This output tells us that `wt82_71` and `income` are being imputed. These correspond to the variables that, in fact, contain missing observations according to the Figure we obtained from the `aggr` function above. Furthermore, the output tells us that both predictive mean matching `pmm` and polytomous logistic regression `polyreg` are being used to impute missing data. A description of the available methods can be found in Table 1 of @vanBuuren2011.
+
+It is important to note that choosing methods for continuous variables when the variable being imputed is integer can sometimes lead to problems. For example, in the `nhefs` data, `school` might be considered an ordinal variable (i.e., ordered factor), but we we are treating it as an integer (numeric). Because it is numeric, using predictive mean matching may lead to noninteger imputations (for example, we may end up with a number of years of school attained of 10.125). If this is likely to cause problems in the analysis, one option is to treat `school` as a factor variable. However, because there are so many levels to this variable (18, in fact), this may result in a considerably slow imputation algorithm. 
+
+Another option is to impute using a fast continuous method, such as `pmm`, and then in the post processing phase, convert all non-integer values to integers (using, e.g., the `round()`, `ceil()` or `floor()` functions in R). Before doing this however, one could evaluate the imputed values for school to see if they are problematic:
+
+```{r tidy = F, eval = T}
+apply(ini$imp$school,2,table)
+```
+
+The output from this apply function tells us that all of the imputed school data in each of the five imputations are integers, so there is no need to worry about noninteger values here.
+
+Note that if we wanted to change the imputation method, we would simply have to replace the text in the `ini$method` object with the appropriate selection from Table 1 of @vanBuuren2011, and then ensure that this set of methods is the selected option the next time we run `mice()`. For the school variable, for example, this could be done with the following code:
+
+```{r tidy = F, eval = F}
+nhefs$school <- factor(nhefs$school)
+ini$method["school"] <- "polr"
+mice_run <- mice(nhefs,seed=123,maxit=0,method=ini$method)
+```
+
+The next element we need to examine is the predictor matrix. This is an essential object that should be modified to properly impute the missing data. It is advisable to save this predictor matrix as an excel or csv file, so as to easily manipulate it.
+
+```{r tidy = F, eval = T}
+options(width = 90)
+pMatrix<-ini$predictorMatrix
+write.csv(pMatrix,here("lectures/04_missing_data","pMatrix.csv"))
+pMatrix
+```
+
+The pMatrix is what determines which covariates are used to impute missing data. In this matrix, a value of 1 means that the column variable is being used as a predictor to impute the row variable. The default pMatrix is a square matrix populated entirely with 1's, except for the diagonal. So, in effect, all variables are used to impute any missingness [@vanBuuren2011]. This may lead to problems, particularly if the dataset includes variables that should not be used to impute (such as ID variables, or similar administrative variables).
+
+Thus, one must always modify the pMatrix to match the missing data mechanisms that arise in the study. In effect, one must appropriately determine the form of the imputation models. This leads to an important consideration of any approach to imputing missing data: the imputation model should always be more flexible than the analysis model.
+
+The following figure shows how we've modified our pMatrix:
+```{r tidy = F, eval = T, out.width = "12cm",fig.cap="",echo=F}
+knitr::include_graphics(here("lectures/04_missing_data","pMatrix.png"))
+```
+
+To use this pMatrix, we must import it and create an appropriate matrix object with row and column names:
+```{r tidy = F, eval = T, message = F, warning = F}
+pMat <- read_csv(here("lectures/04_missing_data","pMatrix1.csv"))[,-1]
+pMat <- as.matrix(pMat)
+row.names(pMat) <- colnames(pMat)
+pMat
+```
+
+With the relevant methods selected and the pMatrix defined appropriately, we are ready to run the imputation. This can be done by calling the `mice` function with the appropriate arguments.
+
+Two of the arguments needed are the number of imputations and the number of iterations. In the early literature on multiple imputation, much of the literature cited the need for 5 imputations, which was shown to be sufficient from an efficiency perspective [@Rubin1987]. However, with today's computing power, increasing this number can only help us with simulation error (though too many imputations may hurt us in terms of computing time). As a general rule of thumb, one should use an imputation number equal to the largest percent missing [@White2011]. So, if the data has a variable with up to 20% missing, one should use at least 20 imputations. 
+
+The next option to choose is the number of iterations. `mice` is an iterative procedure, in that imputed values of one variable can be used to impute the values of another variable, which in turn will be used to impute missing values in the original variable. This iterative procedure requires a stopping criterion, and enough iterations to ensure that the procedure results in a stable set of values. Generally, the recommended number of iterations is often between 20-30, as things tend not to improve once we go above this these numbers.
+
+# MICE: IPW and GLM
+
+Imputing missing data via MICE for estimators that do not require bootstrapping is typically how the procedure is described. The process occurs by (i) imputing missing data, (ii) estimating the effect of interest in each imputed dataset, and (iii) summarizing the estimates and their standard errors into a single measure.
+
+For step (i), we can simply run the `mice` function with appropriately selected options:
+
+```{r tidy = F, eval = T, warning=F, message=F}
+
+mice_imp <- mice(nhefs,
+                 seed=123,
+                 m=10,
+                 maxit=20,
+                 printFlag = F,
+                 method=ini$method,
+                 predictorMatrix=pMat)
+
+```
+
+This gives us an object that contains many things, including the 10 imputed datasets. If our objective is to fit either a linear or generalized linear model (with the `lm` or `glm` functions), then we can use this `mice_imp` object directly and obtain valid point estimates and standard errors. We do this using the `with`, `summary`, and `pool` functions:
+
+```{r tidy = F, eval = T}
+
+mod1 <- with(mice_imp, lm(wt82_71 ~ qsmk + sex + age))
+summary(pool(mod1))
+
+```
+
+However, if our goal is to use a more tailored estimator, such as IP-weighting, we have to first extract the imputed datasets, fit the IPW estimator to each, and then combine the results from each imputed dataset together into one. We can extract the imputed data using the `complete` function. Note that the option `action="long"` returns data with each imputed dataset stacked together. Note also that there is a tidyverse function named `complete` that conflicts with this one. The easiest strategy is to use the `mice::` call before the function call, such as:
+
+```{r tidy = F, eval = T}
+imp_data <- mice::complete(mice_imp, action="long")
+```
+
+This way, we force `R` to use the `complete` function in `mice`, and avoid any conflict with other packages. With this new `imp_data` object, we can now implement IP-weighting. The approach requires that we estimate the propensity score, create stabilized weights, and estimate the association of interest separately for each imputed dataset. We can then combine all estimates and their standard errors using an equation that accounts for the within and between imputation variance of the estimator.^[These equations are sometimes referred to as Rubin's Rules.] Let's first apply the IPW estimator to each imputed dataset, which we can do with a for loop. We'll store the estimate and standard error for each imputation:
+
+```{r tidy = F, eval = T}
+
+est.psi <- est.se <- NULL
+for(ii in 1:10){
+  ps <- glm(qsmk~sex+age,data=subset(imp_data,.imp==ii))$fitted.values
+  qsmk <- imp_data[imp_data$.imp==ii,]$qsmk
+  num <- mean(qsmk)*qsmk + (1 - mean(qsmk))*(1-qsmk)
+  den <- ps*qsmk + (1 - ps)*(1-qsmk)
+  sw <- num/den
+  mod <- lm(wt82_71 ~ qsmk, weights=sw, data=subset(imp_data,.imp==ii))
+  est.psi <- rbind(est.psi,coef(mod)[2])
+  est.se <- rbind(est.se,sqrt(sandwich::sandwich(mod)[2,2]))
+}
+
+```
+
+The above code gives us two vectors, one with an estimate for each imputation (`est.psi`), and one with the estimate's standard error (`est.se`):
+
+```{r tidy = F, eval=T, warning = F, message = F}
+
+  cbind(est.psi,est.se)
+
+```
+
+
+To combine the estimates from each imputation into a single estimate, we can simply take their average. However, combining the standard errors across all estimates requires that we average the standard errors across all imputations, and add the additional variation from the simulations. To do both, we can use the following function:
+
+```{r tidy = F, eval = T}
+#PROGRAM FOR RUBIN'S RULES
+RubinsRules<-function(estimate,se){
+  
+  q<-mean(estimate)
+  u<-mean(se)
+  b<-var(estimate)
+  m<-nrow(as.matrix(estimate))
+  t<-u+(1+(1/m))*b
+  se<-sqrt(t)
+  df<-(m-1)*(1+((m*u)/((m+1)*b)))^2
+  ucl<-q+qt(0.975,df)*se
+  lcl<-q-qt(0.975,df)*se
+  results<-c(q,se,lcl,ucl)
+  names(results)<-c("psi","se","lcl","ucl")
+  return(results)
+  
+}
+
+# THIS FUNCTION TAKES TWO ARGUMENTS: THE POINT ESTIMATES AND THE 
+# STANDARD ERRORS FOR THESE POINT ESTIMATES
+imp_res<-RubinsRules(est.psi,est.se)
+imp_res
+```
+
+These results can be interpreted as our estimates of interest adjusted for missing data. 
+
+# MICE: g Computation
+
+When the bootstrap must be used to estimate standard errors, the approach to multiple imputation differs slightly. In effect, the only difference is that one sets the number of imputations to `m=1`, but incorporates the imputation procedure into the bootstrap loop. In our case, this can be accomplished as follows:
+
+```{r tidy = F, eval = T, warning=F, message=F, results="hide"}
+
+est.psi <- NULL
+set.seed(123)
+for(i in 1:20){ ## set the max number to 200!!
+  index <- sample(1:nrow(nhefs),nrow(nhefs),replace=T)
+  boot_dat <- nhefs[index,]
+  mice_imp <- mice(boot_dat,
+                 #seed=123,
+                 m=1,
+                 maxit=20,
+                 printFlag = F,
+                 method=ini$method,
+                 predictorMatrix=pMat)
+  imp_data <- complete(mice_imp,action="long")
+  modY <- lm(wt82_71 ~ qsmk+age+sex,data=imp_data)
+  pY1 <- mean(predict(modY,newdata=transform(imp_data,qsmk=1)))
+  pY0 <- mean(predict(modY,newdata=transform(imp_data,qsmk=0)))
+  est.psi <- rbind(est.psi,pY1-pY0)
+}
+
+```
+
+This for loop generates the following object:
+
+```{r tidy = F, eval = T}
+head(est.psi)
+```
+
+To get point estimates and standard errors, we simply need to take the mean of `est.psi` and the standard deviation of `est.psi`, which gives `r round(mean(est.psi),2)` and `r round(sd(est.psi),3)`, respectively.
+
+\newpage
+
+# References
