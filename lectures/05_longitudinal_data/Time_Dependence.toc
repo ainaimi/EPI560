@@ -1,0 +1,16 @@
+\contentsline {section}{\numberline {1}Classical versus Complex Longitudinal Data}{2}{section.1}%
+\contentsline {section}{\numberline {2}Example 1: Simple Methods for Correlated Data}{3}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Are Correlated Data a Problem?}{7}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Example Data with Correlated Outcomes}{8}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Handling Correlated Outcome Data}{10}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}Robust Standard Errors}{13}{subsection.2.4}%
+\contentsline {subsection}{\numberline {2.5}Clustered Bootstrap}{14}{subsection.2.5}%
+\contentsline {subsection}{\numberline {2.6}Summary of Results So Far}{19}{subsection.2.6}%
+\contentsline {section}{\numberline {3}Example 2: GEE and Mixed Effects Models for Correlated Data}{20}{section.3}%
+\contentsline {section}{\numberline {4}Example 3: G Methods for Complex Longitudinal Data}{22}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Assumptions}{24}{subsection.4.1}%
+\contentsline {section}{\numberline {5}Results}{26}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Standard Methods}{26}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}g Methods}{27}{subsection.5.2}%
+\contentsline {section}{\numberline {6}Concluding Remarks}{33}{section.6}%
+\contentsfinish 

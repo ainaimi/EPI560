@@ -1,0 +1,618 @@
+---
+title: "Analyzing Longitudinal Data: Robust Variance and Clustered Bootstrap"
+author: "Ashley I Naimi"
+date: "`r paste0('Fall ', format(Sys.Date(), '%Y'))`" #format(Sys.Date(), '%Y')
+urlcolor: blue
+bibliography: ref.bib
+link-citations: yes
+output: 
+    bookdown::pdf_book:
+      base_format: tint::tintPdf
+      toc: true
+      number_sections: true
+      includes:
+        in_header: ../misc/preamble.tex
+      #latex_engine: xelatex
+    html_document:
+      theme: readable
+      toc: true
+      toc_float: true
+      number_sections: true
+      css: ../misc/style.css
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+library(formatR)
+opts_chunk$set(tidy.opts=list(width.cutoff=60),tidy=TRUE)
+
+packages <- c( "data.table","tidyverse","ggplot2","ggExtra","formatR",
+               "gridExtra","skimr","here","RColorBrewer","survival", "mice", 
+               "lattice", "mvtnorm", "kableExtra")
+
+for (package in packages) {
+  if (!require(package, character.only=T, quietly=T)) {
+    install.packages(package, repos='http://lib.stat.cmu.edu/R/CRAN')
+  }
+}
+
+for (package in packages) {
+  library(package, character.only=T)
+}
+
+thm <- theme_classic() +
+  theme(
+    legend.position = "top",
+    legend.background = element_rect(fill = "transparent", colour = NA),
+    legend.key = element_rect(fill = "transparent", colour = NA)
+  )
+theme_set(thm)
+```
+
+\newpage
+\onehalfspacing
+
+# Classical versus Complex Longitudinal Data
+
+In this course, you have already encountered causal inference via potential outcomes when exposure under study is measured once (i.e., time fixed). In this lecture, we will focus on longitudinal, and complex longitudinal data, and the complications that may arise when dealing with such data. For clarity, let's define complex longitudinal data. We will be dealing with data from a cohort study, individuals sampled from a well-defined target population, and clear study start and stop times (i.e., closed cohort). Data from such a cohort are **longitudinal** when they are measured repeatedly over time.^[Another such form is when data are measured repeatedly within clusters defined by geographic space (e.g., census tracts) or some other grouping (e.g., hospitals). We will not be dealing with these data here, though the methods to handle such data are very similar and in some cases identical.]
+
+Different scenarios can lead to longitudinal data:
+
+1. exposure and covariates do not vary over time, but the study outcome is measured repeatedly in the same individual over follow up
+2. exposure and covariates vary over time and are measured repeatedly in the same individual over follow up, but the study outcome can only occur (and/or is measured) only once
+3. exposure and covariates vary over time and are measured repeatedly in the same individual over follow up, and the study outcome can occur more than once, and is measured repeatedly in the same individual over follow up.
+
+
+Scenario 1 is the classical situation that one might refer to as "longitudinal" or correlated (outcomes) data. In this scenario, researchers often use mixed effects models or generalized estimating equations to deal with these data, but one can sometimes use simpler methods depending on the problem's context.
+
+Repeated exposure, covariate, and (possibly) outcome measurement also leads to "longitudinal" data. But these data can result in something fundamentally different, which we refer to here as complex longitudinal data. 
+
+Repeated measurement over time creates the opportunity for us to capture complex causal relations between past and future covariates. Suppose we measure an exposure twice over follow-up, a covariate once, and the outcome at the end of follow-up (Figure 1). If we can assume that past exposure/covariate values do not affect future exposure/covariate values (usually a very risky assumption), we might not consider these data "complex," because we can use many standard methods to obtain correct results.
+
+```{r, out.width = "200px",fig.cap="Longitudinal data that might not be considered `complex' because there is no feedback between exposure and covariates.",echo=F}
+knitr::include_graphics(here("_images","F1.pdf"))
+```
+
+On the other hand, if past exposure/covariates affect future exposure/covariates in such a way that prior exposures or covariates confound future exposures (Figure 2), more advanced analytic techniques are needed. 
+
+```{r, out.width = "200px",fig.cap="Causal diagram representing the relation between anti-retroviral treatment at time 0 ($A_0$), HIV viral load just prior to the second round of treatment ($Z_1$), anti-retroviral treatment status at time 1 ($A_1$), the CD4 count measured at the end of follow-up ($Y$), and an unmeasured common cause ($U$) of HIV viral load and CD4.",echo=F}
+knitr::include_graphics(here("_images","F2.pdf"))
+```
+
+Here, we will learn why this distinction is important, and we'll cover a suite of methods that can be used to analyse data from each of these three scenarios.
+
+# Example 1: Simple Methods for Correlated Data
+
+Standard regression models typically rely on the assumption that data are independent and identically distributed. 
+
+Suppose you had data on the BMI of 20 individuals. Let's say that these 20 individuals are picked randomly from the adult population in the United States. 
+
+Let's say one of the BMI values is 19.8 kg/m$^2$. Could you use this information to tell me anything about the other BMI values in the data?
+
+Because of how these data were sampled, the answer to this question should be "no", you could not use this BMI to say anything about other BMI values in the data.
+
+However, if I change the story a little, and told you that 10 of these data points were randomly selected women from the US Olympic Weightlifting Team (which included the 19.8 kg/m$^2$ data point), and the remaining ten were randomly selected women from Greene County, Alabama (the county with presumably the highest BMIs in the nation). On the basis of this information, you now know something more about what these data look like. You know that the BMI values from the Olympic Weightlifting Team will be closer to each other, and lower, than those from Greene County, Alabama. In effect, the BMI values in each cluster of ten individuals are correlated. 
+
+<!-- Correlated data are very common in public health. Numerous examples exist: -->
+
+<!-- \begin{itemize} -->
+<!--   \item pregnancy outcomes (e.g., preterm birth) may be correlated if women contribute several pregnancies to the data -->
+<!--   \item surgery outcomes (e.g., hip replacement) may be correlated if surgeons perform several surgeries for different people in the data -->
+<!--   \item any outcome (e.g., cardiovascular, neurologic, renal, pregnancy, whatever) may be correlated if the outcomes are measured repeatedly over follow-up on the same person -->
+<!--   \item neighborhood based studies will typically be subject to correlated outcomes because of self-selection and shared features of the social and built environment -->
+<!-- \end{itemize} -->
+
+But what do we really mean when we say that outcomes are correlated? To help make some concrete points, let's simulate 20 individuals' BMI based on the scenario above (10 from the Olympic Team, and 10 from Green County). We can do this in R:
+
+```{r tidy = F, warning = F, message = F}
+
+set.seed(123)
+
+bmi_data <- tibble(ID = 1:15, 
+                   BMI=c(rnorm(5,mean=20,sd=1),
+                         rnorm(5,mean=34,sd=4),
+                         rnorm(5,mean=12,sd=2)),
+                   cluster=factor(c(rep(1,5),
+                                    rep(2,5),
+                                    rep(3,5))))
+
+bmi_data %>% print(n=3)
+
+```
+
+The code above simulates two groups of 100 BMI values. The first are generated from a normal distribution with a mean of 20 and standard deviation of 1 (the US Olympic Team). The second are generated from a normal distribution with a mean of 34 and a standard deviation of 4 (Greene County). The histogram in Figure 1 shows the distribution of BMI in these data. There's clearly an important separation between the BMI's from the two groups (by design). And while this simple example may not be very realistic, it will help us show precisely what we mean by the terms "correlated data", "clustered data" and the like.
+
+
+```{r,echo=F,message=F,warning=F,inlcude=F,results=F}
+
+plot1 <- ggplot(bmi_data) + geom_histogram(aes(BMI,group=cluster,fill=cluster)) + scale_y_continuous(expand=c(0,0)) + scale_x_continuous(expand=c(0,0)) + xlab("BMI (kg/m^2)") + ylab("Frequency")
+
+pdf(here("_images","correlated_outcomes_histogram.pdf"),width=4,height=3)
+plot1
+dev.off()
+
+```
+
+```{r, out.width = "300px",fig.cap="Histogram of Twenty BMI Values from Two Simulated Clusters",echo=F}
+knitr::include_graphics(here("_images","correlated_outcomes_histogram.pdf"))
+```
+
+So how can we evaluate clustering in our data? Typically, we use the **intracluster correlation coefficient (ICC)** to measure how correlated the data are in each cluster. Consider our hypothetical BMI data: 
+
+```{r tidy = F, warning = F, message = F}
+
+print(bmi_data, n = 1)
+
+```
+
+These data have a total of 20 observations equally divided into two clusters: cluster 1 and cluster 2. This means that we can, for example, compute at least three means: 
+
+- the mean BMI in all 20 individuals
+- the mean BMI in the 10 individuals in cluster 1
+- the mean BMI in the 10 individuals in cluster 2
+
+```{r tidy = F, warning = F, message = F}
+
+bmi_data$overall_mean <- mean(bmi_data$BMI)
+
+bmi_data$cluster_mean <- c(rep(mean(bmi_data[bmi_data$cluster == 1,]$BMI), 5),
+                           rep(mean(bmi_data[bmi_data$cluster == 2,]$BMI), 5),
+                           rep(mean(bmi_data[bmi_data$cluster == 3,]$BMI), 5))
+
+bmi_data$squares_within <- (bmi_data$BMI - bmi_data$overall_mean)^2
+
+bmi_data$squares_between <- (bmi_data$BMI - bmi_data$cluster_mean)^2
+
+kable(bmi_data)
+
+sum(bmi_data$squares_within)
+sum(bmi_data$squares_between)
+
+```
+
+With these three means, we can also compute three measures of variability: 
+
+```{r tidy = F, warning = F, message = F}
+
+## the sum of squares overall
+overall_variability <- sum((bmi_data$BMI - mean(bmi_data$BMI))^2)
+
+overall_variability
+
+## the sum of squares in cluster 1
+cluster1_variability <- sum((bmi_data[bmi_data$cluster == 1,]$BMI - 
+                               mean(bmi_data[bmi_data$cluster == 1,]$BMI))^2)
+
+cluster1_variability
+
+## the sum of squares in cluster 2
+cluster2_variability <- sum((bmi_data[bmi_data$cluster == 2,]$BMI - 
+                               mean(bmi_data[bmi_data$cluster == 2,]$BMI))^2)
+
+cluster2_variability
+
+## the sum of squares in cluster 3
+cluster3_variability <- sum((bmi_data[bmi_data$cluster == 3,]$BMI - 
+                               mean(bmi_data[bmi_data$cluster == 3,]$BMI))^2)
+
+cluster3_variability
+
+cluster1_variability + cluster2_variability + cluster3_variability
+
+overall_variability / (overall_variability + cluster1_variability + cluster2_variability + cluster3_variability)
+
+ggplot2::ggplot(bmi_data) +
+  geom_hline(yintercept = mean(bmi_data$BMI), color = "red") +
+  geom_segment(aes(x = 1, xend = 5, 
+                   y = mean(bmi_data[bmi_data$cluster==1,]$BMI),
+                   yend = mean(bmi_data[bmi_data$cluster==1,]$BMI)), 
+               color = "gray") +
+  geom_segment(aes(x = 6, xend = 10, 
+                   y = mean(bmi_data[bmi_data$cluster==2,]$BMI),
+                   yend = mean(bmi_data[bmi_data$cluster==2,]$BMI)), 
+               color = "gray") +
+  geom_segment(aes(x = 11, xend = 15, 
+                   y = mean(bmi_data[bmi_data$cluster==3,]$BMI),
+                   yend = mean(bmi_data[bmi_data$cluster==3,]$BMI)), 
+               color = "gray") +
+  geom_point(aes(y = BMI, 
+                 x = ID, 
+                 group = cluster, 
+                 color = cluster))
+
+```
+
+
+
+For a continuous outcome variable like BMI, the ICC can be obtained using ANOVA, which is easy in R:
+
+```{r tidy = F, warning = F, message = F}
+
+bmi_summary <- summary(aov(BMI ~ cluster,data=bmi_data))
+
+bmi_summary
+
+bmi_summary[[1]][1,2]
+
+bmi_summary[[1]][,2]
+
+icc <- bmi_summary[[1]][1,2]/sum(bmi_summary[[1]][,2])
+
+icc
+```
+
+This tells us that roughly `r round(icc,2)*100`\% of the variation in these data is occurring between clusters. This implies that within clusters, the magnitude of the variation is not as large. If, of all the variability in the data, most of it is occurring between clusters, then there's not much left over to occur within clusters. Subsequently, higher ICC values suggest more **similarity** within clusters than between clusters. In other words, individuals in these data look more similar to one another within each cluster, and are quite different from each other across clusters. This is what we would have expected given how we simulated the data.
+
+In contrast, look at what happens if we simulate a different dataset with the same type of individuals in each cluster (i.e., no clustering):
+
+```{r tidy = F, warning = F, message = F}
+
+set.seed(123)
+
+bmi_data <- tibble(BMI = rnorm(20,mean=25,sd=5),
+                   cluster=factor(c(rep(1,10),
+                                    rep(2,10))))
+
+head(bmi_data)
+tail(bmi_data)
+
+bmi_summary <- summary(aov(BMI ~ cluster,data=bmi_data))
+
+icc <- bmi_summary[[1]][1,2]/sum(bmi_summary[[1]][,2])
+
+icc
+```
+
+In the above code, we simulated all 20 values from the same normal distribution with a mean of 25 and a standard deviation of 5. In other words, there is no (statistical) difference in the individuals across clusters. In this case, we obtain an ICC value of `r round(icc,2)*100`\%. Finally, here's what happens if the cluster perfectly predicts BMI values:
+
+```{r tidy = F, warning = F, message = F}
+
+set.seed(123)
+
+bmi_data <- tibble(BMI=c(rep(25,10),rep(30,10)),
+                   cluster=factor(c(rep(1,10),
+                                    rep(2,10))))
+
+head(bmi_data)
+tail(bmi_data)
+
+bmi_summary <- summary(aov(BMI ~ cluster,data=bmi_data))
+
+icc <- bmi_summary[[1]][1,2]/sum(bmi_summary[[1]][,2])
+
+icc
+```
+
+In the above code, we generated a BMI value of exactly 25 for all ten individuals in the first cluster, and a BMI value of exactly 30 for all ten individuals in the second cluster. Thus, cluster can perfectly predict the BMI value for everyone (i.e., there is no random variation), and we thus get an ICC value of `r round(icc,2)*100`\%.
+
+## Are Correlated Data a Problem?
+
+The answer to the question of whether correlated data are a problem depends entirely on the research question, and we are going to discuss the issues next. First, it's important to note that when we say "correlated data", what we typically refer too is correlated \emph{outcome} data.
+
+Specifically, suppose that your exposure of interest or your confounder adjustment set was highly correlated across several clusters, but the outcome you are studying is not correlated across these or any other clusters. If this is the case, you need not worry about correlated data. The problems with correlated data arise when the \emph{outcome} under study is correlated. The specific "location" where this problem arises is in the process of trying to quantify the parameters of a model that we wish to fit. Take, for example, the following linear model
+
+$$ E( Y \mid X, C ) = \beta_0 + \beta_1 X + \beta_2 C $$
+
+Let's assume that in this example, $Y$ represents BMI, $X$ is some measure of diet (e.g., eat your vegetables versus don't eat your vegetables), and $C$ is a confounder, and that we wanted to fit this model to the made up data in Table 1 (with only three observations, for simplicity):
+
+\begin{table}
+\caption{Some made up data for our likelihood function example}
+\begin{tabular}{lrrr}
+\hline
+ID  & BMI ($Y$) & Vegetables ($X$) & Confounder ($C$) \\
+\hline
+1 & 21.0 & 0 & 1 \\
+2 & 32.7 & 1 & 0 \\
+3 & 25.8 & 1 & 1 \\
+\hline
+\end{tabular}
+\end{table}
+
+Typically, the objective here would be to get an estimate $\beta_1$, which we could interpret as a difference in BMI averages among those who eat their vegetables versus those who don't. An important statistical consideration is HOW we get these estimates. Many approaches exist, with one very common approach being maximum likelihood estimation.
+
+:::{.rmdnote data-latex="{dive}"}
+
+__Deeper Dive__:
+
+|               In introductory probability, you may have learned that the joint probability of two *independent* events [often denoted $P(A,B)$, and read "the probability of $A$ and $B$] is equal to the product of their individual probabilities:
+
+$$ P(A,B) = P(A)\times P(B) $$
+
+If, however, $A$ and $B$ are correlated, the above equation is no longer true. Instead, we'd have to use a more complicated form:
+
+$$ P(A,B) = P(A \mid B) \times P(B) $$
+:::
+
+After choosing a distribution and link function, maximum likelihood estimation proceeds by specifying a likelihood for each person in the data, and multiplying all of these individual likelihoods together:
+
+$$ \underset{\text{joint likelihood}}{\underbrace{L(y; \beta)}} = \overset{\text{product of individual likelihoods}}{\overbrace{L(21.0; \beta_0, \beta_2) \times L(32.7; \beta_0,\beta_1) \times L(25.8; \beta_0,\beta_1,\beta_2)}}  $$
+What your computer software program (i.e., SAS, Stata, R, other) does is find values for $\beta_1$, $\beta_2$, and $\beta_3$ in the product of likelihoods that make joint likelihood as large as it can be with the data we have.
+
+Though likelihoods are not probabilities, the two do share some properties [@Pawitan2001]. Specifically, if the outcomes are correlated, you cannot break up the joint likelihood into the product of individual likelihoods as in the equation above. 
+
+In the next sections, we're going to discuss some of the more practical implications of the problem that result from correlated outcomes. Using real data, we going to look at some different ways we can address the problems that arise. 
+
+## Example Data with Correlated Outcomes
+
+Here, we'll introduce the datasets we'll be using to illustrate some methods for dealing with correlated data. 
+
+The first example dataset is from a cluster randomized trial example in which 10 practices were randomly assigned to two treatment groups (patient centered care and normal care). Body mass index ($kg/m^2$) measured at year 1 of follow-up was the outcome. These data are available and described in @Campbell2006, but I obtained them from @Mansournia2020:
+
+```{r, warning=F, message=F}
+
+cluster_trial <- read_csv(here("data","cluster_trial_data_bmi.csv"))
+
+cluster_trial %>% print(n=5)
+
+```
+
+The second example dataset is from a longitudinal (repeated outcome measure) study of the effect of a lead chelating agent (succimer) on blood lead levels in children aged 12-33 months at enrollment. The data represent a random subset of 100 children from the original sample. Children were randomized at baseline to succimer or placebo, and blood lead levels were measured at weeks 0 (baseline), 1, 4, and 6. These data are available online,^[[https://content.sph.harvard.edu/fitzmaur/ala/tlc.txt](https://content.sph.harvard.edu/fitzmaur/ala/tlc.txt)] and are described in @Fitzmaurice2004:
+
+```{r, warning=F, message=F}
+
+lead_trial <- read_csv(here("data","longitudinal_lead_data.csv"))
+
+lead_trial <- gather(lead_trial, week, lead_value, L0:L6, factor_key=TRUE) %>% 
+  mutate(week=as.numeric(gsub("L", "", week))) %>% 
+  arrange(ID,week)
+
+lead_trial %>% print(n=8)
+
+```
+
+We'll exclusively rely on the BMI data in this lecture (we won't have time to demonstrate with the longitudinal data). However, everything that I show you here can apply equivalently to either the BMI data or the lead data. If you are particularly interested, I'd encourage you to try to do the same analyses we present below with the longitudinal data.
+
+## Handling Correlated Outcome Data
+
+We're going to focus today primarily on the BMI data. As a starting point, let's estimate the ICC to evaluate how correlated these outcomes are: 
+
+```{r tidy = F, warning = F, message = F}
+
+cluster_trial
+
+bmi_summary <- summary(aov(BMI ~ as.factor(practice),
+                           data=cluster_trial)) # type II SS
+
+icc <- bmi_summary[[1]][1,2]/sum(bmi_summary[[1]][,2])
+
+icc
+
+```
+
+With the BMI data, we get an intracluster correlation coefficient estimate of `r round(icc,2)*100` indicating high levels of clustering in each practice. 
+
+So, with this high level clustering, the question is **what should we do about it?**
+
+In the next sections, we'll explore what happens when we **ignore** clustered data, and how our results/conclusions compare when we use different methods to account for the clustering in the BMI trial data. These methods will include:
+
+- Robust Standard Errors and Bootstrapping
+- Generalized Estimating Equations
+- Mixed Effects Models
+
+The order of the techniques presented here is important. First, robust standard errors and (sometimes) the bootstrap are the **easiest** methods to implement when needing to deal with correlated outcomes. Generalized estimating equations are more complicated, and mixed effects models are most complicated. Second, the **assumptions** required for each of these methods to be valid generally increase in scope as we move down the list: robust standard errors and bootstrapping require generally fewer assumptions, while mixed effects models require the strongest set of assumptions.
+
+Let's proceed with the clustered BMI data analysis. Let's conduct an analysis where we simply ignore the fact that the outcomes are correlated. We can fit a linear regression model, regressing BMI against the treatment. In R, we can do this using the `lm()` or `glm` functions. We can also use the `coefci` function from the `lmtest` package to easily get confidence intervals. 
+
+```{r tidy = F, warning=F, message=F}
+
+library(lmtest)
+
+mod1 <- glm(BMI ~ treatment, 
+            data=cluster_trial,
+            family=gaussian(link = "identity"))
+
+coeftest(mod1)
+
+coefci(mod1, level = 0.95)
+
+```
+
+<!-- \noindent In SAS, you can conduct the same analysis using `PROC GENMOD`: -->
+
+<!-- ``` -->
+<!-- PROC GENMOD data=cluster_trial ;  -->
+<!-- class treatment; -->
+<!-- model BMI = treatment / dist=gaussian link=identity; -->
+<!-- run; -->
+<!-- ``` -->
+
+<!-- \noindent And in stata, you can use glm: -->
+
+<!-- ``` -->
+<!-- glm BMI treatment, family(gaussian) link(identity) -->
+<!-- ``` -->
+
+The above analysis tells us that the difference in average BMI between the patient centered care and the normal care groups is `r summary(mod1)$coefficients[2,1]` $kg/m^2$. The standard error for this estimate is `r round(summary(mod1)$coefficients[2,2],2)`, which results in a p-value of `r round(summary(mod1)$coefficients[2,4],2)` and 95\% normal-interval (Wald) confidence intervals of `r round(coefci(mod1, level = 0.95)[2,],2)`. These results are what we obtain when we ignore the clustering. 
+
+## Robust Standard Errors
+
+The above analysis just ignores the clustering of BMI across practices in the data. The easiest way to account for correlated outcomes, in this case due to clustering across practices, is to use robust or sandwich standard errors. There are several ways to do this in R. We'll use the `sandwich` package to implement these standard errors, and the `lmtest` package to get confidence intervals that can be modified to account for clustering.
+
+```{r tidy = F, message = F, warning = F}
+
+library(lmtest)
+library(sandwich)
+
+mod1 <- glm(BMI ~ treatment, 
+            data = cluster_trial,
+            family = gaussian(link = "identity"))
+
+coeftest(mod1, vcov=vcovCL(mod1,
+                           type = "HC0", 
+                           cadjust = F,
+                           cluster = cluster_trial$practice))
+
+coefci(mod1, vcov=vcovCL(mod1, 
+                         type = "HC0", 
+                         cadjust = F,
+                         cluster = cluster_trial$practice), 
+       level = 0.95)
+
+```
+
+<!-- \noindent In SAS, a robust variance estimator can be implemented by adding a "repeated" statement to `PROC GENMOD`: -->
+
+<!-- ``` -->
+<!-- PROC GENMOD data=cluster_trial ;  -->
+<!-- class treatment practice; -->
+<!-- model BMI = treatment / dist=gaussian link=identity; -->
+<!-- repeated subject=practice / type=ind; -->
+<!-- run; -->
+<!-- ``` -->
+
+<!-- The above SAS code allows you to implement the robust variance estimator. It is also the same type of code you'd use to fit generalized estimating equations, and we'll talk about some issues with this below. -->
+
+<!-- In stata, the robust variance estimator can easily be used by adding the `vce(robust)` option to the glm statement: -->
+
+<!-- ``` -->
+<!-- glm BMI treatment, family(gaussian) link(identity) vce(robust) -->
+<!-- ``` -->
+<!-- ______________________________________________________________________________________________ -->
+<!-- \begin{quotation} -->
+<!-- \noindent \textsc{Side Note:} If you run the same robust variance method in Stata and R, you may find that you get very different results. This is because Stata uses a small sample adjustment for their GLM function, in which the standard sandwich variance (obtained via the vce(robust) command) is scaled according to the sample size and the number of parameters in the model. The default in R uses no such adjustment. The specific relation between the sandwich SE from Stata and R (specifying HC1 when using the latter) is: -->
+
+<!-- $$ SE_{sandwich, Stata} = SE_{sandwich, R} \times \sqrt{(n-k)/(n-1)} $$ -->
+
+<!-- where $n$ is the sample size, and $k$ is the number of parameters in the model. More information about the relation between robust variance in Stata and R can be found here: https://stats.stackexchange.com/questions/458159/robust-variance-in-stata-and-r -->
+<!-- \end{quotation} -->
+
+<!-- ______________________________________________________________________________________________ -->
+
+What we see when we use methods to account for clustering is that the it is really the standard errors that are adjusted. This is particularly true when we use the robust variance estimator, or (as we will see) the bootstrap. It's also true with generalized estimating equations (GEE), but in the section on GEE, we'll also discuss how it's a bit more complicated.
+
+It's important to discuss what can go wrong when we use the robust variance estimator. In particular, the most important threat to the validity of the robust variance estimator is small sample sizes. In our case, it's probably not a good idea to use the robust variance estimator we did (HC3). In R, small sample adjustments are implemented by default when using the `vcovCL()` function [@Zeileis2020]. Unfortunately, all of the methods we discuss here (robust variance, bootstrap, GEE, and mixed effects models) require "large" samples to get good performance.^[This is almost universally true about any estimator in any setting. Ultimately, it depends on the complexity of the model/question that you have.] 
+
+There are also many different variations of the robust variance estimator. These variations are typically referred to as HC, HC1, HC2, ... HC5. If you're interested, there is a paper by Mansournia et al in the IJE that explains these differences [@Mansournia2020], and some more general features and properties of the robust variance estimator. 
+
+## Clustered Bootstrap
+
+Instead of using the robust standard error, a slightly more technical option is to use the **clustered** bootstrap. Essentially, the simplest clustered bootstrap approach proceeds in 4 steps:
+
+1. Resample the data, with replacement, at the cluster level
+2. Estimate the parameter of interest (in our case, the mean difference in BMI) and save the estimate
+3. Repeat steps 1 and 2, 200 times
+4. Take the standard deviation of all 200 estimates as the standard error of the estimate in the original (unsampled) data
+
+In R, implementing the clustered bootstrap requires user written code to obtain the resampled data.^[The `boot` package in R provides a range of boostrap estimators, but not for clustered data.] Here is some code that I've written in R to do a clustered bootstrap analysis:
+
+```{r tidy = F, warning = F, message = F}
+
+mod1$coefficients
+
+seed <- 123
+set.seed(seed)
+
+boot_func <- function(boot_num){
+  
+  clusters <- as.numeric(names(table(cluster_trial$practice)))
+  index <- sample(1:length(clusters), length(clusters), replace=TRUE)
+  bb <- table(clusters[index])
+  boot <- NULL
+  
+  for(zzz in 1:max(bb)){
+      cc <- cluster_trial[cluster_trial$practice %in% names(bb[bb %in% c(zzz:max(bb))]),]
+      cc$b_practice<-paste0(cc$practice,zzz)
+      boot <- rbind(boot, cc)
+  }
+  
+  mod1 <- glm(BMI ~ treatment, data=boot,family=gaussian(link = "identity"))
+  res <- cbind(boot_num,coef(mod1)[2])
+  return(res)
+}
+
+boot_res <- lapply(1:750, function(x) boot_func(x))
+boot_res <- do.call(rbind,boot_res)
+
+head(boot_res)
+tail(boot_res)
+
+mean(boot_res[,2])
+sd(boot_res[,2]) ## standard error of the treatment estimate
+  
+```
+
+We can then use the standard normal-interval (Wald) estimator to get 95\% confidence intervals with this bootstrapped standard error:
+
+```{r tidy = F}
+
+LCL <- mod1$coefficient[2] - 1.96*sd(boot_res[,2])
+UCL <- mod1$coefficient[2] + 1.96*sd(boot_res[,2])
+
+mod1$coefficient[2]
+LCL
+UCL
+
+```
+
+What the above bootstrap code does is select, with replacement, practices in the `cluster_trial` data. Specifically, as we saw above, here's what the `cluster_trial` data look like:
+
+```{r}
+
+head(cluster_trial)
+
+table(cluster_trial$practice)
+
+```
+
+The bootstrap code above randomly selects 10 practices from these data to create a "bootstrap resample". This bootstrap resample will contain 10 practices, but in the resample, some of the original practices may not be present, while others may be in the resample more than once. For example:
+
+```{r tidy = F, warning = F, message = F}
+
+clusters <- as.numeric(names(table(cluster_trial$practice)))
+
+index <- sample(1:length(clusters), length(clusters), replace=TRUE)
+
+bb <- table(clusters[index])
+boot <- NULL
+
+for(zzz in 1:max(bb)){
+    cc <- cluster_trial[cluster_trial$practice %in% names(bb[bb %in% c(zzz:max(bb))]),]
+    cc$b_practice<-paste0(cc$practice,zzz)
+    boot <- rbind(boot, cc)
+}
+
+head(boot)
+
+table(boot$b_practice)
+
+```
+
+By resampling this way, the "within-practice" correlation structure is respected, and we are thus able to obtain standard errors that appropriately account for clustering.
+
+Again, it's important to discuss what can go wrong when we use a clustered bootstrap estimator. In my experience, many applied researchers are under the impression that the bootstrap does not require large samples to be valid. While there is simulation evidence that shows performance of the bootstrap is certainly better than the robust variance estimator [e.g., @Cameron2008], the theoretical validity of the bootstrap still rests on large sample (i.e.,  asymptotic) arguments.  Nevertheless, in applied settings similar to what we encountered in the `cluster_trial` data (specifically, when there are fewer then 50 clusters), my preference would be to use the clustered bootstrap.
+
+Similar to the robust variance estimator, there are also many different variations of the bootstrap variance estimator. Among the most important versions of these is the bias-corrected bootstrap, and the bias-corrected and accelerated bootstrap [@Davison1997]. These two variations have been shown to perform better than the normal interval boostrap (or the percentile bootstrap) in a range of settings. Unfortunately, these are much more complicated to code by hand. Thus, for the time being, I almost always rely on the normal-interval bootstrap when dealing with clustered data.
+
+## Summary of Results So Far
+
+```{r tidy = F, warning = F, message = F}
+
+res <- data.frame(
+  Version = c("Uncorrected", "Cluster Robust", "Cluster Bootstrap"),
+  Estimate = c(coeftest(mod1)[2,1], 
+               coeftest(mod1)[2,1], 
+               coeftest(mod1)[2,1]),
+  Std.Err = c(coeftest(mod1)[2,2], 
+              coeftest(mod1, vcov=vcovCL(mod1,type = "HC0", 
+                                         cadjust = F,
+                                         cluster = cluster_trial$practice))[2,2],
+              sd(boot_res[,2])),
+  LCL = c(coefci(mod1, level = 0.95)[2,1], 
+          coefci(mod1, vcov=vcovCL(mod1,type = "HC0",  
+                                   cadjust = F,
+                                   cluster = cluster_trial$practice), level = 0.95)[2,1], 
+          LCL),
+  UCL = c(coefci(mod1, level = 0.95)[2,2], 
+          coefci(mod1, vcov=vcovCL(mod1,type = "HC0",  
+                                   cadjust = F,
+                                   cluster = cluster_trial$practice), level = 0.95)[2,2], 
+          UCL)
+)
+
+knitr::kable(res, digits = 2) 
+
+```
+
+
+
+# References

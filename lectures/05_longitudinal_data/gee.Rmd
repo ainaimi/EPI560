@@ -1,0 +1,201 @@
+---
+title: "Generalized Estimating Equations"
+author: "Ashley I Naimi"
+date: "`r paste0('Spring ', 2024)`" #format(Sys.Date(), '%Y')
+urlcolor: blue
+bibliography: ref.bib
+link-citations: yes
+output: 
+    bookdown::pdf_book:
+      base_format: tint::tintPdf
+      toc: true
+      number_sections: true
+      includes:
+        in_header: ../../misc/preamble.tex
+      latex_engine: xelatex
+    html_document:
+      theme: readable
+      toc: true
+      toc_float: true
+      number_sections: true
+      css: ../../misc/style.css
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+library(formatR)
+opts_chunk$set(tidy.opts=list(width.cutoff=60),tidy=TRUE)
+
+packages <- c( "data.table","tidyverse","ggplot2","ggExtra","formatR",
+               "gridExtra","skimr","here","RColorBrewer","survival")
+
+for (package in packages) {
+  if (!require(package, character.only=T, quietly=T)) {
+    install.packages(package, repos='http://lib.stat.cmu.edu/R/CRAN')
+  }
+}
+
+for (package in packages) {
+  library(package, character.only=T)
+}
+
+remotes::install_github("rstudio/fontawesome")
+
+library(fontawesome)
+
+thm <- theme_classic() +
+  theme(
+    legend.position = "top",
+    legend.background = element_rect(fill = "transparent", colour = NA),
+    legend.key = element_rect(fill = "transparent", colour = NA)
+  )
+theme_set(thm)
+```
+
+\newpage
+\onehalfspacing
+
+# Introduction
+
+Generalized estimating equations are a technique for handling correlated outcome data that were introduced in 1986. The original paper introducing these methods was published in \emph{Biometrika} by Kung Yi Liang and Scott Zeger [@Liang1986]. They proposed an "extension" to generalized linear models that enables handling correlated outcomes.
+
+But why was there a need to "extend" GLMs in the first place? To illustrate, suppose we had a dataset of 400 observations with one continuous outcome and one 50:50 randomized binary exposure. For example, let's look at the first ten observations of a dataset from a double-blind placebo controlled trial to see if a chemical chelating agent can successfully lower blood lead concentrations in children aged 12 to 36 months, with a total of 400 observations:
+
+```{r, warning = F, message = F}
+lead_data <- read_table("https://content.sph.harvard.edu/fitzmaur/ala/tlc.txt", col_names = F, skip=29)
+names(lead_data) <- c("ID", "treatment", "L0", "L1", "L4", "L6") 
+
+lead_data <- gather(lead_data, week, lead_value, L0:L6, factor_key=TRUE) %>% 
+  mutate(week=as.numeric(gsub("L", "", week)),
+         treatment=as.numeric(treatment=="A")) %>% 
+  arrange(runif(400)) %>% select(treatment, lead_value)
+
+lead_data %>% print(n=10)
+```
+
+Suppose, without knowing any more than this, we want to use GLMs to estimate the effect of treatment assignment on the outcome. We might fit a GLM that looks something like this:
+
+$$ Y_i = \beta_0 + \beta_1 X_i + \epsilon_i$$
+where $\epsilon_i \sim \mathcal{N}(0, \sigma^2)$, and use maximum likelihood estimation to quantify the parameters $(\beta_0, \beta_1)$. The R code for this would look something like:
+
+```{r, warning = F, message = F}
+
+mod1 <- glm(lead_value ~ treatment, data=lead_data, family = gaussian("identity"))
+
+summary(mod1)$coefficients
+
+```
+
+which suggests that, relative to placebo, the chemical chelating agent reduces blood lead concentrations by `r round(coef(mod1)[2], 2)` $\mu g/dL$, with a standard error of this estimate of `r round(summary(mod1)$coefficients[2,2],2)` $\mu g/dL$. With this point estimate and standard error, we could construct a whole set of inferential statistics, such as 95\% confidence intervals and p-values, each of which have specific and mathematically rigorous interpretations. 
+
+For example, we might want to interpret the p-value for the treatment effect coefficient from the model and state that, if the null hypothesis were, in fact, true, the probability of observing a result as extreme as `r round(coef(mod1)[2], 2)` $\mu g/dL$ or more extreme is less than 0.0001.
+
+However, in order for this interpretation to work, the errors $\epsilon_i$ (or, equivalently, the outcomes $Y_i$ conditional on $X_i$) must be **independent** across all individuals $i$. If this independence assumption doesn't hold, the math proving that maximum likelihood estimation "works" breaks down, as does the interpretation of our inferential statistics. As a consequence, we can no longer trust the results of an empirical analysis in the ways that we'd like too.
+
+Unfortunately for us, this is a problem with our lead data. Although we have 400 observations in this dataset, they come from a total of 100 children. The blood lead concentrations were measured four times on each child, at week 0, 1, 4, and 6:
+
+```{r, warning = F, message = F}
+
+lead_data0 <- read_table("https://content.sph.harvard.edu/fitzmaur/ala/tlc.txt", col_names = F, skip=29)
+names(lead_data0) <- c("ID", "treatment", "L0", "L1", "L4", "L6") 
+
+lead_data <- gather(lead_data0, week, lead_value, L0:L6, factor_key=TRUE) %>% 
+  mutate(week=as.numeric(gsub("L", "", week)),
+         treatment=as.numeric(treatment=="A")) %>% 
+  arrange(ID,week)
+
+lead_data %>% print(n=10)
+
+mean(lead_data$treatment)
+
+lead_data %>% 
+  group_by(treatment) %>% 
+  summarize(meanLead=mean(lead_value),
+            sdBMI=sd(lead_value),
+            numTx=length(lead_value))
+```
+
+This suggests that within each individual child, the measurements are likely correlated. We can explore this informally using variance-covariance matrices, correlation matrices, or intracluster correlation coefficients:
+
+```{r, warning = F, message = F}
+
+lead_data0 <- read_table("https://content.sph.harvard.edu/fitzmaur/ala/tlc.txt", col_names = F, skip=29)
+names(lead_data0) <- c("ID", "treatment", "L0", "L1", "L4", "L6") 
+
+lead_data0 <- lead_data0 %>% select(L0,L1,L4,L6)
+
+cov(lead_data0)
+
+cor(lead_data0)
+
+## compute intracluster correlation coefficient
+lead_summary <- summary(aov(lead_value ~ as.factor(ID),data=lead_data)) # type II SS
+
+icc <- lead_summary[[1]][1,2]/sum(lead_summary[[1]][,2])
+
+icc
+
+```
+
+# Generalized Estimating Equations
+
+Generalized estimating equations (GEEs) are another method we can use to adjust our generalized linear model to account for a lack of independence, and recover the interpretation of the p-values, confidence intervals, and standard errors of interest. This was the focus of the paper by Liang and Zeger [@Liang1986], who originally introduced the concept. Their "extension" did just that: adjusted the GLM by incorporating information on the correlation structure within individual units. This extension generalized the GLM using a theory of estimating equations, and the new method was hence named generalized estimating equations.
+
+The main distinction between deploying GEEs versus GLMs is that, in the former, we have to consider the structure of the correlation within units in our data. Several correlation structures exist, and include things like the independence, exchangeable, unstructured, or variations of autoregression correlation matrices. In R, these methods can be deployed using the `geepack` library. 
+
+Let's again use our BMI data as we did with the robust variance and clustered bootstrap above. These data can then be analyzed using the `geeglm` functions in the `geepack` library:
+
+```{r, warning = F, message = F}
+
+#install.packages("geepack")
+library(geepack)
+
+## use GEE
+mod1_ind <- geeglm(lead_value ~ treatment, id=factor(ID), data=lead_data, corstr="independence")
+summary(mod1_ind)#$coefficients
+
+mod1_exch <- geeglm(lead_value ~ treatment, id=factor(ID), data=lead_data, corstr="exchangeable")
+summary(mod1_exch)#$coefficients
+
+mod1_unstr <- geeglm(lead_value ~ treatment, id=factor(ID), data=lead_data, corstr="unstructured")
+summary(mod1_unstr)#$coefficients
+
+```
+
+# Conclusion
+
+As a tool for discussion and consideration, here is a table showing the treatment effect estimates and standard errors from each of the models we've fit above:
+
+```{r, warning = F, message = F}
+
+res_tab <- rbind(
+  summary(mod1)$coefficients[2,c(1,2)],
+  summary(mod1_ind)$coefficients[2,c(1,2)],
+  summary(mod1_exch)$coefficients[2,c(1,2)],
+  summary(mod1_unstr)$coefficients[2,c(1,2)]
+)
+
+row.names(res_tab) <- c("GLM", "GEE, Independence", "GEE, Exchangeable", "GEE, Unstructured")
+
+kable(res_tab)
+
+```
+
+
+
+
+<!-- Let's say we can assume that the outcome is distributed as a Gaussian random variable:  -->
+
+<!-- $$f(y) = \frac{1}{\sigma \sqrt{2\pi}} \exp{ \left \{ - \frac{1}{2} \left ( \frac{y - \mu}{\sigma} \right )^2 \right \} }$$ -->
+<!-- where $\mu$ is defined as the mean of $Y$, and $\sigma$ is the standard deviation of $Y$. Because we're interested in the difference in the mean of $Y$ among the treated versus controls, we can re-define $\mu = \beta_0 + \beta_1 X$, where $X$ denotes the treatment indicator. -->
+
+<!-- The goal now is to estimate the parameters $(\beta_0, \beta_1)$ using our data, and the Gaussian pdf equation above. We can do this using (e.g.) maximum likelihood estimation. Let's write the same Gaussian equation above, but with a slight difference: -->
+
+<!-- $$ L(y ; \beta_0, \beta_1) = \frac{1}{\sigma \sqrt{2\pi}} \exp{ \left \{ - \frac{1}{2} \left ( \frac{y - \mu}{\sigma} \right )^2 \right \} } $$ -->
+
+
+
+
+\newpage
+
+# References

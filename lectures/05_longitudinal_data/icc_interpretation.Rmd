@@ -1,0 +1,19 @@
+---
+title: "Interpreting the Intracluster Correlation Coefficient (ICC): Extended Example"
+author: "Ashley I Naimi"
+date: "`r paste0('Spring ', 2024)`" #format(Sys.Date(), '%Y')
+urlcolor: blue
+link-citations: yes
+output: pdf_document
+---
+
+# Example Scenario
+
+Imagine a scenario where we collect data on the systolic blood pressure of 15 individuals. Imagine further that, of these 15, five came from one of three different clinic practices in different neighborhoods in a given location. These data might look something like this:
+
+```{r tidy = F, warning = F, message = F}
+
+sbp <- 
+
+```
+
