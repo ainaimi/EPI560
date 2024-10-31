@@ -1,0 +1,122 @@
+---
+title: "Maximum Likelihood Estimation for GLMs"
+author: "Ashley I Naimi"
+date: "`r paste0('Fall ', format(Sys.Date(), '%Y'))`" #format(Sys.Date(), '%Y')
+urlcolor: blue
+bibliography: ref.bib
+link-citations: yes
+output: 
+    bookdown::pdf_book:
+      base_format: tint::tintPdf
+      toc: true
+      number_sections: true
+      includes:
+        in_header: ../misc/preamble.tex
+      #latex_engine: xelatex
+    html_document:
+      theme: readable
+      toc: true
+      toc_float: true
+      number_sections: true
+      css: ../misc/style.css
+---
+
+```{r setup, include=FALSE}
+
+pacman::p_load(
+  rio,          
+  here,         
+  skimr,        
+  tidyverse,     
+  lmtest,
+  sandwich,
+  broom,
+  plotly
+  )
+
+thm <- theme_classic() +
+  theme(
+    legend.position = "top",
+    legend.background = element_rect(fill = "transparent", colour = NA),
+    legend.key = element_rect(fill = "transparent", colour = NA)
+  )
+theme_set(thm)
+
+```
+
+
+
+```{r tidy = F, warning = F, message = F, echo = F}
+
+## import some datasets
+
+bmi_cluster <- read_csv(here("data", "cluster_trial_data_bmi.csv"))
+
+lead_data <- read_csv(here("data", "longitudinal_lead_data.csv"))
+
+ships_data <- read_csv(here("data", "longitudinal_ships.csv"))
+
+wheeze_data <- read_csv(here("data", "longitudinal_wheeze.csv"))
+
+
+set.seed(123)
+n = 50
+x <- rbinom(n, size = 1, prob = .5)
+y <- rpois(n, lambda = exp(2 + log(1.5)*x))
+
+sim_data <- data.frame(y,x)
+
+head(sim_data)
+
+hist(y)
+
+## FIML for Poisson Regression: Page 23 Hardin and Hilbe GEE book
+
+mle_poisson <- function(){
+  
+}
+
+```
+
+\newpage
+
+# Estimating the mean of a Poisson Random Variable using MLE
+
+How can we use maximum likelihood estimation to estimate the mean of a random variable assumed to be drawn from a Poisson distribution? Let's start with some data from 15 hypothetical individuals:
+
+```{r tidy = F, warning = F, message = F, echo = F}
+
+set.seed(123)
+
+n = 15
+y <- rpois(n, lambda = exp(2))
+
+y
+
+```
+
+If we assume `y` is drawn from a Poisson distribution, can we use this to estimate the mean of this distribution? Let's start with writing out the probability density function of a Poisson random variable:
+
+$$f(y\mid \lambda) = \frac{e^{-\lambda}\lambda^{y}}{y!}$$
+
+This equation gives us the value of the distribution's density for a given value of the variable `y` under a specific value of the mean $\lambda$. For example, let's assume the mean value is $\lambda = 2.5$. This means that the probability density for our first observation with a realized value of $y = 6$ is:
+
+$$f(y\mid \lambda) = \frac{e^{-2.5}2.5^{6}}{6!} = \frac{20}{720} = 0.0278$$
+
+That is, if the mean was 2.5, then the probability of drawing a Poisson random variable with a value of 6 is 0.0278. 
+
+We can ask a slightly different question, what's the probability of drawing a value of 6 and a value of 9, which are the values for the first two people in our sample. Recall that for two independent random variables A and B:
+
+$$P(A, B) = P(A)P(B) $$
+
+In the context of our Poisson example, this translates to:
+
+$$f(y_1, y_2 \mid \lambda) = \frac{e^{-2.5}2.5^{6}}{6!} \times \frac{e^{-2.5}2.5^{9}}{9!} = \frac{20}{720} \times \frac{313}{362880} = 0.0278 \times 0.000863 = 2.4 \times 10^{-5}$$
+
+which means that, if the mean of our distribution was, in fact, 2.5, the probability of observing a 6 and a 9 is $2.4 \times 10^{-5}$.
+
+More generally, if the observations in the sample are independent, we can come up with an equation that gives us the probability of observing all the specific values in our data. This can be written as:
+
+$$f(y_1, y_2, \dots , y_{15} \mid \lambda) = \prod_{i = 1}^{15} \frac{e^{-\lambda}\lambda^{y_i}}{y_i!}$$
+
+We could compute this joint probability, but we don't know the actual value of $\lambda$. 

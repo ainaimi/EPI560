@@ -1,0 +1,318 @@
+---
+title: "Regression in Time-Fixed Settings: Part 4"
+author: "Ashley I Naimi"
+date: "Spring 2022"
+urlcolor: blue
+bibliography: ref.bib
+link-citations: yes
+output: 
+    bookdown::pdf_book:
+      base_format: tint::tintPdf
+      toc: true
+      number_sections: true
+      includes:
+        in_header: "../misc/preamble.tex"
+      latex_engine: xelatex
+    html_document:
+      theme: readable
+      toc: true
+      toc_float: true
+      number_sections: true
+      css: "../misc/style.css"
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+opts_chunk$set(tidy.opts=list(width.cutoff=40),tidy=TRUE)
+
+packages <- c( "data.table","tidyverse","ggplot2","ggExtra","formatR",
+               "gridExtra","skimr","here","RColorBrewer", "broom")
+
+for (package in packages) {
+  if (!require(package, character.only=T, quietly=T)) {
+    install.packages(package, repos='http://lib.stat.cmu.edu/R/CRAN',dependencies=T)
+  }
+}
+
+for (package in packages) {
+  library(package, character.only=T)
+}
+
+remotes::install_github("rstudio/fontawesome")
+
+library(fontawesome)
+
+thm <- theme_classic() +
+  theme(
+    legend.position = "top",
+    legend.background = element_rect(fill = "transparent", colour = NA),
+    legend.key = element_rect(fill = "transparent", colour = NA)
+  )
+theme_set(thm)
+```
+
+\newpage
+\onehalfspacing
+
+
+# Right Hand Side
+
+In this set of notes, we will cover some considerations and techniques in specifying the right hand side of a regression model. This is sometimes referred to as "coding" the variables in the model, or "feature engineering" (in the machine learning literature). To illustrate some of the issues, we will use the NHEFS data where we seek to estimate the association between sex and smoke intensity adjusted for age and marital status:
+
+```{r, warning = F, message = F}
+nhefs <- read_csv(here("data","nhefs_data.csv"))
+```
+
+Smoking intensity is distributed as follows:
+```{r,out.width = "8cm",fig.cap="Distribution of smoking intensity in the NHEFS data.",echo=F,message=F,warning=F}
+  ggplot(nhefs) + geom_histogram(aes(smokeintensity),bins=20) + ggtitle("Distribution of Age")
+```
+
+The age variable is distributed as follows:
+```{r,out.width = "8cm",fig.cap="Distribution of age in the NHEFS data.",echo=F,message=F,warning=F}
+  ggplot(nhefs) + geom_histogram(aes(age),bins=20) + ggtitle("Distribution of Age")
+```
+
+Additionally, marital status and sex are distributed as:
+
+```{r}
+
+table(nhefs$marital)
+
+
+table(nhefs$sex)
+
+```
+
+
+Using the NHEFS codebook, we can determine that the marital status categories are:
+\begin{table}
+\centering
+\begin{tabular}{lll}
+\toprule
+ Category & Marital Status in 1971 & N \\
+\midrule
+2 & Married & 1583 \\
+3 & Widowed & 102 \\
+4 & Never Married & 130 \\
+5 & Divorced & 126 \\
+6 & Separated & 58 \\
+8 & Unknown & 1 \\
+\bottomrule
+\end{tabular}\\[10pt]
+\end{table}
+
+First, we will deal with marital status. The first thing we want to do is reduce the number of categories as much as possible. This reduction will be based entirely on substantive (background) knowledge. Let's assume, for our purposes, that we do not expect the average outcome between separated and divorced individuals to differ. We can thus combine their category:
+```{r}
+
+nhefs$marital <- ifelse(nhefs$marital==6,5,nhefs$marital)
+
+table(nhefs$marital)
+
+```
+
+Next we have to deal with the last (unknown) category, which has a single observation. For our purposes, let's assume the person in this category is among those with the most common value: married
+```{r}
+
+nhefs$marital <- ifelse(nhefs$marital==8,2,nhefs$marital)
+
+table(nhefs$marital)
+
+```
+
+Finally, we will examine the status of the marital variable in R:
+
+```{r}
+
+class(nhefs$marital)
+
+```
+
+Because `marital` is a numeric variable, if we include it in a regression model as is, then we will be estimating the association between marital and smoking intensity assuming a linear relation between all the categories. This assumption is untenable for a variable like marital status. 
+
+To resolve this, **we must change the class of the marital variable.** We can do this in two ways: first by changing the class in the data object itself; second by changing the class in the model itself:
+
+```{r}
+
+model_2 <- glm(smokeintensity ~ sex + age + factor(marital), 
+               data=nhefs, family=poisson(link="log"))
+
+summary(model_2)$coefficients[,1:2]
+
+```
+
+We can tell from the output that the referent category for the marital variable is category 2: married. Finally, with the age variable, we must also account for the fact that the relation between age and smoking intensity is potentially nonlinear. We can do this with splines. 
+
+In R, splines are easily implemented using the `splines` package. For our particular example, we use b-splines:
+
+```{r}
+
+library(splines)
+
+model_2a <- glm(smokeintensity ~ sex + age + factor(marital), 
+               data=nhefs, family=poisson(link="log"))
+
+summary(model_2a)$coefficients[,1:2]
+
+model_2b <- glm(smokeintensity ~ sex + bs(age,df=3,degree=3) + factor(marital), 
+               data=nhefs, family=poisson(link="log"))
+
+summary(model_2b)$coefficients[,1:2]
+
+```
+
+But we can also use natural splines:
+
+```{r}
+
+library(splines)
+
+model_2a_ns <- glm(smokeintensity ~ sex + age + factor(marital), 
+               data=nhefs, family=poisson(link="log"))
+
+summary(model_2a)$coefficients[,1:2]
+
+model_2b_ns <- glm(smokeintensity ~ sex + ns(age,df=3) + factor(marital), 
+               data=nhefs, family=poisson(link="log"))
+
+summary(model_2b)$coefficients[,1:2]
+
+```
+
+But what, exactly, are splines? The word spline is an engineering/architectural term. It refers to a flexible piece of material that individuals would use to draw up blue-prints that incorporated flexible curves:
+
+```{r,out.width = "4cm",fig.align='center',fig.cap="An illustration of a engineering/architectural spline use to draw flexible curves for blueprint diagrams. Source: Wikipedia",echo=F,message=F,warning=F}
+  knitr::include_graphics(here("figures", "spline.png"))
+```
+
+In the 1970s and 80s, statisticians began translating some of these engineering concepts to curve fitting. The basic idea was to create functions of a continuous variable that would yield the appropriate degree of flexibility between that value and the conditional outcome expectation.
+
+When it comes to implementation, there are a great many number of different options one can use to fit splines. Among these include natural cubic splines (the `ns()` option in R), B-splines (the `bs()` option in R), generalized additive models (or GAMs, implemented in the `gam` package or the `mgcv` package in R), penalized smoothing splines (implemented via the `smooth.spline()` function in R), or restricted quadratic splines [@Howe2011]. 
+
+Of all these, restricted quadratic splines are the easiest to understand. They do not share some of the ideal mathematical properties of the other implementations (properties that we will not discuss, but that relate to the derivatives of the spline functions). However, here we will walk through the steps to create restricted quadratic splines to demonstrate how splines work in principle. 
+
+# Restricted Quadratic Splines
+
+When using splines, the basic question is about how to code the relation between the conditional expectation of the outcome and a continuous covariate. For example, suppose we had the following exposure (x) and outcome (y) data:
+
+```{r}
+# load package needed to generate laplace distribution
+install.packages("rmutil",repos="http://lib.stat.cmu.edu/R/CRAN/")
+library(rmutil)
+
+# set the seed for reproducibility
+set.seed(12345)
+
+## generate the observed data
+n=1000
+# uniform random variable bounded by 0 and 8
+x = runif(n,0,8) 
+# continuous outcome as a complex function of x
+y = 5 + 4*sqrt(9 * x)*as.numeric(x<2) + as.numeric(x>=2)*(abs(x-6)^(2)) + rlaplace(n) 
+
+a <- data.frame(x=x,y=y)
+head(a)
+
+```
+
+We can create a scatter plot of these data to see how they relate:
+
+```{r,out.width = "8cm",fig.cap="Scatterplot of the relation between a simulated exposure and simulated outcome with a complex curvilinear relation",echo=F,message=F,warning=F}
+  ggplot(a) + geom_point(aes(y=y,x=x),color="gray")
+```
+
+Obviously, the relation between $X$ and $Y$ is not a straight line. But suppose we assume linearity, fitting the following regression model to these data:
+
+$$ E( Y \mid X) = \beta_0 + \beta_1 X $$
+```{r}
+model1 <- lm(y ~ x)
+a$y_pred1 <- predict(model1)
+```
+
+```{r,out.width = "8cm",fig.cap="Scatterplot of the relation between a simulated exposure and simulated outcome with a complex curvilinear relation and a linear fit",echo=F,message=F,warning=F}
+  ggplot(a) + geom_point(aes(y=y,x=x),color="gray") + geom_line(aes(y=y_pred1,x=x),color="red")
+```
+
+If $X$ were a confounder and we assumed such a linear fit, there would be an important degree of residual confounding left over in our estimate. If $X$ were our exposure of interest, such a linear fit would seriously mis-represent the true functional relation between the exposure and the outcome. Splines are meant to solve these problems. 
+
+Splines are essentially a function that take the exposure as an argument, and return a set of **basis functions** that account for the curvilinear relation. Any spline starts by selecting knots, which are the points along the variable's distribution where we will create categories. In our example, we will use three knots chosen at $x = 1$, $x = 4$, and $x = 6$. We will denote these $\chi_1$, $\chi_2$, and $\chi_3$, respectively.^[Knots can be chosen as *a priori* cutpoints, or by selecting percentile's of the distribution (e.g., the 25th, 50th, and 75th percentile values).]
+
+Restricted quadratic spline basis functions for a three knot spline can then be defined as follows:
+\begin{align*}
+f(x) = & \left [ (x - \chi_1)_+^2 - (x - \chi_3)_+^2 \right ] \\
+       & \;\; \left [ (x - \chi_2)_+^2 - (x - \chi_3)_+^2 \right ] 
+\end{align*}
+
+The parentheses with a subscripted plus sign refers to the *positive part function* returns the value of the difference if it is positive, and zero otherwise^[formally, $$ (x - \chi_1)_+ = x - \chi_1 \text{  if }(x - \chi_1)>0; 0\text{ otherwise}$$]
+
+With these equations, we can create the spline basis functions we need to fit restricted quadratic splines with out simulated data:
+
+```{r}
+
+basis_1 <- as.numeric((x - 1)>0)*(x - 1)^2 - as.numeric((x - 6)>0)*(x - 6)^2 
+basis_2 <- as.numeric((x - 3)>0)*(x - 3)^2 - as.numeric((x - 6)>0)*(x - 6)^2 
+
+```
+
+We can now fit our regression model using these spline basis functions:
+
+```{r}
+model2 <- lm(y ~ x + basis_1 + basis_2)
+a$y_pred2 <- predict(model2)
+```
+
+```{r,out.width = "8cm",fig.cap="Scatterplot of the relation between a simulated exposure and simulated outcome with a complex curvilinear relation and a linear fit",echo=F,message=F,warning=F}
+  ggplot(a) + geom_point(aes(y=y,x=x),color="gray") + geom_line(aes(y=y_pred1,x=x),color="red") + geom_line(aes(y=y_pred2,x=x),color="blue")
+```
+
+Clearly, using splines gives us a much better fit. 
+
+A natural question that arises from this illustration is, how do we interpret the spline results? For example, if we look at a summary of the estimates from `model2`, we get:
+```{r}
+summary(model2)$coefficients[,-3]
+```
+Can we interpret the `r round(coef(model2)[2],1)`, `r round(coef(model2)[3],1)`, and `r round(coef(model2)[4],1)` that we estimated for the linear and spline terms? The answer is **no.**
+
+An analyst will encounter using splines in two settings: 1) adjusting for a continuous confounder; and 2) accounting for a curvilinear relation between an exposure and an outcome. When adjusting for confounding, interest often lies primarily in the exposure-outcome relation. 
+
+The confounder-outcome relation is usually not of particular interest. Indeed, this part of the relation is often referred to as the "nuisance function" in the literature on semiparametric methods [@Tsiatis2006]. As a result, even though spline estimates do not have an interpretation, it does not matter as long as they are appropriately adjusting for the confounder-outcome relation. 
+
+If splines are being used to model a continuous expsoure-outcome relation, then the interpretation of the estimates will not matter as long as there is a curvilinear relation. Consider, for example, the use of quadratic and cubic terms:
+
+$$ E ( Y \mid X) = \beta_0 + \beta_1 X + \beta_2 X^2 + \beta_3 X^3 $$
+
+The objective of fitting these quadratic and cubic terms is to account for any curvilinear relation. One would not typically interpret the coefficients of the squared and cubic terms. One could, however, predict the outcome under different values of $X$ from this model, and compare these predicted outcomes. 
+
+The same principles apply to splines. There is no interesting way to interpret the coefficients for the spline terms. However we could obtain estimates of the effect of changing $X$ from one level to another. Suppose we were interested in comparing the average outcome under $X = 1$ versus $X = 2$ and $X =2$ versus $X = 4$. We could easily do this using the splines we fit above:
+
+```{r}
+x = 1
+basis_1 <- as.numeric((x - 1)>0)*(x - 1)^2 - as.numeric((x - 6)>0)*(x - 6)^2 
+basis_2 <- as.numeric((x - 3)>0)*(x - 3)^2 - as.numeric((x - 6)>0)*(x - 6)^2 
+
+nd1 <- data.frame(x,basis_1,basis_2)
+mu1 <- predict(model2,newdata=nd1)
+
+x = 2
+basis_1 <- as.numeric((x - 1)>0)*(x - 1)^2 - as.numeric((x - 6)>0)*(x - 6)^2 
+basis_2 <- as.numeric((x - 3)>0)*(x - 3)^2 - as.numeric((x - 6)>0)*(x - 6)^2 
+
+nd2 <- data.frame(x,basis_1,basis_2)
+mu2 <- predict(model2,newdata=nd2)
+
+x = 6
+basis_1 <- as.numeric((x - 1)>0)*(x - 1)^2 - as.numeric((x - 6)>0)*(x - 6)^2 
+basis_2 <- as.numeric((x - 3)>0)*(x - 3)^2 - as.numeric((x - 6)>0)*(x - 6)^2 
+
+nd6 <- data.frame(x,basis_1,basis_2)
+mu6 <- predict(model2,newdata=nd6)
+
+mu2 - mu1
+mu6 - mu2
+```
+
+Here, we see that the effect of going from $X = 1$ to $X = 2$ is `r round(mu2 - mu1,2)` while the effect of going from $X = 6$ to $X = 2$ is `r round(mu6 - mu2,2)`. Notably, these estimates account for the curvilinear relation between $X$ and $Y$. Confidence intervals can be obtained using the bootstrap. 
+
+\newpage
+
+# References

@@ -1,0 +1,345 @@
+---
+urlcolor: blue
+bibliography: ref.bib
+link-citations: yes
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+
+pacman::p_load(
+  rio,          
+  here,         
+  skimr,        
+  tidyverse,     
+  lmtest,
+  sandwich,
+  broom
+  )
+
+thm <- theme_classic() +
+  theme(
+    legend.position = "top",
+    legend.background = element_rect(fill = "transparent", colour = NA),
+    legend.key = element_rect(fill = "transparent", colour = NA)
+  )
+theme_set(thm)
+
+```
+
+[From Sarina]: Basically, Ashley says that in a single marginal model, the ATT is forced to equal the ATE (in the absence of interaction terms) because you are forcing the coefficients to be equal across exposure groups. For example if the coefficient for age is 3, then it is 3 for both the exposed and unexposed groups.
+
+[From David]: My break in your paragraph here. Ashley’s statement is not correct for non-linear models (e.g., logistic regression) due to non-collapsibility. This is illustrated in the attached code. You will in general get different answers for ATT and ATE even in a single outcome model with no interactions between treatment and covariates.
+
+# The Attached Code
+
+Here is David's code, interspersed with my comments and thoughts
+
+```{r tidy = F, warning = F, message = F}
+
+# simulate data from linear/logistic models
+n <- 1000
+W <- runif(n)
+A <- rbinom(n, 1, plogis(W))
+binary_Y <- rbinom(n, 1, plogis(A + W + A*W))
+continuous_Y <- A + W + A*W +rnorm(n)
+data <- data.frame(W, A, binary_Y, continuous_Y)
+
+# these are used throughout to compute g-comp
+data_Ais1 <- data; data_Ais1$A <- 1
+data_Ais0 <- data; data_Ais0$A <- 0
+
+
+# case 1, single linear regression, no interactions
+outcome_model <- glm(
+	continuous_Y ~ A + W, 
+	data = data,
+	family = gaussian()
+)
+
+pred_Ais1 <- predict(
+	outcome_model, newdata = data_Ais1, type = "response"
+)
+pred_Ais0 <- predict(
+	outcome_model, newdata = data_Ais0, type = "response"
+)
+
+# E[Y(1)] estimate (for ATE)
+EY1_hat <- mean(pred_Ais1)
+# E[Y(0)] estimate (for ATT)
+EY0_hat <- mean(pred_Ais0)
+# E[Y(1) | A = 1] estimate (for ATT)
+EY1_Ais1_hat <- mean(pred_Ais1[A == 1])
+# E[Y(0) | A = 1] estimate (for ATT)
+EY0_Ais1_hat <- mean(pred_Ais0[A == 1])
+
+ATE_hat <- EY1_hat - EY0_hat
+ATT_hat <- EY1_Ais1_hat - EY0_Ais1_hat
+
+# equivalent up to rounding error
+ATE_hat - ATT_hat
+
+```
+
+Yes, the above results are as I expected, and I might say that these are forced to be equivalent. That is, even though the true ATT and ATE are different, we estimate them to be the same here **because** we didn't include any interactions between A and W when we estimated the model. This is a form of misspecification bias.
+
+\newpage
+
+```{r tidy = F, warning = F, message = F}
+
+# case 2, single linear regression, interactions
+outcome_model <- glm(
+	continuous_Y ~ A*W, 
+	data = data,
+	family = gaussian()
+)
+
+pred_Ais1 <- predict(
+	outcome_model, newdata = data_Ais1, type = "response"
+)
+pred_Ais0 <- predict(
+	outcome_model, newdata = data_Ais0, type = "response"
+)
+
+# E[Y(1)] estimate (for ATE)
+EY1_hat <- mean(pred_Ais1)
+# E[Y(0)] estimate (for ATT)
+EY0_hat <- mean(pred_Ais0)
+# E[Y(1) | A = 1] estimate (for ATT)
+EY1_Ais1_hat <- mean(pred_Ais1[A == 1])
+# note that this is EXACTLY THE SAME (up to rounding error) 
+# as the mean of Y in the treated (because outcome_model above 
+# contains an intercept)
+EY1_Ais1_hat - mean(continuous_Y[A == 1])
+
+# E[Y(0) | A = 1] estimate (for ATT)
+EY0_Ais1_hat <- mean(pred_Ais0[A == 1])
+
+ATE_hat <- EY1_hat - EY0_hat
+ATT_hat <- EY1_Ais1_hat - EY0_Ais1_hat
+
+# not equivalent
+ATE_hat - ATT_hat
+
+```
+
+Re above, again, as expected. The true ATT and ATE are different, and we get different results for them when we fit models that allow for these differences to occur.
+
+\newpage
+
+```{r}
+# case 3, linear regression for each treatment arm
+# the same as a model where every term is interacted with treatment
+# i.e., EXACTLY the same as case 2 above
+outcome_model_Ais1 <- glm(
+	continuous_Y ~ W, 
+	data = data[data$A == 1,],
+	family = gaussian()
+)
+
+pred_Ais1 <- predict(
+	outcome_model_Ais1, newdata = data, type = "response"
+)
+
+outcome_model_Ais0 <- glm(
+	continuous_Y ~ W, 
+	data = data[data$A == 0,],
+	family = gaussian()
+)
+
+pred_Ais0 <- predict(
+	outcome_model_Ais0, newdata = data, type = "response"
+)
+
+# E[Y(1)] estimate (for ATE)
+EY1_hat_two_models <- mean(pred_Ais1)
+# E[Y(0)] estimate (for ATT)
+EY0_hat_two_models <- mean(pred_Ais0)
+# E[Y(1) | A = 1] estimate (for ATT)
+EY1_Ais1_hat_two_models <- mean(pred_Ais1[A == 1])
+# E[Y(0) | A = 1] estimate (for ATT)
+EY0_Ais1_hat_two_models <- mean(pred_Ais0[A == 1])
+
+ATE_hat_two_models <- EY1_hat_two_models - EY0_hat_two_models
+ATT_hat_two_models <- EY1_Ais1_hat_two_models - EY0_Ais1_hat_two_models
+
+# not equivalent
+ATE_hat_two_models - ATT_hat_two_models
+
+# but exactly the same (up to rounding error) as single model with trt * covariate interactions
+ATE_hat_two_models - ATE_hat
+ATT_hat_two_models - ATT_hat
+```
+
+Re above, this is a great illustration. Again, as expected.
+
+\newpage
+
+Now let's look at the code when using a logistic regression model. Before running code, let's emphasize that **we are fitting a logistic regression model (noncollapsibility) BUT we are estimating our effects on the risk difference scale (technically, strictly collapsible).**
+
+```{r}
+
+## now repeat for logistic regression
+# case 1, single logistic regression, no interactions
+outcome_model <- glm(
+	binary_Y ~ A + W, 
+	data = data,
+	family = binomial()
+)
+
+pred_Ais1 <- predict(
+	outcome_model, newdata = data_Ais1, type = "response"
+)
+pred_Ais0 <- predict(
+	outcome_model, newdata = data_Ais0, type = "response"
+)
+
+# E[Y(1)] estimate (for ATE)
+EY1_hat <- mean(pred_Ais1)
+# E[Y(0)] estimate (for ATT)
+EY0_hat <- mean(pred_Ais0)
+# E[Y(1) | A = 1] estimate (for ATT)
+EY1_Ais1_hat <- mean(pred_Ais1[A == 1])
+# E[Y(0) | A = 1] estimate (for ATT)
+EY0_Ais1_hat <- mean(pred_Ais0[A == 1])
+
+ATE_hat <- EY1_hat - EY0_hat
+ATT_hat <- EY1_Ais1_hat - EY0_Ais1_hat
+
+# NOT equivalent due to non-collapsibility
+ATE_hat - ATT_hat
+ATE_hat 
+ATT_hat
+
+ATE_hat_OR <- (EY1_hat/(1 - EY1_hat))/(EY0_hat/(1 - EY0_hat))
+ATT_hat_OR <- ((EY1_Ais1_hat)/(1 - EY1_Ais1_hat))/(EY0_Ais1_hat/(1 - EY0_Ais1_hat))
+
+ATE_hat_OR - ATT_hat_OR
+ATE_hat_OR 
+ATT_hat_OR
+
+```
+
+<!-- Clearly, the above result is not equivalent, but I'm not convinced this is due to noncollapsibility. Case in point (see, e.g., https://bit.ly/3TUk3SQ): -->
+
+<!-- ```{r} -->
+
+<!-- # simulate data from linear risk model -->
+<!-- n <- 1e6 -->
+
+<!-- Z <- rbinom(n, 1, .5) # not a confounder -->
+<!-- A <- rbinom(n, 1, .5) -->
+<!-- binary_Y <- rbinom(n, 1, 0.3 + .3*A + .3*Z) -->
+
+<!-- mean(binary_Y) # roughly 50% -->
+
+<!-- data <- data.frame(Z, A, binary_Y) -->
+
+<!-- # compute OR1 for A - Y association -->
+
+<!-- mod1 <- glm(binary_Y ~ A,  -->
+<!--             data = data,  -->
+<!--             family = binomial(link = "logit")) -->
+
+<!-- log_OR1 <- summary(mod1)$coefficients[2,1] -->
+
+<!-- # compute OR2 for A - Y | Z association (conditionally adjusted) -->
+
+<!-- mod2 <- glm(binary_Y ~ A + Z,  -->
+<!--             data = data,  -->
+<!--             family = binomial(link = "logit")) -->
+
+<!-- log_OR2 <- summary(mod2)$coefficients[2,1] -->
+
+<!-- log_OR1 - log_OR2 # noncollapsibility -->
+
+<!-- exp(log_OR1) -->
+<!-- exp(log_OR2) -->
+
+<!-- ``` -->
+
+<!-- What happens if we do the same analysis, but marginally standardize?: -->
+
+<!-- ```{r} -->
+
+<!-- # compute OR1 for A - Y association -->
+
+<!-- mod1 <- glm(binary_Y ~ A,  -->
+<!--             data = data,  -->
+<!--             family = binomial(link = "logit")) -->
+
+<!-- mu1 <- mean(predict(mod1,  -->
+<!--                newdata = transform(data, A = 1),  -->
+<!--                type = "response")) -->
+
+<!-- mu0 <- mean(predict(mod1,  -->
+<!--                newdata = transform(data, A = 0),  -->
+<!--                type = "response")) -->
+
+<!-- OR1_mstand <- (mu1/(1-mu1))/(mu0/(1-mu0)) -->
+
+<!-- RD1_mstand <- mu1 - mu0 -->
+
+<!-- # compute OR2 for A - Y | Z association (conditionally adjusted) -->
+
+<!-- mod2 <- glm(binary_Y ~ A + Z,  -->
+<!--             data = data,  -->
+<!--             family = binomial(link = "logit")) -->
+
+<!-- mu1 <- mean(predict(mod2,  -->
+<!--                newdata = transform(data, A = 0),  -->
+<!--                type = "response")) -->
+
+<!-- mu0 <- mean(predict(mod2,  -->
+<!--                newdata = transform(data, A = 0),  -->
+<!--                type = "response")) -->
+
+<!-- OR2_mstand <- (mu1/(1-mu1))/(mu0/(1-mu0)) -->
+
+<!-- RD2_mstand <- mu1 - mu0 -->
+
+<!-- mu1 <- mean(predict(mod2,  -->
+<!--                newdata = subset( -->
+<!--                  transform(data, A = 1),  -->
+<!--                  Z == 1),  -->
+<!--                type = "response")) -->
+
+<!-- mu0 <- mean(predict(mod2,  -->
+<!--                newdata = subset( -->
+<!--                  transform(data, A = 0), -->
+<!--                  Z == 1),  -->
+<!--                type = "response")) -->
+
+<!-- OR2_mstand_Zis1 <- (mu1/(1-mu1))/(mu0/(1-mu0)) -->
+
+<!-- RD2_mstand_Zis1 <- mu1 - mu0 -->
+
+<!-- mu1 <- mean(predict(mod2,  -->
+<!--                newdata = subset( -->
+<!--                  transform(data, A = 1),  -->
+<!--                  Z == 0),  -->
+<!--                type = "response")) -->
+
+<!-- mu0 <- mean(predict(mod2,  -->
+<!--                newdata = subset( -->
+<!--                  transform(data, A = 0), -->
+<!--                  Z == 0),  -->
+<!--                type = "response")) -->
+
+<!-- OR2_mstand_Zis0 <- (mu1/(1-mu1))/(mu0/(1-mu0)) -->
+
+<!-- RD2_mstand_Zis0 <- mu1 - mu0 -->
+
+<!-- OR2_mstand -->
+<!-- OR2_mstand_Zis1 -->
+<!-- OR2_mstand_Zis0 -->
+
+<!-- RD2_mstand -->
+<!-- RD2_mstand_Zis1 -->
+<!-- RD2_mstand_Zis0 -->
+<!-- ``` -->
+
+
+<!-- At least as I understand it, noncollapsibility is a property of the effect contrast (odds ratio versus risk difference), not the model per se.  -->
+
+<!-- This is important because we can generate binary outcome data from an additive risk model  -->
