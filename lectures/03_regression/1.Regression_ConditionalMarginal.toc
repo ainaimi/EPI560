@@ -1,0 +1,9 @@
+\contentsline {section}{\numberline {1}Introduction}{2}{section.1}%
+\contentsline {section}{\numberline {2}Collapsibility versus Noncollapsibility of Association Contrasts}{2}{section.2}%
+\contentsline {section}{\numberline {3}Noncollapsibility in a Regression Context}{4}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Unadjusted Regression Models}{5}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Conditionally Adjusted Model}{5}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Marginally Adjusted Model}{6}{subsection.3.3}%
+\contentsline {section}{\numberline {4}Conditionally Adjusted Parametric Regression: An NHEFS Example}{7}{section.4}%
+\contentsline {section}{\numberline {5}Marginally Adjusted Parametric Regression: An NHEFS Example}{12}{section.5}%
+\contentsfinish 

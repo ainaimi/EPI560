@@ -1,0 +1,248 @@
+---
+title: "Combining Coefficients and Variances"
+author: "Ashley I Naimi"
+date: "`r paste0('Spring ', format(Sys.Date(), '%Y'))`"
+urlcolor: blue
+bibliography: ref.bib
+link-citations: yes
+output:
+    bookdown::pdf_book:
+      base_format: tint::tintPdf
+      toc: true
+      number_sections: true
+      includes:
+        in_header: "../misc/preamble.tex"
+      latex_engine: xelatex
+    html_document:
+      theme: readable
+      toc: true
+      toc_float: true
+      number_sections: true
+      css: "../misc/style.css"
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+opts_chunk$set(tidy.opts=list(width.cutoff=40),tidy=TRUE)
+
+packages <- c( "data.table","tidyverse","ggplot2","ggExtra","formatR",
+               "gridExtra","skimr","here","Hmisc","RColorBrewer")
+
+for (package in packages) {
+  if (!require(package, character.only=T, quietly=T)) {
+    install.packages(package, repos='http://lib.stat.cmu.edu/R/CRAN',dependencies=T)
+  }
+}
+
+for (package in packages) {
+  library(package, character.only=T)
+}
+
+remotes::install_github("rstudio/fontawesome")
+
+library(fontawesome)
+
+thm <- theme_classic() +
+  theme(
+    legend.position = "top",
+    legend.background = element_rect(fill = "transparent", colour = NA),
+    legend.key = element_rect(fill = "transparent", colour = NA)
+  )
+theme_set(thm)
+```
+
+\newpage
+\onehalfspacing
+
+# Combining Parameter Estimates from a Regression Model
+
+Suppose we are fitting a log-linear or linear model to estimate the risk difference, risk ratio, or some other contrast on the additive or multiplicative scale, and we have to include an interaction between between the exposure of interest and a covariate in the model. For example:
+
+$$E(Y \mid X, C) = \beta_0 + \beta_1 X + \beta_2 C + \beta_3 XC$$
+To be specific, let's consider the NHEFS data again:
+
+```{r tidy = F, warning = F, message = F}
+
+packages <- c("broom","here","tidyverse","skimr","rlang","sandwich","boot", "kableExtra")
+
+pacman::p_load(packages)
+
+#' Define where the data are
+file_loc <- url("https://bit.ly/47ECRcs")
+
+#' This begins the process of cleaning and formatting the data
+nhefs <- read_csv(file_loc) %>% 
+  select(qsmk,wt82_71,exercise,sex,age,
+         race,income, marital,school) %>% 
+  mutate(income=as.numeric(income>15),
+         marital=as.numeric(marital>2)) %>% 
+  na.omit(.)
+
+factor_names <- c("exercise","income","marital","sex","race")
+nhefs[,factor_names] <- lapply(nhefs[,factor_names] , factor)
+
+#' Define outcome
+nhefs <- nhefs %>% mutate(id = row_number(), 
+                          wt_delta = as.numeric(wt82_71>median(wt82_71)),
+                          .before = qsmk)
+
+#' Quick summary of data
+nhefs %>% print(n=5)
+
+```
+
+Let's fit a linear risk model to estimate the effect of quitting smoking on greater than median weight change,
+
+```{r tidy = F, warning = F, message = F}
+
+library(lmtest)
+library(sandwich)
+
+mod <- lm(wt_delta ~ qsmk + sex + qsmk*sex + race + income,
+          data = nhefs)
+
+summary(mod)
+
+# we'll need robust SEs:
+mod_res <- coeftest(mod, vcov = vcovHC(mod, type = "HC3"))
+
+mod_res
+
+```
+
+Based on this model, we might interpret the stratum specific `qsmk` effects separately. The risk difference among individuals classified as `male` (sex = 0) is simply the coefficient for `qsmk` in the model. The risk difference among individuals classified as `female` (sex = 1) is the coefficient for `qsmk` in the model plus the coefficient for `qsmk*sex`. There are a few ways we can compute this in R. 
+
+## Method 1
+
+```{r tidy = F, warning = F, message = F}
+
+rd_sex0_m1 <- mod_res[2,1]
+
+rd_sex1_m1 <- mod_res[2,1] + mod_res[6,1]
+
+```
+
+## Method 2
+
+```{r tidy = F, warning = F, message = F}
+
+rd_sex0_m2 <- mod_res["qsmk",1]
+
+rd_sex1_m2 <- mod_res["qsmk",1] + mod_res["qsmk:sex1",1]
+
+```
+
+## Method 3
+
+```{r}
+
+contrast1 <- c(0,1,0,0,0,0)
+
+contrast2 <- c(0,1,0,0,0,1)
+
+rd_sex0_m3 <- coef(mod_res)%*%contrast1
+
+rd_sex1_m3 <- coef(mod_res)%*%contrast2
+
+```
+
+All these approaches return the same risk differences:
+
+```{r tidy = F, warning = F, message = F, echo=F}
+knitr::kable(caption = "Comparison of risk differences from all three methods.",
+  rbind(c("Method 1", rd_sex0_m1, rd_sex1_m1),
+        c("Method 2", rd_sex0_m2, rd_sex1_m2),
+        c("Method 3", rd_sex0_m3, rd_sex1_m3)),
+  "simple"
+)
+```
+
+# Computing Standard Errors for Combined Parameters
+
+The next question is how to obtain the correct standard errors for both of these estimates. We've already computed the robust variance estimates for the coefficients. We can thus obtain the standard error for the `qsmk` coefficient directly from the model. The first two methods are easy:
+
+```{r tidy = F, warning = F, message = F}
+
+var_rd_sex0_m1 <- mod_res[2,2]
+
+var_rd_sex0_m2 <- mod_res["qsmk",2]
+
+```
+
+The third method will require a little explaining, but is very useful to know in more complicated settings. Consider the vector of coefficients from the model above, and let's call it $\mathbf{\beta}$. In our case, $\mathbf{\beta}$ is a vector with 6 elements. 
+
+This vector can be used to define a $6\times 6$ variance-covariance matrix. The diagonal entries of this matrix are the variances of the coefficients from the model. The square root of these are the standard errors:
+
+```{r tidy = F, warning = F, message = F}
+
+round(vcovHC(mod, type = "HC3"),4)
+
+sqrt(vcovHC(mod, type = "HC3")[2,2]) == mod_res["qsmk",2]
+
+```
+
+Thus, to obtain the standard error for the `qsmk` parameter with the third method, we can extract the variance for the coefficient from this variance covariance matrix:
+
+```{r tidy = F, warning = F, message = F}
+
+var_rd_sex0_m3 <- sqrt(contrast1%*%vcovHC(mod, type = "HC3")%*%contrast1)
+
+```
+
+To obtain the standard error for the combined parameter, we have to note that the following variance equation:
+
+$$Var(A + B) = var(A) + var(B) + 2cov(A,B)$$
+
+Because of this equation, we can't simply use the output of the `coeftest` function since we do not have the covariances available in this output. However, the covariances are available from the `vcov` function:
+
+```{r tidy = F, warning = F, message = F}
+
+round(vcovHC(mod, type = "HC3"),4)
+
+```
+
+We can combine the requisite pieces according to the equation above in a couple of ways. For example:
+
+```{r tidy = F, warning = F, message = F}
+
+var_rd_sex1_m2 <- sqrt(vcovHC(mod, type = "HC3")[2,2] + 
+                         vcovHC(mod, type = "HC3")[6,6] + 
+                         2*vcovHC(mod, type = "HC3")[2,6])
+
+```
+
+Alternatively, we can use matrix multiplication to simplify the math:
+
+```{r tidy = F, warning = F, message = F}
+
+var_rd_sex1_m3 <- sqrt(contrast2%*%vcovHC(mod, type = "HC3")%*%contrast2)
+
+```
+
+Here are the standard errors from each of the methods:
+
+```{r tidy = F, warning = F, message = F, echo=F}
+knitr::kable(caption = "Comparison of standard errors from all three methods.",
+  rbind(c("Method 1", var_rd_sex0_m1, "-"),
+        c("Method 2", var_rd_sex0_m2, var_rd_sex1_m2),
+        c("Method 3", var_rd_sex0_m3, var_rd_sex1_m3)),
+  "simple"
+)
+```
+
+With these, we can construct the stratum specific risk difference and 95% confidence intervals:
+
+```{r tidy = F, warning = F, message = F, echo=T}
+knitr::kable(caption = "Risk differences and 95% CIs using standard errors obtained from method 3.",
+  rbind(c("Stratum Sex = 0", round(rd_sex0_m3, 3), 
+                             round(rd_sex0_m3 - 1.96*var_rd_sex0_m3, 3), 
+                             round(rd_sex0_m3 + 1.96*var_rd_sex0_m3, 3)),
+        c("Stratum Sex = 1", round(rd_sex1_m3, 3), 
+                             round(rd_sex1_m3 - 1.96*var_rd_sex1_m3, 3), 
+                             round(rd_sex1_m3 + 1.96*var_rd_sex1_m3, 3))),
+  "simple"
+)
+```
+
+
+# References

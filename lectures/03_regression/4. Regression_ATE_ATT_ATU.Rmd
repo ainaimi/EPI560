@@ -1,0 +1,336 @@
+---
+title: "Marginal Standardization for the ATE, ATT, and ATU"
+author: "Ashley I Naimi"
+date: "`r paste0('Spring ', format(Sys.Date(), '%Y'))`"
+urlcolor: blue
+bibliography: ref.bib
+link-citations: yes
+output: 
+    bookdown::pdf_book:
+      base_format: tint::tintPdf
+      toc: true
+      number_sections: true
+      includes:
+        in_header: "../misc/preamble.tex"
+      latex_engine: xelatex
+    html_document:
+      theme: readable
+      toc: true
+      toc_float: true
+      number_sections: true
+      css: "../misc/style.css"
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+opts_chunk$set(tidy.opts=list(width.cutoff=40),tidy=TRUE)
+
+packages <- c( "data.table","tidyverse","ggplot2","ggExtra","formatR",
+               "gridExtra","skimr","here","Hmisc","RColorBrewer")
+
+for (package in packages) {
+  if (!require(package, character.only=T, quietly=T)) {
+    install.packages(package, repos='http://lib.stat.cmu.edu/R/CRAN',dependencies=T)
+  }
+}
+
+for (package in packages) {
+  library(package, character.only=T)
+}
+
+remotes::install_github("rstudio/fontawesome")
+
+library(fontawesome)
+
+thm <- theme_classic() +
+  theme(
+    legend.position = "top",
+    legend.background = element_rect(fill = "transparent", colour = NA),
+    legend.key = element_rect(fill = "transparent", colour = NA)
+  )
+theme_set(thm)
+```
+
+```{=tex}
+\newpage
+\onehalfspacing
+```
+```{=tex}
+\newpage
+\onehalfspacing
+```
+<!-- **Learning Objectives** -->
+
+<!-- - Define the propensity score and understand how it can be used to adjust for confounding. -->
+
+<!-- - Understand when it might be preferable to use the propensity score versus an outcome model (e.g., marginal standardization) to estimate a treatment effect. -->
+
+<!-- - Be able to identify different ways of using the propensity score to estimate treatment effects, including propensity score adjustment, stratification, matching, and inverse probability weighting. -->
+
+<!-- - Understand how and why inverse probability of treatment weighting works.  -->
+
+<!-- - Be able to implement inverse probability weighting to quantify the average treatment effect on the risk difference, risk ratio, and odds ratio scales using `R`.  -->
+
+<!-- - Be able to use stabilized, stabilized normalized, as well as trimmed inverse probability weights. -->
+
+# Introduction
+
+Here, we show how marginal standardization and IP weighting can be used to compute the ATE, ATT, and ATU on the risk difference, risk ratio, and odds ratio scales. Practical issues are emphasized, within some important theoretical contexts. 
+
+We'll use the NHEFS data:
+
+```{r tidy = F, warning = F, message = F}
+
+file_loc <- url("https://bit.ly/47ECRcs")
+
+#' This begins the process of cleaning and formatting the data
+nhefs <- read_csv(file_loc) %>% 
+  select(qsmk, wt82_71, sex, age, race, alcoholfreq, income, 
+         marital, school, asthma, bronch, 
+         starts_with("price"),
+         starts_with("tax"), 
+         starts_with("smoke"),
+         smkintensity82_71) %>% 
+  mutate(wt_delta = as.numeric(wt82_71 >= median(wt82_71, na.rm = T)), 
+         income=as.numeric(income>15),
+         marital=as.numeric(marital>2),
+         alcoholfreq=as.numeric(alcoholfreq>1)) %>% 
+  select(-wt82_71) %>% 
+  na.omit(.)
+
+dim(nhefs)
+
+nrow(nhefs[nhefs$qsmk==1,])
+
+nrow(nhefs[nhefs$qsmk==0,])
+
+names(nhefs)
+
+```
+
+## Marginal Standardization of the ATE
+
+We'll start with marginal standardization for the ATE, which we've seen a few times before. We won't use the stratified modeling approach for the ATE, but we'll comment on why it's important to consider for the ATT and ATU:
+
+```{r tidy = F, warning = F, message = F}
+
+formulaVars <- paste(names(nhefs)[c(1:11,14,17)],collapse = "+")
+modelForm <- as.formula(paste0("wt_delta ~", formulaVars))
+modelForm
+
+mod1 <- glm(modelForm, data = nhefs, family = binomial("logit"))
+mu1 <- mean(predict(mod1, newdata = transform(nhefs, qsmk = 1), type = "response"))
+mu0 <- mean(predict(mod1, newdata = transform(nhefs, qsmk = 0), type = "response"))
+RD_ATE <- mu1 - mu0
+RR_ATE <- mu1/mu0
+OR_ATE <- (mu1/(1 - mu1))/(mu0/(1 - mu0))
+
+
+## bootstrapping for CIs with a for loop instead of the boot package
+
+RD_ATEb <- RR_ATEb <- OR_ATEb <- NULL
+R = 2000
+for(i in 1:R){
+  index <- sample(1:nrow(nhefs), nrow(nhefs), replace = T)
+  boot_dat <- nhefs[index,]
+  mod1 <- glm(modelForm, data = boot_dat, family = binomial("logit"))
+  mu1_ <- mean(predict(mod1, newdata = transform(boot_dat, qsmk = 1), type = "response"))
+  mu0_ <- mean(predict(mod1, newdata = transform(boot_dat, qsmk = 0), type = "response"))
+  RD_ATEb <- rbind(RD_ATEb, mu1_ - mu0_)
+  RR_ATEb <- rbind(RR_ATEb, mu1_/mu0_)
+  OR_ATEb <- rbind(OR_ATEb, (mu1_/(1 - mu1_))/(mu0_/(1 - mu0_)))
+}
+
+
+UCL_RD_ATE <- RD_ATE + 1.96*sd(RD_ATEb)
+LCL_RD_ATE <- RD_ATE - 1.96*sd(RD_ATEb)
+
+UCL_RR_ATE <- exp(log(RR_ATE + 1.96*sd(RR_ATEb)))
+LCL_RR_ATE <- exp(log(RR_ATE - 1.96*sd(RR_ATEb)))
+
+UCL_OR_ATE <- exp(log(OR_ATE + 1.96*sd(OR_ATEb)))
+LCL_OR_ATE <- exp(log(OR_ATE + 1.96*sd(OR_ATEb)))
+
+ate_tab <- rbind(c(RD_ATE,LCL_RD_ATE,UCL_RD_ATE),
+                 c(RR_ATE,LCL_RR_ATE,UCL_RR_ATE),
+                 c(OR_ATE,LCL_OR_ATE,UCL_OR_ATE))
+
+
+rownames(ate_tab) = c("Risk Difference", "Risk Ratio", "Odds Ratio")
+
+```
+
+
+```{r tidy = F, warning = F, message = F}
+knitr::kable(round(ate_tab,2), 
+             caption = "Average Treatment Effect Estimates of Quitting Smoking 
+             on Greater than Median Weight Change among 1,422 
+             Individuals in the NHEFS Data, 1971-1982.",
+             col.names = c("Estimate", "LCL", "UCL"), 
+             "simple")
+```
+
+## Marginal Standardization of the ATT
+
+To use marginal standardization to quantify the average treatment effect on the treated (ATT) \marginnote{The effect of treatment on the treated is the same as the average treatment effect on the treated. The shorthand abbreviations are usually ETT or ATT, and these are the same quantity}, we need to observe a few conditions [@Wang2017]. First, on the difference scale, we note that ATT is defined as:
+
+$$E(Y^{x = 1} - Y^{x = 0} \mid X = 1 )$$
+which is equivalent to:
+
+$$E(Y^{x = 1} \mid X = 1) - E(Y^{x = 0} \mid X = 1 )$$
+So we need two means to compute the ATT: the average outcome that would be observed if the exposure was set to 1 *among those who were exposed*, and the average outcome that would be observed if the exposure was set to 0 *among those who were exposed*. By counterfactual consistency and no interference, the average outcome that would be observed if the exposure was set to 1 among those who were actually exposed is the average of the observed outcomes. For this reason, we need not model the first term in the ATT equation, we can simply take the mean of the outcome among those who were exposed and use that as the first term in the ATT equation:
+
+```{r tidy = F, warning = F, message = F}
+mean(nhefs[nhefs$qsmk == 1,]$wt_delta)
+```
+
+However, for the second term in the ATT equation, we need the average outcome that would be observed if everyone's exposure was set to 0, *among those who were exposed*. To get this mean, we need to model. But we have to consider how to specify this model carefully. To see why, consider this simple example:
+
+```{r tidy = F, message = F, warning = F, echo = F}
+
+set.seed(123)
+
+nn = 1e7
+c <- rbinom(n = nn, size = 1, prob = .5)
+x <- rbinom(n = nn, 
+            size = 1, 
+            prob = 1/(1+exp(-(-.225 + 
+                                log(4)*c))))
+
+y  <- rnorm(n = nn, 
+            mean = 5*x + 5*c - 10*c*x, sd = 1)
+
+dat <- data.frame(y, x, c)
+```
+
+```{r tidy = F, message = F, warning = F}
+
+## here's our dataset
+head(dat)
+dim(dat)
+
+# compute the first term of the ATT
+y1_pred <- mean(dat[dat$x==1,]$y)
+
+# fit a simple model
+modmod <- lm(y ~ x + c, data = dat)
+
+# compute the second term of the ATT
+y0_pred <- mean(predict(modmod, 
+                        newdata = transform(subset(dat, x == 1), x = 0), 
+                        type = "response"))
+
+# ATT from the first approach
+y1_pred - y0_pred
+
+# fit a model stratified by the exposure, in this 
+# case among those with x = 0
+modmod <- lm(y ~ c, 
+             data = subset(dat, x == 0))
+
+# compute the second term of the ATT from the second model
+y0_pred_ <- mean(predict(modmod, 
+                          newdata = transform(subset(dat, x == 1)), 
+                          type = "response"))
+
+# ATT from the second approach
+y1_pred - y0_pred_
+
+# models make a difference
+
+```
+
+<!-- ```{r tidy = F, warning = F, message = F} -->
+
+<!-- formulaVars <- paste(names(nhefs)[c(2:11,14,17)],collapse = "+") -->
+<!-- modelForm <- as.formula(paste0("qsmk ~", formulaVars)) -->
+<!-- modelForm -->
+
+<!-- propensity_score_mod <- glm(modelForm, data = nhefs, family = binomial("logit")) -->
+
+<!-- summary(propensity_score_mod) -->
+
+<!-- propensity_score <- propensity_score_mod$fitted.values -->
+
+<!-- plot_dat <- data.frame(propensity_score,  -->
+<!--                        exposure = factor(nhefs$qsmk)) -->
+
+<!-- ggplot(plot_dat) + -->
+<!--   geom_density(aes(x = propensity_score,  -->
+<!--                    group = exposure,  -->
+<!--                    fill = exposure), alpha = 0.5) + -->
+<!--   scale_x_continuous(expand = c(0,0)) + -->
+<!--   scale_y_continuous(expand = c(0,0)) -->
+
+<!-- ``` -->
+
+When estimating the ATT, the example above shows that it's important to fit a flexible model. One way of doing this is fitting a (flexible) model among **unexposed** observations. 
+
+
+```{r tidy = F, warning = F, message = F}
+
+formulaVars <- paste(names(nhefs)[c(2:11,14,17)],collapse = "+")
+modelForm <- as.formula(paste0("wt_delta ~", formulaVars))
+modelForm
+
+mod0 <- glm(modelForm, data = subset(nhefs, qsmk == 0), 
+            family = binomial("logit"))
+
+mu1_att <- mean(nhefs[nhefs$qsmk == 1,]$wt_delta)
+mu0_att <- mean(predict(mod0, newdata = subset(nhefs, qsmk == 1), 
+                        type = "response"))
+
+RD_ATT <- mu1_att - mu0_att
+RR_ATT <- mu1_att/mu0_att
+OR_ATT <- (mu1_att/(1 - mu1_att))/(mu0_att/(1 - mu0_att))
+
+## bootstrapping for CIs with a for loop instead of the boot package
+RD_ATTb <- RR_ATTb <- OR_ATTb <- NULL
+R = 2000
+for(i in 1:R){
+  index <- sample(1:nrow(nhefs), nrow(nhefs), replace = T)
+  boot_dat <- nhefs[index,]
+  
+mod0 <- glm(modelForm, data = subset(boot_dat, qsmk == 0), 
+            family = binomial("logit"))
+
+mu1_att_ <- mean(boot_dat[boot_dat$qsmk == 1,]$wt_delta)
+mu0_att_ <- mean(predict(mod0, newdata = subset(boot_dat, qsmk == 1), 
+                        type = "response"))
+  
+  RD_ATTb <- rbind(RD_ATTb, mu1_att_ - mu0_att_)
+  RR_ATTb <- rbind(RR_ATTb, mu1_att_/mu0_att_)
+  OR_ATTb <- rbind(OR_ATTb, (mu1_att_/(1 - mu1_att_))/(mu0_att_/(1 - mu0_att_)))
+}
+
+
+UCL_RD_ATT <- RD_ATT + 1.96*sd(RD_ATTb)
+LCL_RD_ATT <- RD_ATT - 1.96*sd(RD_ATTb)
+
+UCL_RR_ATT <- exp(log(RR_ATT + 1.96*sd(RR_ATTb)))
+LCL_RR_ATT <- exp(log(RR_ATT - 1.96*sd(RR_ATTb)))
+
+UCL_OR_ATT <- exp(log(OR_ATT + 1.96*sd(OR_ATTb)))
+LCL_OR_ATT <- exp(log(OR_ATT + 1.96*sd(OR_ATTb)))
+
+att_tab <- rbind(c(RD_ATT,LCL_RD_ATT,UCL_RD_ATT),
+                 c(RR_ATT,LCL_RR_ATT,UCL_RR_ATT),
+                 c(OR_ATT,LCL_OR_ATT,UCL_OR_ATT))
+
+
+rownames(att_tab) = c("Risk Difference", "Risk Ratio", "Odds Ratio")
+
+```
+
+```{r tidy = F, warning = F, message = F}
+knitr::kable(round(att_tab,2), 
+             caption = "Average Treatment Effect on the Treated Estimates 
+             of Quitting Smoking on Greater than Median Weight Change among 1,422 
+             Individuals in the NHEFS Data, 1971-1982.",
+             col.names = c("Estimate", "LCL", "UCL"), 
+             "simple")
+```
+
+## Marginal Standardization of the ATU
+
+The same strategy can be used to compute treatment effect on the untreated. The key here is to compute the mean outcome among the untreated, then fit a flexible model in the treated and use it to predict the outcome that would be observed if the untreated were treated.

@@ -1,0 +1,753 @@
+---
+title: "IP Weighting for the ATE, ATT, and ATU"
+author: "Ashley I Naimi"
+date: "`r paste0('Spring ', format(Sys.Date(), '%Y'))`"
+urlcolor: blue
+bibliography: ref.bib
+link-citations: yes
+output: 
+    bookdown::pdf_book:
+      base_format: tint::tintPdf
+      toc: true
+      number_sections: true
+      includes:
+        in_header: "../misc/preamble.tex"
+      latex_engine: xelatex
+    html_document:
+      theme: readable
+      toc: true
+      toc_float: true
+      number_sections: true
+      css: "../misc/style.css"
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+opts_chunk$set(tidy.opts=list(width.cutoff=40),tidy=TRUE)
+
+packages <- c( "data.table","tidyverse","ggplot2","ggExtra","formatR",
+               "gridExtra","skimr","here","Hmisc","RColorBrewer")
+
+for (package in packages) {
+  if (!require(package, character.only=T, quietly=T)) {
+    install.packages(package, repos='http://lib.stat.cmu.edu/R/CRAN',dependencies=T)
+  }
+}
+
+for (package in packages) {
+  library(package, character.only=T)
+}
+
+remotes::install_github("rstudio/fontawesome")
+
+library(fontawesome)
+
+thm <- theme_classic() +
+  theme(
+    legend.position = "top",
+    legend.background = element_rect(fill = "transparent", colour = NA),
+    legend.key = element_rect(fill = "transparent", colour = NA)
+  )
+theme_set(thm)
+```
+
+\newpage
+\onehalfspacing
+
+<!-- **Learning Objectives** -->
+
+<!-- - Define the propensity score and understand how it can be used to adjust for confounding. -->
+
+<!-- - Understand when it might be preferable to use the propensity score versus an outcome model (e.g., marginal standardization) to estimate a treatment effect. -->
+
+<!-- - Be able to identify different ways of using the propensity score to estimate treatment effects, including propensity score adjustment, stratification, matching, and inverse probability weighting. -->
+
+<!-- - Understand how and why inverse probability of treatment weighting works.  -->
+
+<!-- - Be able to implement inverse probability weighting to quantify the average treatment effect on the risk difference, risk ratio, and odds ratio scales using `R`.  -->
+
+<!-- - Be able to use stabilized, stabilized normalized, as well as trimmed inverse probability weights. -->
+
+# Introduction to Propensity Score Methods
+
+So far in this course, we've focused on obtaining quantitative estimates of the average treatment effect using an outcome modeling approach. In this approach, one regresses the outcome against the exposure and confounders. This works for the conditionally adjusted estimator, where we read the coefficient for the exposure from the regression model, or the marginally adjusted estimator (e.g., using marginal standardization). The basic formulation of this outcome modeling approach can be depicted heuristically using the DAG in Figure \ref{fig:figure1}:
+
+```{r figure1, out.width="10cm", fig.align='center', fig.margin=FALSE, echo=F, fig.cap="Directed acyclic graph depicting confounder adjustment using an outcome modelling approach. In this approach, information from the confounder to the outcome is 'blocked' (blue arrow). With this adjustment, the exposure $X$ os $d$-separated from the outcome $Y$, rendering the estimate of the exposure-outcome association unconfounded."}
+knitr::include_graphics(here("_images","2022_03_21-Section3_Figure1.pdf"))
+```
+
+In this Figure, the open back-door path from $X$ to $Y$ is blocked by conditioning on $C$. This leads to a conditionally adjusted estimate of the exposure effect. One can marginalize over the distribution on $C$ to get a marginally adjusted estimate from a model for the outcome. For a binary outcome, such estimates may be obtained on the risk difference, risk ratio, or odds ratio scales, or one may obtain a marginally adjusted estimate of the cumulative risk function that would be observed if everyone were exposed or unexposed.  
+
+On the other hand, we may want to obtain an adjusted estimate of the exposure effect by modeling the exposure. This may be the case when the event under study (e.g., mortality, birth defect, heart attack) is very rare in the sample, and there are a large number of confounders that we must adjust for. In this case, it may be preferable to limit the number of confounders in the outcome model, and adjust for confounding by modeling the exposure.
+
+This can be accomplished using propensity score methods. 
+
+The propensity score was first defined by Rosenbaum and Rubin [@Rosenbaum1983] as the conditional probability of receiving the treatment (or, equivalently, of being exposed). The true propensity score is defined as 
+
+$$e(C) = P(X = 1 \mid C)$$
+This propensity score is typically known in a randomized trial. It's important to distinguish this true PS from the estimated PS:
+
+$$\hat{e}(C) =  \hat{P}(X = 1 \mid C)$$
+This estimated PS can be fit using a parametric model, in which case, we might write^[Recall, the $\expit(a)$ function is the inverse of the $\logit(a)$ function, defined as: $1/[1 + exp(-a)]$]: 
+$$\hat{e}(C; \alpha) =  \hat{P}(X = 1 \mid C) = \expit ( \alpha C)$$
+For reasons that are not entirely obvious, it is usually better to use the estimated PS, even when the true PS is known [@Robins1992c, @Henmi2004]. For example, in the context of a randomized trial, the true propensity score is actually known exactly, and is equal to the probability of receiving treatment. However, the performance of a propensity score based estimator (in terms of statistical efficiency, which determines, among other things, the size of the standard errors) will be better after using an estimated propensity score, even in this setting.
+
+If the set of conditioning variables consists of the relevant confounding variables, the propensity score can be used to invoke conditional exchangeability. To see why, consider the case where the probability of being exposed is conditional on two binary confounders:
+
+$$ f(C) = P(X = 1 \mid C) = \expit(\alpha_0 + \alpha_1 C_1 + \alpha_2 C_2 + \alpha_3 C_1 C_2)$$
+
+Consider that, for two binary confounders, there are four possible joint confounder levels:
+
+```{r echo = F, results = 'asis'}
+library(knitr)
+conf <- data.frame(C1 = c(0,1,0,1), 
+                   C2 = c(0,0,1,1))
+
+conf$`$P(X = 1 \\mid C)$` <- c('$\\expit(\\alpha_0)$', '$\\expit(\\alpha_0 + \\alpha_1)$', '$\\expit(\\alpha_0 + \\alpha_2)$', '$\\expit(\\alpha_0 + \\alpha_1 + \\alpha_2 + \\alpha_3)$')
+
+kable(conf, "pipe")
+```
+
+Notice also that there are four parameters in the above model, one parameter for each level. This implies that, for this simple example, there is a unique propensity score value for each unique confounder level. In other words, the one-dimensional propensity score in this example contains all the information available in the two-dimensional set of confounders. We can thus reduce the complexity of the set of confounders to a single variable, and adjust for this variable instead of the confounders. For example:
+
+$$E[Y \mid X, f(C)] = \beta_0 + \beta_1 X + \beta_c f(C)$$
+Heuristically (again), we can show why this approach works using the DAG in Figure 2
+
+```{r figure2, out.width="10cm", fig.align='center', fig.margin=FALSE, echo=F, fig.cap="Directed acyclic graph depicting confounder adjustment using an outcome modelling approach. In this approach, information from the confounder to the outcome is 'blocked' (blue arrow). With this adjustment, the exposure $X$ os $d$-separated from the outcome $Y$, rendering the estimate of the exposure-outcome association unconfounded."}
+knitr::include_graphics(here("_images","2022_03_21-Section3_Figure2.pdf"))
+```
+
+In this DAG, $f(C)$ is a proxy for all the variables $C$. Thus, we can use $f(C)$ to replace $C$ in an outcome regression model.
+
+As a univariate proxy for the multivariate set of confounders, we can use the propensity score to adjust for confounding using a number of different techniques. These techniques include regression adjustment, propensity score matching, stratification, and weighting. In this lecture, we will quickly cover the first three and focus on the creation and use of IP-weights. The reason for this emphasis is that ($i$) in epidemiology, the most commonly used PS technique is inverse probability weighting, and so it is important to know how to implement; and ($ii$), there are theoretical justifications suggesting that weighting is the most optimal use of the PS. 
+
+<!-- # Adjustment, Matching, Stratification -->
+
+<!-- To demonstrate these techniques, we will again use the NHEFS data: -->
+
+<!-- ```{r, warning=F, message=F} -->
+<!-- #' Define where the data are -->
+<!-- file_loc <- url("https://cdn1.sph.harvard.edu/wp-content/uploads/sites/1268/1268/20/nhefs.csv") -->
+
+<!-- #' This begins the process of cleaning and formatting the data -->
+<!-- nhefs <- read_csv(file_loc) %>%  -->
+<!--   select(qsmk,wt82_71,wt82, wt71, exercise,sex,age, -->
+<!--          race,income, marital,school, -->
+<!--          asthma,bronch,  -->
+<!--          starts_with("alcohol"),-alcoholpy, -->
+<!--          starts_with("price"), -->
+<!--          starts_with("tax"),  -->
+<!--          starts_with("smoke"), -->
+<!--          smkintensity82_71) %>%  -->
+<!--   mutate(income=as.numeric(income>15), -->
+<!--          marital=as.numeric(marital>2), -->
+<!--          alcoholfreq=as.numeric(alcoholfreq>1)) %>%  -->
+<!--   na.omit(.) -->
+
+<!-- factor_names <- c("exercise","income","marital", -->
+<!--                   "sex","race","asthma","bronch") -->
+<!-- nhefs[,factor_names] <- lapply(nhefs[,factor_names] , factor) -->
+
+<!-- #' Define outcome -->
+<!-- nhefs <- nhefs %>% mutate(id = row_number(),  -->
+<!--                           wt_delta = as.numeric(wt82_71>median(wt82_71)), -->
+<!--                           .before = qsmk) -->
+
+<!-- #' Quick summary of data -->
+<!-- nhefs %>% print(n=5) -->
+<!-- ``` -->
+
+<!-- The first step in any PS analysis is to obtain an estimate of the propensity score. This can be done using an array of techniques, including nonparametric techniques such as machine learning methods [e.g., @Lee2010] or a more general nonparametric approach [@Hirano2003] (see Technical Note), but is most often accomplished using logistic regression.  -->
+
+<!-- :::{.rmdnote data-latex="{tip}"} -->
+
+<!-- __Technical Note__: -->
+
+<!-- |               Using the propensity score to adjust for confounding is a technique that falls into the class of single robust estimation. Singly robust estimators rely on a single model to adjust for confounding (or missing data or selection bias). In this case, the single model is the propensity score model.  -->
+
+<!-- Many researchers have proposed or implemented single robust estimation methods using machine learning methods. Machine learning methods consist of a wide range of analytic techniques that do not require hard to verify modeling assumptions. Because of this, they are often assumed to be less biased than their standard parametric counterparts. This perceived property has motivated many to either recommended or use machine learning methods to quantify exposure effects [@Lee2010,@Westreich2010c,@Snowden2011,@Oulhote2019]. These ``machine learning'' methods include techniques like kernel regression, splines, random forests, boosting, etc., which exploit smoothness across covariate patterns to estimate the regression function.  -->
+
+<!-- However, for any nonparametric approach there is an explicit bias-variance trade-off that arises in the choice of tuning parameters; less smoothing yields smaller bias but larger variance, while more smoothing yields smaller variance but larger bias (parametric models can be viewed as an extreme form of smoothing). This tradeoff has important consequences.  -->
+
+<!-- Convergence rates for nonparametric estimators become slower with more flexibility and more covariates. For example, a standard rate for estimating smooth regression functions is $N^{-\beta/(2\beta+d)}$, where $\beta$ represents the number of derivatives of the true regression function, and $d$ represents the dimension of, or number of covariates in, the true regression function. This issue is known as the **curse of dimensionality** [@Gyorfi2002,@Robins1997c,@Wasserman2006]. Sometimes this is viewed as a disadvantage of nonparametric methods; however, it is just the cost of making weaker assumptions: if a parametric model is misspecified, it will converge very quickly to the wrong answer.  -->
+
+<!-- In addition to slower convergence rates, confidence intervals are harder to obtain. Specifically, even in the rare case where one can derive asymptotic distributions for nonparametric estimators, it is typically not possible to construct confidence intervals (even via the bootstrap) without impractically undersmoothing the regression function (i.e., overfitting the data) [@Wasserman2006].  -->
+
+<!-- These complications (slow rates and lack of valid confidence intervals) are generally inherited by singly robust estimators such as methods that use only the propensity score for adjustment (this is apart from a few special cases which require simple estimators, such as kernel methods with strong smoothness assumptions and careful tuning parameter choices that are suboptimal for estimating $f$ or $g$).  -->
+
+<!-- For general nonparametric estimators of the exposure or outcome model, convergence will be slow, and honest confidence intervals will not be computable (note that "honest" confidence intervals are defined as CIs with a minimum coverage probability no less than the nominal value over a rich class of nonparametric regression functions). -->
+
+<!-- For these reasons, it is generally not advisable to use machine learning or nonparametric methods to estimate the propensity score and then proceed with PS adjustment in a regression model, matching, stratification, or weighting [@Naimi2022]. Instead, one should implement double robust estimation methods when machine learning or nonparametric methods are used. -->
+
+<!-- ::: -->
+
+<!-- In a previous lecture, we discussed using different link functions and distributions to estimate a conditionally adjusted risk difference, risk ratio, or odds ratio. However, when using parametric regression to estimate the propensity score, one would typically (always?)^[Generally, you will always want to use a method that bounds the predicted probabilities between 0 and 1.] use logistic regression: -->
+
+<!-- ```{r, warning = F, message = F} -->
+
+<!-- # formulaVars <- paste(names(nhefs)[7:16],collapse = "+") -->
+<!-- # modelForm <- as.formula(paste0("qsmk ~", formulaVars)) -->
+<!-- # modelForm -->
+
+<!-- # create the propensity score in the dataset -->
+<!-- nhefs$propensity_score <- glm(qsmk ~ exercise + sex + age + race + income + marital + school + asthma + bronch + alcoholfreq, data = nhefs, family = binomial("logit"))$fitted.values -->
+
+<!-- ``` -->
+
+<!-- ## Propensity Score Adjustment -->
+
+<!-- For regression adjustment, we can then simply adjust for this propensity score in an outcome regression model to obtain an adjusted estimate of the parameter of interest. This is one of the easiest techniques available for using the propensity score to adjust for confounders: -->
+
+<!-- ```{r} -->
+
+<!-- # adjust for the propensity score to obtain conditionally adjusted risk difference -->
+<!-- model1 <- glm(wt_delta ~ qsmk + propensity_score, data = nhefs, family = binomial("identity")) -->
+
+<!-- summary(model1)$coefficients[2,] -->
+
+<!-- ``` -->
+
+<!-- In the above output, the point estimate can be interpreted as the risk difference, with valid 95\% CIs (binomial distribution, identity link). In principle, nothing here prevents us from using a logistic link function, and then marginalizing over the distribution the way we do with marginal standardization and the confounders (though we must use the bootstrap for standard error assessment). -->
+
+<!-- ## Propensity Score Stratification -->
+
+<!-- For propensity score stratification, we can create quantiles of the propensity score, and quantify the exposure effect within each stratum of this categorized propensity score. One can then combine the stratum specific point estimates and standard errors using a simple weighted average [@Lunceford2004]. We can start by looking at the distribution of the propensity scores: -->
+
+<!-- ```{r} -->
+
+<!-- summary(nhefs$propensity_score) -->
+
+<!-- ``` -->
+
+<!-- We can create a variable that represents strata of the propensity score using quantiles. Often, *quintiles* of the distribution of the propensity score are used to create strata. However, it is important to note the bias-variance tradeoff that exists when selecting the number of quantiles of a distribution. A higher number of quantiles results in less bias and more variance, and vice versa. Here, we'll use quintiles to create strata: -->
+
+<!-- ```{r} -->
+
+<!-- ## Identify the quintiles of the PS -->
+<!-- quints <- quantile(nhefs$propensity_score, prob = seq(0,1,by=.2), na.rm = T) -->
+
+<!-- nhefs$ps_strata <- cut(nhefs$propensity_score, breaks = quints, include.lowest = T) -->
+
+<!-- nhefs %>% group_by(ps_strata) %>% -->
+<!--    count() -->
+
+<!-- ``` -->
+
+<!-- Once the PS strata are created, the next step is to estimate the stratum specific associations of interest. Here, we quantify the risk differences using the binomial distribution and identity link: -->
+
+<!-- ```{r} -->
+<!-- # Perform logistic regression within each stratum -->
+
+<!-- stratified_ps <- nhefs %>%  -->
+<!--   group_by(ps_strata) %>%  -->
+<!--   do(model = glm(wt_delta ~ qsmk, data=., family=binomial("identity"))) -->
+
+<!-- summary(stratified_ps$model[[1]])$coefficients[2,] -->
+
+<!-- summary(stratified_ps$model[[2]])$coefficients[2,] -->
+
+<!-- summary(stratified_ps$model[[3]])$coefficients[2,] -->
+
+<!-- summary(stratified_ps$model[[4]])$coefficients[2,] -->
+
+<!-- summary(stratified_ps$model[[5]])$coefficients[2,] -->
+
+<!-- ``` -->
+
+<!-- The stratum specific coefficients and standard errors can then be combined using standard equations: -->
+
+<!-- $$\hat{\gamma} = \frac{1}{K}\sum_{k=1}^K \bigg \{ \hat{\gamma}^{(i)} \bigg \}, \;\;\;\;\;\; SE(\hat{\gamma}) = \sqrt{\frac{1}{K^2}\sum_{k=1}^K \bigg \{ SE(\hat{\gamma}^{(i)})^2 \bigg \}}$$ -->
+
+
+<!-- These equations could be executed with, for example: -->
+
+<!-- ```{r} -->
+
+<!-- estimates <- NULL -->
+<!-- for(i in 1:5){ -->
+<!--   estimates <- rbind(estimates,summary(stratified_ps$model[[i]])$coefficients[2,1]) -->
+<!-- } -->
+
+<!-- mean(estimates) -->
+
+<!-- st.err <- NULL -->
+<!-- for(i in 1:5){ -->
+<!--   st.err <- rbind(st.err,summary(stratified_ps$model[[i]])$coefficients[2,2]) -->
+<!-- } -->
+
+<!-- sqrt((1/5^2)*sum(estimates^2)) -->
+
+<!-- ``` -->
+
+
+<!-- ## Propensity Score Matching -->
+
+<!-- Finally, one can match on the basis of the propensity score, using a range of different techniques. These include 1:1 or 1:M matching, matching with or without replacement, greedy versus optimal matching, and nearest neighbor versus caliper matching [@Austin2011]. -->
+
+<!-- ```{r} -->
+<!-- library(MatchIt) -->
+<!-- library(optmatch) -->
+
+<!-- ps_matching <- matchit(formula = qsmk ~ exercise + sex + age + race + income + marital + school + asthma + bronch + alcoholfreq, data = nhefs, -->
+<!--                        method = "full", distance = "logit", # Distance defined by usual propensity score from logistic model -->
+<!--                        ratio = 1, # gives us 1:1 matching, which is the default -->
+<!--                        estimand = "ATE" -->
+<!--                        ) -->
+
+<!-- ps_matching -->
+
+<!-- ``` -->
+
+<!-- Once we've identified the matched pairs, we can create a dataset that contains the information we need to match. The `matchit` function in `R`, as with some other matching approaches, constructs a set of weights to operationalize the matched sets [@Yoshida2017]. The dataset will include a weights variable and subclass variable that provide the information needed to conduct the matched analysis: -->
+
+<!-- ```{r} -->
+
+<!-- matched_data <- match.data(ps_matching) -->
+
+<!-- matched_data %>% select(id, qsmk, exercise, sex, age, race, income, marital, school, asthma, bronch, alcoholfreq, -->
+<!--                         propensity_score, distance,  -->
+<!--                         weights, subclass) %>%  -->
+<!--   print(n=6) -->
+
+<!-- ``` -->
+
+<!-- One can then use this dataset with a standard `glm` model, weighted to implement the matching: -->
+
+<!-- ```{r} -->
+
+<!-- matched_model <- glm(wt_delta ~ qsmk,  -->
+<!--                      data = matched_data,  -->
+<!--                      weights = weights, -->
+<!--                      family = binomial(link = "identity")) -->
+
+<!-- summary(matched_model)$coefficients -->
+
+<!-- ``` -->
+
+<!-- This model creates a warning referring to "non-integer #successes in a binomial glm". This warning is referring to the fact that, while each individual contributes either 0 or 1 event to the likelihood function, with the weights added, these "contributions" become non-integer values. For example, if an individual's weight is 0.718, they will contribute a total of 0.718 events to the overall analysis. This is not actually a problem when we use weights to conduct an analysis. It's just the consequence of using weights. Thus, the only real problem is the warning that we get. -->
+
+<!-- One way to avoid this warning^[This warning can sometimes create problems in the context of, e.g., a simulation study where the warning will prematurely interrupt the simulation.] is to use the `quasibinomial` distribution instead of the `binomial` option. The coefficient from this model can be interpreted as an average treatment effect obtained via matching. The next step is to obtain a standard error for this parameter. This is where things get a little uncertain. There are generally two approaches used to obtain standard errors for a matching estimator: the robust (sandwich) variance estimator, and the bootstrap.  -->
+
+<!-- Here is some code to implement the robust variance estimator. Note the need for the "subclass" argument and the ID argument, which allows us to account for the strata that we use to match the data: -->
+
+<!-- ```{r, warning = F, message = F} -->
+
+<!-- library(lmtest) -->
+<!-- library(sandwich) -->
+
+<!-- coeftest(matched_model, vcov. = vcovCL, cluster = ~ subclass + id) -->
+
+<!-- ``` -->
+
+<!-- The problem here is that there is comparatively little evidence supporting the use of the robust (sandwich) variance estimator or the bootstrap for matching estimators. There is even some theoretical work suggesting that the bootstrap is biased for a propensity score matching estimator [@Abadie2008].  -->
+
+<!-- Thus, while matching is used regularly in the literature, there are some challenges in using propensity score matching estimators suggesting they may not be the best choice. -->
+
+# Inverse Probability Weighting: Intuition
+
+The most commonly employed propensity score adjustment technique is inverse probability weighting. The simple heuristic often used to describe the way IP-weighting works is that, when applied to data, they yield a "pseudo population" where there is no longer an effect of the confounder on the exposure. The causal structure of the variables in this new pseudo-population can be depicted in Figure \ref{fig:figure3}:
+
+```{r figure3, out.width="10cm", fig.align='center', fig.margin=FALSE, echo=F, fig.cap="Directed acyclic graph depicting the causal relations between variables in a 'pseudo-population' obtained via inverse probability weighting. Again, with this adjustment, the exposure $X$ os $d$-separated from the outcome $Y$, rendering the estimate of the exposure-outcome association unconfounded."}
+knitr::include_graphics(here("_images","2022_03_21-Section3_Figure3.pdf"))
+```
+
+The weights for each individual needed to create this pseudo-population are defined as the inverse of the probability of receiving their observed exposure. Let's consider the following simple example to explain why this works. In this example, there are 20 observations, with one binary confounder (50:50 split) and one binary exposure. Let's suppose the probability that the exposure `x = 1` is 0.2 for those with `c = 0` and 0.9 for those with `c = 1`:
+
+Under these scenarios, we'd have exposure and confounder data that looks like this:
+
+```{r}
+
+c <- c(0,0,1,1)
+x <- c(1,0,1,0)
+n <- c(2,8,9,1)
+
+tibble(x,c,n)
+
+```
+
+Let's focus on the stratum of individuals with `c = 0`. In this stratum, there are 2 exposed individuals, and 8 unexposed individuals. Now let's ask what these data should look like if we were able to implement an ideal (marginally) randomized trial with the probability of treatment being 50% for all individuals. We would expect that within the stratum of individuals with `c = 0`, there would be 5 exposed and 5 unexposed individuals. Inverse probability weighting seeks to accomplish this balance. 
+
+Consider that the inverse probability of the **observed exposure** among those with `c = 0` is 0.2 for those who were actually exposed, and 0.8 for those who were unexposed. 
+
+The inverse probability weight is thus $\frac{1}{0.2} = 5$ for the exposed in this confounder stratum, and $\frac{1}{0.8} = 1.25$ for the unexposed in this confounder stratum.
+
+This suggests that, in their contribution to the overall analysis, the two exposed individuals in the `c = 0` status would each receive a weight of 5, while the eight unexposed individuals in the `c = 0` stratum would each receive a weight of 1.25. Under these conditions, we would have a re-balanced set of observations in the `c = 0` stratum of:
+
+$$\text{Exposed Observations:}\;\;\;\; 5 \times 2 = 10$$
+$$\text{Unexposed Observations:}\;\;\;\; 8 \times 1.25 = 10$$
+In effect, our inverse probability weighting strategy made it such that we now have an equal number of exposed and unexposed observations within the `c = 0` stratum. In these weighted data, we can now compute the difference in the outcome among the exposed and unexposed individuals (if we had it) to obtain an estimate of our average treatment effect.
+
+# Inverse Probability Weighting In Practice
+
+Simply taking the inverse of the probability of the observed exposure, while valid, is not the usual strategy for implementing inverse probability weights. In practice, one will often use stabilized inverse probability weights, or stabilized normalized inverse probability weights. 
+
+At times, there may be a reason to "truncate" or, more accurately, trim the weights to reduce the impact of potential outliers in the weights.^[In contrast to our emphasis of the usage of the word "truncation" which refers to the removal of observations from the dataset, researchers will often refer to "truncating" the weights, which sets the largest value to be equal to the 99th or 95th percentile values. This is more accurately referred to as "trimming" the weights, since no truncation is occurring.] 
+
+Furthermore, it's important to note that "data" are often not weighted, but rather the contribution that each individual in the sample makes to the estimating function (e.g., likelihood, estimating equation, or other function used to find parameters). This is important in that one must choose a fitting algorithms that allows for this type of weighting.
+
+To start, the simplest type of weight used in practice is the stabilized inverse probability weight. These are often defined as:
+
+\[
+sw = 
+\begin{dcases}
+\frac{P(X = 1)}{P(X = 1 \mid C)} & \text{if $X = 1$} \\
+\frac{P(X = 0)}{P(X = 0 \mid C)} & \text{if $X = 0$}
+\end{dcases}
+\]
+
+but are sometimes written more succinctly as^[This formulation is unusual, since $f(.)$ represents the probability density function, which is usually taken for a specific realization of the random variable. However, in this case, because the weights are defined as a function of the observed exposure status, the argument in the operator is the observed data (denoted with capital letter), as opposed to some specific realization.]:
+
+$$sw = \frac{f(X)}{f(X \mid C)}$$
+Let's use the cohort data again to construct the stabilized weights. We will re-fit the PS model to the data, and construct the weights:
+
+```{r, warning = F, message = F}
+
+file_loc <- url("https://bit.ly/47ECRcs")
+
+#' This begins the process of cleaning and formatting the data
+nhefs <- read_csv(file_loc) %>%
+  select(qsmk,wt82_71,sex,age,exercise,
+         race,income, marital,school,
+         asthma,bronch,
+         starts_with("alcohol"),-alcoholpy,
+         starts_with("price"),
+         starts_with("tax"),
+         starts_with("smoke"),
+         smkintensity82_71) %>%
+  mutate(wt_delta = as.numeric(wt82_71>median(wt82_71, na.rm = T)),
+         income=as.numeric(income>15),
+         marital=as.numeric(marital>2),
+         alcoholfreq=as.numeric(alcoholfreq>1)) %>%
+  na.omit(.)
+
+nhefs$id <- 1:nrow(nhefs)
+
+# create the propensity score in the dataset
+nhefs$propensity_score <- glm(qsmk ~ exercise + sex + age + race + income + marital + school + asthma + bronch + alcoholfreq, 
+                              data = nhefs, 
+                              family = binomial("logit"))$fitted.values
+
+# stabilized inverse probability weights
+nhefs$sw <- (mean(nhefs$qsmk)/nhefs$propensity_score)*nhefs$qsmk + 
+  ((1-mean(nhefs$qsmk))/(1-nhefs$propensity_score))*(1-nhefs$qsmk)
+
+summary(nhefs$sw)
+
+nhefs %>% select(id, wt_delta, qsmk, sex, age, exercise, propensity_score, sw) %>% print(n = 5)
+
+```
+
+As we can see from the output above, the stabilized weights are, in fact, well behaved, with a mean of one and a max value that is small.
+
+```{r}
+
+model_RD_weighted <- glm(wt_delta ~ qsmk, data = nhefs, weights=sw, family = quasibinomial("identity"))
+
+summary(model_RD_weighted)$coefficients
+
+```
+
+At times, the mean and max of the stabilized weights are sub-optimal, in that the mean may not be one, or the max may be too large for comfort. One strategy we can use here is to normalize the weights, by dividing the stabilized weights by the max stabilized weight:
+
+```{r}
+
+nhefs$sw_norm <- nhefs$sw/max(nhefs$sw)
+
+summary(nhefs$sw_norm)
+
+nhefs %>% select(id, wt_delta, qsmk, sex, age, exercise, propensity_score, sw, sw_norm) %>% print(n = 5)
+
+```
+
+In this case, the mean of the normalized weights is no longer expected to be one. However, the max weight will be one by definition. These weights can then be used in the same way:
+
+```{r}
+
+model_RD_weighted_norm <- glm(wt_delta ~ qsmk, data = nhefs, weights=sw_norm, family = quasibinomial("identity"))
+
+summary(model_RD_weighted_norm)$coefficients
+
+```
+
+Finally, instead of normalizing, more commonly, researchers will "trim" the weights to avoid problems induced by very large weights. The procedure for doing this requires simply replacing all weight values greater than a certain percentile with their percentile values:
+
+```{r}
+
+quantile(nhefs$sw, .99)
+
+nhefs <- nhefs %>% mutate(sw_trim = if_else(sw > quantile(sw, .99),
+                                            quantile(sw, .99),
+                                            sw))
+
+summary(nhefs$sw)
+
+summary(nhefs$sw_trim)
+
+```
+
+We can see how this changes the values in the following plot:
+
+```{r}
+
+ggplot(nhefs) + 
+  geom_jitter(aes(sw, sw_trim)) + 
+  scale_x_continuous(limits = c(0,3.5)) +
+  scale_y_continuous(limits = c(0,3.5))
+
+```
+
+When trimming weights, it's often best to start at the highest percentile (e.g., 99th percentile) and work your way down until the mean of the weights is close enough to 1 and the max weight is not too large. This strategy of starting with the highest percentile allows us to avoid the brunt of the potential bias that results from trimming. In fact, the key idea behind weight trimming is to optimize the bias-variance tradeoff being made [@Cole2008].
+
+A final note that is important with these weighted approaches is to consider how to estimate the standard errors. In fact, the model-based standard errors are no longer valid when weighting is used. One must instead use the robust variance estimators, or the bootstrap. 
+
+In the previous set of notes, we saw how to use the `sandwich` function to implement the robust variance estimator. Here, we'll use the `coeftest` function in the `lmtest` package, which relies on the `sandwich` function without making an explicit call to the `sandwich` package. The `coeftest` function also allows us to obtain our results in a cleaner format. For example:
+
+```{r}
+
+library(lmtest)
+library(sandwich)
+
+coeftest(model_RD_weighted_norm, vcov. = vcovHC)
+```
+
+One can then construct CIs in the standard way using the estimated standard error in the output above.
+
+# IP Weighting for the ATT and ATU
+
+One can use an inverse probability weighted estimator to compute the treatment effect on the treated and untreated. The key is to use weights that target these effects instead of the ATE. Different weights must be used. 
+
+Inverse probability weights for the treatment effect on the treated are defined as:
+
+\[
+sw = 
+\begin{dcases}
+1 & \text{if $X = 1$} \\
+\frac{P(X = 1 \mid C)}{P(X = 0 \mid C)} & \text{if $X = 0$}
+\end{dcases}
+\]
+
+
+Inverse probability weights for the treatment effect on the untreated are defined as:
+
+\[
+sw = 
+\begin{dcases}
+1 - P(X = 1 \mid C) & \text{if $X = 1$} \\
+P(X = 1 \mid C) & \text{if $X = 0$}
+\end{dcases}
+\]
+
+These estimators can be deployed in R as follows:
+
+```{r tidy = F, warning = F, message = F}
+
+# stabilized inverse probability weights for the ATT
+nhefs$sw_att <- nhefs$qsmk + 
+  (nhefs$propensity_score/(1 - nhefs$propensity_score))*(1-nhefs$qsmk)
+
+# stabilized inverse probability weights for the ATU
+nhefs$sw_atu <- (1 - nhefs$propensity_score)*nhefs$qsmk + 
+  (nhefs$propensity_score)*(1-nhefs$qsmk)
+
+
+
+model_RD_weighted_att <- glm(wt_delta ~ qsmk, 
+                             data = nhefs, 
+                             weights=sw_att, 
+                             family = quasibinomial("identity"))
+
+coeftest(model_RD_weighted_att, vcov. = vcovHC)
+
+model_RD_weighted_atu <- glm(wt_delta ~ qsmk, 
+                             data = nhefs, 
+                             weights=sw_atu, 
+                             family = quasibinomial("identity"))
+
+coeftest(model_RD_weighted_atu, vcov. = vcovHC)
+
+```
+
+
+# IP Weighting for Categorical and Continuous Exposures
+
+Oftentimes, we're interested in estimating the effect of a categorical or continuous exposure using inverse probability weighting. Constructing weights for these types of exposures requires additional considerations. 
+
+Suppose, for example, we're interested in estimating the effect of exercise on greater than median weight change in the NHEFS data. Per the NHEFS codebook, the exercise variable is based on the following question regarding the amount of exercise in 1971, classified as:
+
+- exercise = 0: "much exercise"
+- exercise = 1: "moderate exercise"
+- exercise = 2: "little or no exercise"
+
+Suppose we were interested in computing two risk differences comparing "much exercise" to "little or no exercise", and comparing "moderate exercise" to "little or no exercise". These both represent average treatment effects, and we can compute these using IP weighting. 
+To construct weights for a categorical exposure, we can use multinomial logistic regression to obtain the predicted probability of being in the **observed exposure category.** In R, multinomial regression can be deployed using the `VGAM` package via the `vglm` function. If we assume that sex, age, race, income, and education (school) are confounders of the exercise and weight change relation, we can fit the following propensity score model:
+
+
+```{r tidy = F, warning = F, message = F}
+
+library(VGAM)
+
+ps_mod <- vglm(factor(exercise) ~ sex + age + race + income + school, 
+               data = nhefs, 
+               family = "multinomial")
+
+summary(ps_mod)
+
+```
+
+Once this propensity score model is fit, we need to obtain predicted probabilities of being exposed in each category:
+
+```{r tidy = F, warning = F, message = F}
+
+ps_matrix <- cbind(predict(ps_mod, type = "response"), nhefs$exercise)
+
+ps_matrix <- data.frame(ps_matrix)
+
+names(ps_matrix) <- c("pEx0","pEx1","pEx2","Observed_Exercise")
+
+head(ps_matrix)
+
+```
+
+Let's look at the summary distributions of each level:
+
+```{r}
+
+summary(ps_matrix[,1])
+
+summary(ps_matrix[,2])
+
+summary(ps_matrix[,3])
+
+```
+
+We can also explore the overlap in these propensity scores:
+
+```{r tidy = F, warning = F, message = F, fig.show = "hide"}
+
+plot_dat1 <- data.frame(ps_matrix[,c(1,4)], pEx = "pEx0")
+plot_dat2 <- data.frame(ps_matrix[,c(2,4)], pEx = "pEx1")
+plot_dat3 <- data.frame(ps_matrix[,c(3,4)], pEx = "pEx2")
+
+names(plot_dat1) <- names(plot_dat2) <- names(plot_dat3) <- c("propensity_score", 
+                                                              "exposure_level", 
+                                                              "pEx")
+
+plot_dat <- rbind(plot_dat1,
+                  plot_dat2,
+                  plot_dat3)
+
+dim(plot_dat)
+dim(ps_matrix)
+
+head(ps_matrix, 10)
+
+head(plot_dat, 10)
+
+ggplot(plot_dat) +
+  geom_density(aes(x = propensity_score,
+                   group = factor(exposure_level),
+                   fill  = factor(exposure_level)),
+               bw = .03, alpha = .25) +
+  facet_wrap(~ pEx, ncol = 1) +
+  scale_x_continuous(expand = c(0,0), limits = c(0,1)) +
+  scale_y_continuous(expand = c(0,0))
+
+ggsave(here("_images", "ps_overlap_3level.pdf"), 
+       width = 10, 
+       height = 16,
+       units = "cm")
+
+```
+
+
+```{r psthree, out.width="10cm", fig.align='center', fig.margin=FALSE, echo=F, fig.cap="Propensity score overlap for exercise, a three level exposure in the NHEFS data."}
+knitr::include_graphics(here("_images","ps_overlap_3level.pdf"))
+```
+
+This is a propensity score overlap plot for the categorical (three level) exposure, and it does not suggest problematic overlap. If we move forward with the analysis, we need to obtain the predicted probability of the observed exposure from this propensity score matrix:
+
+```{r tidy = F, message = F, warning = F}
+
+head(ps_matrix)
+
+pscore_obs <- NULL
+for(i in 1:nrow(ps_matrix)){
+  pscore_obs <- rbind(pscore_obs, 
+                  ps_matrix[i, ps_matrix[i,]$Observed_Exercise + 1] # note the "+ 1"
+                  )
+}
+
+head(pscore_obs)
+
+```
+
+Each row in the `pscore_obs` object represents the predicted probability for each person being in their **observed exposure level**, conditional on the covariates in the propensity score model. With this, we can construct inverse probability weight as we did above. Note that we can stabilize these weights by including the overall mean of the observed exposure category. We can actually do this simply with an intercept only multinomial model, as we did above:
+
+```{r tidy = F, warning = F, message = F}
+
+ps_model <- vglm(factor(exercise) ~ 1, 
+               data = nhefs, 
+               family = "multinomial")
+
+ps_num <- cbind(predict(ps_model, type = "response"),  nhefs$exercise)
+
+ps_num <- data.frame(ps_num)
+
+names(ps_num) <- c("p0", "p1", "p2", "exercise_level")
+
+head(ps_num)
+
+pscore_num <- NULL
+for(i in 1:nrow(ps_num)){
+  pscore_num <- rbind(pscore_num,
+                      ps_num[i, ps_num[i,]$exercise_level + 1]
+  )
+}
+
+nhefs$sw_exercise <- pscore_num/pscore_obs
+
+summary(nhefs$sw_exercise)
+
+```
+
+With these weights we can now estimate the average treatment affect between exercise and our outcome of interest (in this case, `wt_delta`):
+
+```{r tidy = F, warning = F, message = F}
+
+modelRD_ex <- lm(wt_delta ~ relevel(factor(exercise), 
+                                    ref = "2"), 
+                 weight = sw_exercise, 
+                 data = nhefs)
+
+coeftest(modelRD_ex, .vcov = vcovHC)
+
+```
+
+## Continuous Exposures
+
+A similar procedure can be used for continuous exposures. This procedure, referred to at the "quantile binning" method [@Naimi2014a], first categorizes the exposure into deciles or more, and then model this categorized exposure as above using a multinomial logistic regression model. 
+
+
+<!-- # Takeaways -->
+
+<!-- - The propensity score is defined as the probability of **being exposed** conditional on all confounders needed to attain exchangeability -->
+
+<!-- - There are important practical distinctions between the true and estimated propensity score. Even when the true propensity score is available, it is often better to use the estimated propensity score when using it to estimate treatment effects. -->
+
+<!-- - The propensity score is a **scalar summary** of all of the information contained in the confounding variables. For this reason, adjusting for the propensity score allows us to adjust for confounding.  -->
+
+<!-- - Propensity score adjustment can be implemented by fitting a propensity score model, and then fitting a model for the outcome of interest regressed against the exposure of interest, while conditioning on the estimated propensity score. When using this approach, model based standard errors for the exposure are valid. -->
+
+<!-- - Propensity score stratification can be implemented by creating strata based on the propensity score. Quintiles are commonly used to construct strata, but there is a bias-variance tradeoff to consider when choosing the number of strata. Stratum specific exposure outcome associations can then be averaged to obtain the overall exposure-outcome association of interest. -->
+
+<!-- - Propensity score matching can be implemented in a number of different ways, including 1:M, nearest neighbors, caliper matching, optimal matching, greedy matching, etc. However, all of these approaches are affected by the absence of theoretically justified standard error estimators. -->
+
+<!-- - The most common technique for using the propensity score in epidemiology is inverse probability weighting. IP weights can be used to balance the distribution of the confounders across exposure categories, thus removing the association between the exposure and the confounders, and thus adjusting for confounding. -->
+
+<!-- - There are several variations of inverse probability of treatment weights, including stabilized, stabilized normalized, and trimmed inverse probability weights.  -->
+
+<!-- - Only the stabilized (or stabilized and trimmed) inverse probability weights should have a mean of 1 and a max that is not "too large" -->
+
+<!-- - When using inverse probability weights, it's important to use either the robust (sandwich) variance estimator, or the bootstrap to obtain appropriate standard errors. -->
+
+# References
